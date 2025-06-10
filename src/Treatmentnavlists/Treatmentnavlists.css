@@ -1,0 +1,144 @@
+/* Container */
+.treatment-container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.treatment-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.treatment-header h2 {
+  color: #ff9eb5;
+}
+
+.treatment-header p {
+  color: #ffb6c1;
+}
+
+.treatmentnavlists__service-lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* Each Card */
+.treatment-card {
+  border: 1px solid #ffd1dc;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+}
+
+/* Button */
+.treatmentnavlists__btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  background: #fff9fa;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #ff85a1;
+  transition: all 0.2s ease;
+}
+
+.treatmentnavlists__btn:hover {
+  background-color: #ffecef;
+  transform: translateY(-2px);
+}
+
+.treatmentnavlists__btn.active {
+  background-color: #ffecef;
+  color: #ff6b8b;
+}
+
+/* Toggle icon */
+.toggle-icon {
+  font-size: 1.3rem;
+  color: #ff9eb5;
+}
+
+/* Details container */
+.treatmentnavlists_details {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease-out 0.1s, transform 0.3s ease-out;
+}
+
+.treatmentnavlists_details.active {
+  max-height: 1500px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Lists */
+.treatmentnavlists_lists {
+  list-style: none;
+  margin: 0;
+  padding: 1rem;
+}
+
+.service-item {
+  padding: 0.5rem 0;
+  animation: fadeInUp 0.4s ease forwards;
+  animation-delay: calc(var(--i) * 0.05s);
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.service-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.service-name {
+  font-size: 0.95rem;
+  color: #ff9eb5;
+}
+
+.dotted-line {
+  flex-grow: 1;
+  border-bottom: 1px dotted #ffd1dc;
+  margin: 0 0.5rem;
+}
+
+.service-price {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #ff85a1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .treatmentnavlists__service-lists {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .treatmentnavlists__service-lists {
+    grid-template-columns: 1fr;
+  }
+}

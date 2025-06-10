@@ -1,0 +1,153 @@
+.home {
+  /* margin-top: 80px; */
+  height: 100vh;
+  margin: 150px auto 0;
+  max-width: 600px;
+  display: flex;
+  /* justify-content: center; */
+  flex-direction: column;
+  align-items: center;
+  /* background-image: url(../Images/waxing.png); */
+}
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #d63384;
+}
+
+/* .nav-links a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+
+.nav-links a:hover {
+  color: #d63384;
+} */
+.nav-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh;  */
+  width: 300px;
+}
+
+/* Nav links layout */
+.nav-links.desktop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Nav link styles */
+.nav-link {
+  text-decoration: none;
+  color: #d63384;
+  font-family: "CormorantGaramond";
+  font-size: 18px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #60a5fa; /* Light blue on hover */
+}
+
+.menu-icon {
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  align-items: center;
+  height: 64px;
+}
+.menu-icon:hover {
+  transform: scale(1.1);
+}
+.aboutus__text {
+  margin: 0;
+  font-family: "CormorantGaramond";
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.2;
+  width: 100%;
+  display: flex;
+}
+.aboutus__text-title {
+  font-family: "CormorantGaramond";
+  font-size: 45px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0;
+
+  padding: 15px 0;
+}
+.aboutus__texts {
+  font-family: "CormorantGaramond";
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0;
+  height: 350px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* .aboutus__booknow {
+  height: 40px;
+  border: 1px;
+  background: #000;
+  color: #fff;
+  width: 100px;
+  box-sizing: border-box;
+  padding: 0;
+  z-index: 1;
+  font-family: "CormorantGaramond";
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+} */
+.aboutus__booknow {
+  position: relative;
+  padding: 12px 24px;
+  background-color: #2e2e2e; /* dark gray */
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  overflow: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.aboutus__booknow:hover {
+  background-color: #3d3d3d; /* slightly lighter gray */
+  color: #60a5fa; /* light blue */
+  transform: scale(1.03);
+}
+
+/* Hide mobile icon and menu by default */
+.mobile {
+  display: none;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .desktop {
+    display: none;
+  }
+  .mobile {
+    display: block;
+    display: flex;
+    justify-content: center;
+  }
+
+  .home {
+    padding: 0 15px 0;
+    margin-top: 100px;
+  }
+}

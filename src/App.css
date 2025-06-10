@@ -36,3 +36,56 @@
     transform: rotate(360deg);
   }
 }
+html {
+  scroll-behavior: smooth;
+}
+/* 
+.section {
+  width: 100vw;
+  height: 100vh;
+  scroll-snap-align: start;
+} */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.App {
+  font-family: sans-serif;
+}
+
+.section {
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  /* align-items: center; */
+}
+
+.header-section {
+  background-color: #f8f0fa;
+}
+
+.services-section {
+  background-color: #fef9f3;
+}
+
+.contact-section {
+  background-color: #f0f9f8;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #d63384;
+}
+
+p {
+  font-size: 1rem;
+  max-width: 600px;
+  text-align: center;
+  line-height: 1.6;
+}
