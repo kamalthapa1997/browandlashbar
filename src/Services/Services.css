@@ -8,3 +8,10 @@
   align-items: center;
   text-align: center;
 }
+.services__header {
+  font-family: "CormorantGaramond";
+}
+.services__paragraph {
+  font-family: "CormorantGaramond";
+  /* color: #d63384; */
+}

@@ -45,28 +45,64 @@
 
 /* Nav link styles */
 .nav-link {
+  color: #d63384 !important;
   text-decoration: none;
-  color: #d63384;
-  font-family: "CormorantGaramond";
-  font-size: 18px;
-  font-weight: 600;
+  font-family: "CormorantGaramond", serif;
+  font-size: 18px !important;
+  font-weight: 600 !important;
   transition: color 0.3s ease;
+  cursor: pointer;
 }
 
 .nav-link:hover {
-  color: #60a5fa; /* Light blue on hover */
+  color: #a61e66;
+}
+/* .aboutus__announcement {
+  background-color: #fff4f4;
+
+  color: #b30000;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 8px;
+  font-size: 1rem;
+  text-align: center;
+} */
+.aboutus__announcement {
+  background-color: #ffe5e5;
+  color: #b30000;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 8px;
+  font-size: 1rem;
+  text-align: center;
+  animation: announcementFloat 6s ease-in-out infinite;
+}
+
+@keyframes announcementFloat {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .menu-icon {
-  font-size: 1.8rem;
+  /* font-size: 1.8rem; */
+  font-size: 40px;
+  padding-right: 20px;
   cursor: pointer;
   transition: transform 0.3s ease;
   align-items: center;
-  height: 64px;
+  height: 30px;
+  box-sizing: border-box;
 }
-.menu-icon:hover {
+/* .menu-icon:hover {
   transform: scale(1.1);
-}
+} */
 .aboutus__text {
   margin: 0;
   font-family: "CormorantGaramond";
@@ -91,7 +127,7 @@
   font-weight: 500;
   line-height: 1.2;
   margin: 0;
-  height: 350px;
+  height: 288px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -144,10 +180,18 @@
     display: block;
     display: flex;
     justify-content: center;
+    max-height: 35px;
+    box-sizing: border-box;
   }
 
   .home {
-    padding: 0 15px 0;
-    margin-top: 100px;
+    padding: 30px 15px 0;
+    margin-top: 65px;
+    /* background-image: url("../Images/mobilebg.jpg"); */
+    background-image: url("../Images/home.jpg");
+
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 }

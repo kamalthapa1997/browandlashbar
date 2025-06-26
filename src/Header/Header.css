@@ -10,6 +10,7 @@
   flex-direction: column;
   gap: 1.5rem;
   padding: 2rem;
+  background-color: #fff4f4;
 }
 .mobile-menu a {
   margin: 10px 0;
@@ -36,6 +37,7 @@
   top: 0;
   left: 0;
   z-index: 999;
+  align-items: center;
   border-bottom: 1px solid #d63384; /* pink bottom border */
 }
 

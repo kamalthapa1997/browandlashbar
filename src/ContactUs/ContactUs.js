@@ -36,7 +36,7 @@ function ContactUs({ sectionId, sectionClass }) {
 
   return (
     <div id={sectionId} className={`${sectionClass} contact-container`}>
-      <h1 className="contact-title">Contact Us</h1>
+      <h1 className="contact-title Header__text">Contact Us</h1>
       <div className="contact-content">
         <div className="contact-left">
           <div

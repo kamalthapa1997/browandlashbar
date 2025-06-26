@@ -132,9 +132,9 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .treatmentnavlists__service-lists {
+  /* .treatmentnavlists__service-lists {
     grid-template-columns: 1fr 1fr;
-  }
+  } */
 }
 
 @media (max-width: 500px) {
