@@ -5,7 +5,7 @@ function Home() {
   return (
     <div className="home">
       <p className="aboutus__text">WELCOME TO</p>
-      <h1 className="aboutus__text-title">Mero Brow & Lash Bar</h1>
+      <h1 className="aboutus__text-title">Mero Brow & Lash Bar LLc</h1>
       <p className="aboutus__texts">
         At Mero Brow & Lash Bar, we specialize in enhancing your natural beauty
         with precision and care. Our experienced team offers a range of

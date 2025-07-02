@@ -53,7 +53,7 @@ function Header({ sectionId, sectionClass }) {
     <header id={sectionId} className={`${sectionClass} header`}>
       <div id={sectionId} className="nav_lists">
         <a href="/">
-          <img src="/logoo.svg" alt="logo" className="header__mainlogo" />
+          <img src="/mainlogo.png" alt="logo" className="header__mainlogo" />
         </a>
         <div className="nav-container desktop">
           <nav className="nav-links desktop">

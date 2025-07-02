@@ -12,9 +12,9 @@ function Services({ sectionId, sectionClass }) {
         and feel their absolute best.
         <br />
         <br />
-        Please note, the prices shown here reflect our regular rates, but if you
+        {/* Please note, the prices shown here reflect our regular rates, but if you
         choose to book online, you’ll enjoy special discounts designed to make
-        your experience even better.
+        your experience even better. */}
       </p>
       <Treatmentnavlists />
     </div>

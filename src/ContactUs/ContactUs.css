@@ -72,7 +72,7 @@
   line-height: 1.5;
   word-break: break-word; /* 👈 this will force long words to wrap */
   /* width: 48%; */
-  color: #ff85a1;
+  color: #f60038;
   font-family: "CormorantGaramond";
   font-size: 18px;
   font-weight: 500;
@@ -118,14 +118,23 @@
 }
 
 .contact-us__hours-title {
-  display: flex;
+  /* display: flex; */
   align-items: center;
   font-size: 1.2rem;
-  color: #ff85a1;
-  justify-content: center;
+  color: #d63384;
+  /* justify-content: center; */
   column-gap: 5px;
 
   /* margin-bottom: 1rem; */
+}
+.contact-us__hours-title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: #f72585;
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
 }
 
 .contact-us__icon {
@@ -141,7 +150,7 @@
 .contact-us__day,
 .contact-us__hours {
   width: 48%;
-  color: #ff85a1;
+  color: #f60038;
   font-family: "CormorantGaramond";
   font-size: 18px;
   font-weight: 500;
@@ -170,7 +179,7 @@
 
   @media (max-width: 480px) {
     .contact-text {
-      font-size: 0.95rem;
+      font-size: 1.09rem;
       word-break: break-word;
     }
     .contact-us__hours-grid {
