@@ -13,9 +13,7 @@ const Treatmentnavlists = () => {
       name: "Threading",
       items: [
         { name: "Eyebrow Threading", price: "$15" },
-
         { name: " Lip Threading", price: "$10" },
-
         { name: "Chin Threading", price: "$11" },
         { name: "Forehead Threading", price: "$10" },
         { name: "Neck Threading", price: "$10" },
@@ -50,15 +48,13 @@ const Treatmentnavlists = () => {
       items: [
         { name: "Eyebrow Tint", price: "$20" },
         { name: "Lash Tint", price: "$20" },
-        { name: "Volume Lashes", price: "$140" },
-        { name: "Lash Remove", price: "$25" },
       ],
     },
     {
       name: "Lift and Lamination ",
       items: [
         { name: " Lashe Lift", price: "$75" },
-        { name: " Lashe lift and Tint", price: "$850" },
+        { name: " Lashe lift and Tint", price: "$85" },
         { name: "Brow Lamination", price: "$75" },
         { name: "Brow Lamination and Tint", price: "$90" },
         { name: "Brow Lamination, Tint, and Eyebrows", price: "$105" },
@@ -73,6 +69,7 @@ const Treatmentnavlists = () => {
         { name: "Full leg with Brazilian waxing", price: "$125" },
         { name: "Full leg with Bikini waxing", price: "$110" },
         { name: "Full leg waxing", price: "$80" },
+        { name: "Full Face waxing", price: "$65" },
         { name: "Brazilian waxing", price: "$55" },
         { name: "Full arm waxing", price: "$50" },
         { name: "Upper leg waxing", price: "$50" },
