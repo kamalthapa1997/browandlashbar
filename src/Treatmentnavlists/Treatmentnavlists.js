@@ -39,8 +39,8 @@ const Treatmentnavlists = () => {
         { name: "Hybrid 1 week refill", price: "$45" },
         { name: "Volume 1 week refill", price: "$50" },
         { name: "Classic 2 week refill", price: "$65" },
-        { name: "Volume 2 week refill", price: "$75" },
-        { name: "Classic 2 week refill", price: "$85" },
+        { name: "Hybrid 2 week refill", price: "$75" },
+        { name: "Volume 2 week refill", price: "$85" },
       ],
     },
     {

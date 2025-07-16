@@ -131,6 +131,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.highlight {
+  font-weight: bold;
+  color: #e91e63; /* a pink accent, change as you like */
+}
+
 /* .aboutus__booknow {
   height: 40px;
   border: 1px;
