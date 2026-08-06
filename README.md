@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+# Mero Brow & Lash Bar
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository contains the React frontend and a Node.js/Express backend for managing services, gallery content, and brand settings.
 
-## Available Scripts
+## Setup
 
-In the project directory, you can run:
+1. Copy `.env.example` to `.env`.
+2. Add your MongoDB connection string, JWT secret, and Cloudinary credentials.
+3. Optionally set `ADMIN_USERNAME` and `ADMIN_PASSWORD` to auto-create the first admin account on startup.
 
-### `npm start`
+## Scripts
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- `npm run client`: starts the React app on `http://localhost:3000`
+- `npm run server`: starts the Express API with nodemon
+- `npm run dev`: runs both frontend and backend together
+- `npm start`: runs the backend in production mode
+- `npm run build`: builds the React frontend
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Backend routes
 
-### `npm test`
+### Public
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- `GET /api/services`
+- `GET /api/gallery`
+- `PATCH /api/gallery/:id/like`
+- `GET /api/settings`
 
-### `npm run build`
+### Admin
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- `POST /api/admin/login`
+- `POST /api/services`
+- `PUT /api/services/:id`
+- `DELETE /api/services/:id`
+- `POST /api/gallery`
+- `DELETE /api/gallery/:id`
+- `PUT /api/settings`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Protected routes require `Authorization: Bearer <token>`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Upload fields
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Gallery uploads use the multipart field name `image`
+- Logo uploads use the multipart field name `logo`

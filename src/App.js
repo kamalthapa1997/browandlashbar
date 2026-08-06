@@ -10,6 +10,7 @@ import Services from "./Services/Services";
 import ContactUs from "./ContactUs/ContactUs";
 import Gallery from "./Gallery/Gallery.js";
 import Home from "./Home/Home.js";
+import Login from "./Login/Login";
 
 function AppContent() {
   const location = useLocation();
@@ -36,6 +37,7 @@ function AppContent() {
       )}
 
       <Routes>
+        <Route path="/login" element={<Login />} />
         <Route path="/gallery" element={<Gallery />} />
       </Routes>
     </div>

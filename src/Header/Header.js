@@ -72,6 +72,9 @@ function Header({ sectionId, sectionClass }) {
             >
               Contact Us
             </span>
+            <Link to="/login" className="nav-link">
+              Login
+            </Link>
           </nav>
         </div>
 
@@ -115,6 +118,13 @@ function Header({ sectionId, sectionClass }) {
               onClick={() => setMenuOpen(false)}
             >
               Gallery
+            </Link>
+            <Link
+              to="/login"
+              className="nav-link"
+              onClick={() => setMenuOpen(false)}
+            >
+              Login
             </Link>
             <span
               className="nav-link"
