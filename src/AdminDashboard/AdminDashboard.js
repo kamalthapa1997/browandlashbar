@@ -108,7 +108,7 @@ function AdminDashboard() {
       </button>
       <button
         className="admin-mobile-home"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/admin")}
         aria-label="Go to website home"
       >
         <img
