@@ -1,28 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Gallery.css";
-import gal1 from "../Images/gall1.jpg";
-import gal2 from "../Images/gal2.jpg";
-import gal3 from "../Images/gal3.jpg";
-import gal4 from "../Images/gal4.jpg";
-import gal5 from "../Images/gal5.jpg";
-import gal6 from "../Images/gal6.jpg";
-import gal7 from "../Images/gal7.jpg";
-import gal8 from "../Images/gal8.jpg";
-import gal9 from "../Images/gal9.jpg";
-import gal10 from "../Images/gal10.jpg";
-
-const images = [gal1, gal2, gal3, gal4, gal5, gal6, gal7, gal8, gal9, gal10];
+import { getGallery } from "../api/galleryService";
 
 const Gallery = () => {
+  const [images, setImages] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function loadGallery() {
+      setError("");
+      try {
+        const data = await getGallery();
+        setImages(Array.isArray(data) ? data : []);
+      } catch (loadError) {
+        setError(loadError.message || "Unable to load gallery.");
+      }
+    }
+
+    loadGallery();
+  }, []);
+
   return (
-    <div className="gallery-page">
-      <h2 className="gallery__heading">Our Work</h2>
-      <div className="gallery-grid">
-        {images.map((src, i) => (
-          <img key={i} src={src} alt={`Work ${i + 1}`} />
+    <main className="gallery-page">
+      <header className="gallery-page__header">
+        <p>Our portfolio</p>
+        <h1>Beauty in every detail</h1>
+      </header>
+      <div className="gallery-list">
+        {error && <p className="gallery-error" role="alert">{error}</p>}
+        {images.map((item, i) => (
+          <div className="gallery-item" key={item._id || i}>
+            <img src={item.imageUrl} alt={item.caption || `Work ${i + 1}`} />
+            {item.caption && <p>{item.caption}</p>}
+          </div>
         ))}
+        {!error && images.length === 0 && (
+          <p className="gallery-empty">Our latest work will be here soon.</p>
+        )}
       </div>
-    </div>
+    </main>
   );
 };
 

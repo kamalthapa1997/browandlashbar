@@ -1,43 +1,94 @@
-# Mero Brow & Lash Bar
+# Mero Brow, Lash & Waxing Bar ✨
 
-This repository contains the React frontend and a Node.js/Express backend for managing services, gallery content, and brand settings.
+<p align="center">
+  <img src="mainlogo.png" alt="Mero Brow, Lash & Waxing Bar Logo" width="250"/>
+</p>
 
-## Setup
+<h3 align="center">
+  A modern and elegant beauty salon website built to provide a smooth online experience for clients.
+</h3>
 
-1. Copy `.env.example` to `.env`.
-2. Add your MongoDB connection string, JWT secret, and Cloudinary credentials.
-3. Optionally set `ADMIN_USERNAME` and `ADMIN_PASSWORD` to auto-create the first admin account on startup.
+---
 
-## Scripts
+## 💖 About The Project
 
-- `npm run client`: starts the React app on `http://localhost:3000`
-- `npm run server`: starts the Express API with nodemon
-- `npm run dev`: runs both frontend and backend together
-- `npm start`: runs the backend in production mode
-- `npm run build`: builds the React frontend
+**Mero Brow, Lash & Waxing Bar** is a modern salon website designed to showcase professional beauty services, create an elegant online presence, and provide clients with an easy way to explore services and connect with the business.
 
-## Backend routes
+The website focuses on a clean, responsive, and user-friendly design that represents the quality and professionalism of the salon.
 
-### Public
+Our goal is to create a seamless digital experience where clients can:
 
-- `GET /api/services`
-- `GET /api/gallery`
-- `PATCH /api/gallery/:id/like`
-- `GET /api/settings`
+- Explore beauty services
+- View salon information
+- Discover promotions
+- Access booking options
+- Connect with the business easily
 
-### Admin
+---
 
-- `POST /api/admin/login`
-- `POST /api/services`
-- `PUT /api/services/:id`
-- `DELETE /api/services/:id`
-- `POST /api/gallery`
-- `DELETE /api/gallery/:id`
-- `PUT /api/settings`
+## 🚀 Full-Stack Experience Coming Soon
 
-Protected routes require `Authorization: Bearer <token>`.
+This project is actively evolving.
 
-## Upload fields
+A complete **full-stack version** is currently in development, bringing powerful new features and a more personalized experience for both clients and salon management.
 
-- Gallery uploads use the multipart field name `image`
-- Logo uploads use the multipart field name `logo`
+Upcoming features include:
+
+✅ User account creation and authentication  
+✅ Online appointment management system  
+✅ Customer profiles and booking history  
+✅ Admin dashboard for salon management  
+✅ Service and promotion management  
+✅ Image gallery management  
+✅ Secure backend API  
+✅ Database integration  
+✅ Automated deployment workflow
+
+The future version will transform this website into a complete salon management platform built for real-world business needs.
+
+---
+
+## ✨ Current Features
+
+### Frontend
+
+- Responsive modern design
+- Mobile-friendly layout
+- Service showcase pages
+- Image gallery
+- Smooth animations
+- Interactive user interface
+- Professional branding
+- Optimized production build
+
+---
+
+## 🛠️ Technologies Used
+
+### Frontend
+
+- React.js
+- JavaScript (ES6+)
+- HTML5
+- CSS3
+- React Router
+- Framer Motion
+
+### Deployment
+
+- Ubuntu Server
+- Nginx
+- Google Cloud Platform
+- Git & GitHub
+
+---
+
+## 📸 Website Preview
+
+The website provides a visually appealing experience designed around beauty, elegance, and simplicity.
+
+---
+
+## 📂 Project Structure
+
+Current frontend structure:

@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 .App-logo {
@@ -14,7 +16,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--color-text);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -25,7 +27,7 @@
 }
 
 .App-link {
-  color: #61dafb;
+  color: var(--color-accent);
 }
 
 @keyframes App-logo-spin {
@@ -36,19 +38,20 @@
     transform: rotate(360deg);
   }
 }
-html {
-  scroll-behavior: smooth;
-}
 /* 
 .section {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   scroll-snap-align: start;
 } */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .section { min-height: auto; padding: 64px 16px; }
 }
 
 .App {
@@ -58,7 +61,7 @@ html {
 .section {
   width: 100vw;
   height: 100vh;
-  padding: 20px;
+  padding: 32px 20px;
   display: flex;
   flex-direction: column;
   /* justify-content: center; */
@@ -66,21 +69,21 @@ html {
 }
 
 .header-section {
-  background-color: #f8f0fa;
+  background-color: var(--color-background);
 }
 
 .services-section {
-  background-color: #fef9f3;
+  background-color: var(--color-secondary-bg);
 }
 
 .contact-section {
-  background-color: #f0f9f8;
+  background-color: var(--color-background);
 }
 
 h1 {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: #d63384;
+  color: var(--color-text);
 }
 
 p {
@@ -88,4 +91,5 @@ p {
   max-width: 600px;
   text-align: center;
   line-height: 1.6;
+  color: var(--color-text-secondary);
 }

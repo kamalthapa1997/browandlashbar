@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginAdmin } from "../api/authService";
+import Modal from "../components/Modal/Modal";
 import "./Login.css";
 
 function Login() {
@@ -8,6 +10,10 @@ function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleClose = () => {
+    navigate("/");
+  };
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -20,35 +26,9 @@ function Login() {
 
     try {
       setLoading(true);
-      const response = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: username.trim(), password }),
-      });
-
-      const text = await response.text();
-      let data = null;
-
-      try {
-        data = JSON.parse(text);
-      } catch {
-        data = null;
-      }
-
-      if (!response.ok) {
-        const message =
-          data?.message ||
-          data?.error ||
-          (text && !text.startsWith("<")
-            ? text
-            : "Unable to sign in. Please check your email or password and try again.");
-        throw new Error(message);
-      }
-
+      const data = await loginAdmin({ username: username.trim(), password });
       localStorage.setItem("adminToken", data?.token);
-      navigate("/");
+      navigate("/admin");
     } catch (err) {
       setError(err.message || "Unable to sign in. Please try again.");
     } finally {
@@ -57,7 +37,7 @@ function Login() {
   };
 
   return (
-    <main className="login">
+    <Modal isOpen={true} onClose={handleClose} maxWidth="520px">
       <section className="login__card" aria-label="Admin login form">
         <h1 className="login__title">Admin Login</h1>
         <p className="login__subtitle">
@@ -102,7 +82,7 @@ function Login() {
           Need the admin password? Contact the site owner for access.
         </p>
       </section>
-    </main>
+    </Modal>
   );
 }
 

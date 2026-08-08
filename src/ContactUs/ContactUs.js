@@ -1,9 +1,10 @@
 import React from "react";
 import "./ContactUs.css";
 
-function ContactUs({ sectionId, sectionClass }) {
+function ContactUs({ sectionId, sectionClass, phoneNumber }) {
+  const contactPhone = phoneNumber || "+12406021445";
   const handlePhoneClick = () => {
-    window.location.href = "tel:+12406021445";
+    window.location.href = `tel:${contactPhone.replace(/[^0-9+]/g, "")}`;
   };
 
   const handleEmailClick = () => {
@@ -13,11 +14,11 @@ function ContactUs({ sectionId, sectionClass }) {
 
   const handleAddressClick = () => {
     const encodedAddress = encodeURIComponent(
-      "4711 Montgomery Ln, Bethesda, MD 20814"
+      "4711 Montgomery Ln, Bethesda, MD 20814",
     );
     window.open(
       `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`,
-      "_blank"
+      "_blank",
     );
   };
 
@@ -45,7 +46,7 @@ function ContactUs({ sectionId, sectionClass }) {
             title="Click to call"
           >
             <span className="contact-icon">📞</span>
-            <span className="contact-text">(240) 602-1445</span>
+            <span className="contact-text">{contactPhone}</span>
           </div>
           <div
             className="contact-item clickable"

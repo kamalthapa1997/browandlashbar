@@ -10,8 +10,22 @@ async function startServer() {
   await connectToDatabase();
   await bootstrapAdmin();
 
-  app.listen(port, () => {
+  const server = app.listen(port);
+
+  server.on("listening", () => {
     console.log(`Server listening on port ${port}`);
+  });
+
+  server.on("error", (err) => {
+    if (err && err.code === "EADDRINUSE") {
+      console.error(
+        `Port ${port} is already in use. Please free the port or set a different PORT in your .env.`,
+      );
+      process.exit(1);
+    }
+
+    console.error("Server error:", err);
+    process.exit(1);
   });
 }
 

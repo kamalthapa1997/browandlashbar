@@ -1,0 +1,2 @@
+.site-footer { align-items: center; background: var(--color-text); color: var(--color-border); display: flex; font-family: Georgia, "Times New Roman", serif; font-size: .9rem; justify-content: space-between; padding: 1.4rem clamp(1rem, 5vw, 4rem); }.site-footer p { color: inherit; font-size: inherit; margin: 0; text-align: left; }.site-footer p + p { color: var(--color-accent); }
+@media (max-width: 560px) { .site-footer { align-items: flex-start; flex-direction: column; gap: .45rem; } }

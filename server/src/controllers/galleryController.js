@@ -13,7 +13,9 @@ const getGallery = asyncHandler(async (_request, response) => {
 
 const createGalleryItem = asyncHandler(async (request, response) => {
   if (!request.file) {
-    throw Object.assign(new Error("Image upload is required"), { statusCode: 400 });
+    throw Object.assign(new Error("Image upload is required"), {
+      statusCode: 400,
+    });
   }
 
   const { caption } = validateGalleryPayload(request.body);
@@ -33,12 +35,57 @@ const createGalleryItem = asyncHandler(async (request, response) => {
   response.status(201).json(item);
 });
 
+const updateGalleryItem = asyncHandler(async (request, response) => {
+  validateObjectId(request.params.id, "gallery");
+  const item = await Gallery.findById(request.params.id);
+
+  if (!item) {
+    throw Object.assign(new Error("Gallery item not found"), {
+      statusCode: 404,
+    });
+  }
+
+  const { caption } = validateGalleryPayload(request.body);
+  const previousPublicId = item.publicId;
+  const uploadedPublicId = request.file ? request.file.filename : null;
+
+  if (caption !== undefined) {
+    item.caption = caption;
+  }
+
+  if (request.file) {
+    item.imageUrl = request.file.path;
+    item.publicId = request.file.filename;
+  }
+
+  try {
+    await item.save();
+  } catch (error) {
+    if (uploadedPublicId) {
+      await destroyCloudinaryAsset(uploadedPublicId).catch(() => {});
+    }
+    throw error;
+  }
+
+  if (
+    uploadedPublicId &&
+    previousPublicId &&
+    previousPublicId !== uploadedPublicId
+  ) {
+    await destroyCloudinaryAsset(previousPublicId).catch(() => {});
+  }
+
+  response.json(item);
+});
+
 const deleteGalleryItem = asyncHandler(async (request, response) => {
   validateObjectId(request.params.id, "gallery");
   const item = await Gallery.findById(request.params.id);
 
   if (!item) {
-    throw Object.assign(new Error("Gallery item not found"), { statusCode: 404 });
+    throw Object.assign(new Error("Gallery item not found"), {
+      statusCode: 404,
+    });
   }
 
   await destroyCloudinaryAsset(item.publicId);
@@ -52,11 +99,13 @@ const likeGalleryItem = asyncHandler(async (request, response) => {
   const item = await Gallery.findByIdAndUpdate(
     request.params.id,
     { $inc: { likes: 1 } },
-    { new: true }
+    { new: true },
   );
 
   if (!item) {
-    throw Object.assign(new Error("Gallery item not found"), { statusCode: 404 });
+    throw Object.assign(new Error("Gallery item not found"), {
+      statusCode: 404,
+    });
   }
 
   response.json(item);
@@ -65,6 +114,7 @@ const likeGalleryItem = asyncHandler(async (request, response) => {
 module.exports = {
   getGallery,
   createGalleryItem,
+  updateGalleryItem,
   deleteGalleryItem,
   likeGalleryItem,
 };

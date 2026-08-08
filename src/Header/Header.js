@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Header.css";
 
-function Header({ sectionId, sectionClass }) {
+function Header({ sectionId, sectionClass, logoUrl }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
@@ -52,8 +52,19 @@ function Header({ sectionId, sectionClass }) {
   return (
     <header id={sectionId} className={`${sectionClass} header`}>
       <div id={sectionId} className="nav_lists">
-        <a href="/">
-          <img src="/mainlogo.png" alt="logo" className="header__mainlogo" />
+        {/* <a href="/">
+          <img
+            src={logoUrl || "/mainlogo.png"}
+            alt="logo"
+            className="header__mainlogo"
+          />
+        </a> */}
+        <a href="/" className="logo-container">
+          <img
+            src={logoUrl || "/mainlogo.png"}
+            alt="logo"
+            className="header__mainlogo"
+          />
         </a>
         <div className="nav-container desktop">
           <nav className="nav-links desktop">
