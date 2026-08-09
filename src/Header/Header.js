@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./Header.css";
 
 function Header({ sectionId, sectionClass, logoUrl }) {
@@ -10,14 +10,17 @@ function Header({ sectionId, sectionClass, logoUrl }) {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const shouldReduceMotion = useReducedMotion();
+
   const scrollBehavior = window.matchMedia("(prefers-reduced-motion: reduce)")
     .matches
     ? "auto"
     : "smooth";
 
-  const toggleMenu = () => setMenuOpen((prev) => !prev);
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
+  };
 
-  // Handle outside click for mobile menu
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -32,8 +35,6 @@ function Header({ sectionId, sectionClass, logoUrl }) {
 
     if (menuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
@@ -41,20 +42,28 @@ function Header({ sectionId, sectionClass, logoUrl }) {
     };
   }, [menuOpen]);
 
-  // Scroll handler for "Services" and "Contact Us"
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
   const handleSectionClick = (sectionId) => {
     if (location.pathname !== "/") {
       navigate(`/#${sectionId}`);
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: scrollBehavior });
-      }
+      return;
+    }
+
+    const element = document.getElementById(sectionId);
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: scrollBehavior,
+        block: "start",
+      });
     }
   };
 
   return (
-    <header id={sectionId} className={`${sectionClass} header`}>
+    <header id={sectionId} className={`${sectionClass || ""} header`}>
       <div className="nav_lists">
         <Link
           to="/"
@@ -64,6 +73,7 @@ function Header({ sectionId, sectionClass, logoUrl }) {
           onClick={(event) => {
             if (location.pathname === "/") {
               event.preventDefault();
+
               window.scrollTo({
                 top: 0,
                 behavior: scrollBehavior,
@@ -73,53 +83,138 @@ function Header({ sectionId, sectionClass, logoUrl }) {
         >
           <img
             src={logoUrl || "/mainlogo.png"}
-            alt="logo"
+            alt="Mero Brow & Lash Bar"
             className="header__mainlogo"
           />
         </Link>
 
         <div className="nav-container desktop">
-          <div className="nav-links">
-            <span
+          <nav className="nav-links" aria-label="Desktop navigation">
+            <button
+              type="button"
               className="nav-link"
               onClick={() => handleSectionClick("services")}
             >
               Services
-            </span>
+            </button>
 
             <Link to="/gallery" className="nav-link">
               Gallery
             </Link>
 
-            <span
+            <button
+              type="button"
               className="nav-link"
               onClick={() => handleSectionClick("contact")}
             >
               Contact Us
-            </span>
+            </button>
 
             <Link to="/login" className="nav-link">
               Login
             </Link>
-          </div>
+          </nav>
         </div>
 
-        <div
+        <button
+          type="button"
           className="menu-icon mobile"
           onClick={toggleMenu}
           ref={toggleRef}
-          aria-label="Toggle menu"
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              toggleMenu();
-            }
-          }}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
         >
-          {menuOpen ? "×" : "≡"}
-        </div>
+          <span className={menuOpen ? "menu-icon__close" : "menu-icon__open"}>
+            {menuOpen ? "×" : "≡"}
+          </span>
+        </button>
+
+        <AnimatePresence>
+          {menuOpen && (
+            <>
+              <motion.div
+                className="mobile-menu-backdrop"
+                initial={shouldReduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+                transition={{
+                  duration: shouldReduceMotion ? 0 : 0.25,
+                  ease: "easeOut",
+                }}
+                onClick={() => setMenuOpen(false)}
+                aria-hidden="true"
+              />
+
+              <motion.nav
+                ref={menuRef}
+                className="mobile-menu"
+                aria-label="Mobile navigation"
+                initial={
+                  shouldReduceMotion
+                    ? false
+                    : {
+                        opacity: 0,
+                        x: 30,
+                      }
+                }
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                }}
+                exit={
+                  shouldReduceMotion
+                    ? undefined
+                    : {
+                        opacity: 0,
+                        x: 30,
+                      }
+                }
+                transition={{
+                  duration: shouldReduceMotion ? 0 : 0.28,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                <button
+                  type="button"
+                  className="nav-link mobile-menu__link"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleSectionClick("services");
+                  }}
+                >
+                  Services
+                </button>
+
+                <Link
+                  to="/gallery"
+                  className="nav-link mobile-menu__link"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Gallery
+                </Link>
+
+                <button
+                  type="button"
+                  className="nav-link mobile-menu__link"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleSectionClick("contact");
+                  }}
+                >
+                  Contact Us
+                </button>
+
+                <Link
+                  to="/login"
+                  className="nav-link mobile-menu__link"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              </motion.nav>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );

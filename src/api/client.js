@@ -1,6 +1,7 @@
 async function request(path, options = {}) {
   const response = await fetch(path, {
     ...options,
+    cache: "no-store",
     credentials: "include",
   });
   const contentType = response.headers.get("content-type") || "";

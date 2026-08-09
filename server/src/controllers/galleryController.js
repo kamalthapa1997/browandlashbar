@@ -8,7 +8,7 @@ const {
 
 const getGallery = asyncHandler(async (_request, response) => {
   const items = await Gallery.find().sort({ createdAt: -1 });
-  response.json(items);
+  response.set("Cache-Control", "no-store").json(items);
 });
 
 const createGalleryItem = asyncHandler(async (request, response) => {

@@ -71,13 +71,13 @@
   display: grid;
   gap: 0.65rem;
   grid-template-columns: 1fr 1.25fr;
-  color: rgb(246, 228, 225);
+  color: rgb(0, 0, 0);
 }
 .contact-us__day {
   font-weight: 700;
 }
 .contact-us__today {
-  color: var(--color-primary-hover);
+  color: #de8787;
   font-weight: 800;
 }
 @media (max-width: 959px) {

@@ -15,7 +15,7 @@ async function getSettingsDocument() {
 
 const getSettings = asyncHandler(async (_request, response) => {
   const settings = await getSettingsDocument();
-  response.json(settings);
+  response.set("Cache-Control", "no-store").json(settings);
 });
 
 const upsertSettings = asyncHandler(async (request, response) => {

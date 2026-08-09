@@ -40,7 +40,12 @@ function ContactUs({ sectionId, sectionClass, phoneNumber }) {
 
   return (
     <div id={sectionId} className={`${sectionClass} contact-container`}>
-      <h1 ref={title.ref} className={`contact-title Header__text ${title.className}`}>Contact Us</h1>
+      <h1
+        ref={title.ref}
+        className={`contact-title Header__text ${title.className}`}
+      >
+        Contact Us
+      </h1>
       <div ref={content.ref} className={`contact-content ${content.className}`}>
         <div className="contact-left">
           <div
@@ -73,28 +78,7 @@ function ContactUs({ sectionId, sectionClass, phoneNumber }) {
               4711 Montgomery Ln, Bethesda, MD 20814
             </span>
           </div>
-          {/* <div className="contact-item">
-            <div className="opening-hours-container">
-              <h3 className="hours-title">
-                <span className="contact-icon">⏰</span>
-                Opening Hours
-              </h3>
-              <div className="hours-grid">
-                {openingHours.map((item, index) => (
-                  <React.Fragment key={index}>
-                    <div className={`day ${item.day === today ? "today" : ""}`}>
-                      {item.day}
-                    </div>
-                    <div
-                      className={`hours ${item.day === today ? "today" : ""}`}
-                    >
-                      {item.hours}
-                    </div>
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          </div> */}
+
           <div className="contact-us__item">
             <div className="contact-us__opening-hours-container">
               <h3 className="contact-us__hours-title">

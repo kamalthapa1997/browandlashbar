@@ -30,7 +30,7 @@ const navItems = [
   ["settings", "Settings", "⚙"],
 ];
 
-function AdminDashboard() {
+function AdminDashboard({ onSettingsUpdated }) {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("overview");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -88,6 +88,55 @@ function AdminDashboard() {
 
   function requestConfirmation(config) {
     setConfirmation(config);
+  }
+
+  function upsertService(service) {
+    setServices((current) => {
+      const next = Object.fromEntries(
+        serviceCategories.map((category) => [
+          category,
+          (current[category] || []).filter((item) => item._id !== service._id),
+        ]),
+      );
+      next[service.category] = [...next[service.category], service].sort(
+        (first, second) =>
+          Number(first.price) - Number(second.price) ||
+          first.name.localeCompare(second.name),
+      );
+      return next;
+    });
+  }
+
+  function removeService(serviceId) {
+    setServices((current) =>
+      Object.fromEntries(
+        serviceCategories.map((category) => [
+          category,
+          (current[category] || []).filter((item) => item._id !== serviceId),
+        ]),
+      ),
+    );
+  }
+
+  function upsertGalleryItem(item) {
+    setGallery((current) => {
+      const withoutItem = current.filter((entry) => entry._id !== item._id);
+      return item.createdAt
+        ? [item, ...withoutItem].sort(
+            (first, second) =>
+              new Date(second.createdAt) - new Date(first.createdAt),
+          )
+        : [...withoutItem, item];
+    });
+  }
+
+  function removeGalleryItem(itemId) {
+    setGallery((current) => current.filter((item) => item._id !== itemId));
+  }
+
+  function applySettings(nextSettings) {
+    setSettings(nextSettings);
+    onSettingsUpdated?.(nextSettings);
   }
 
   const stats = [
@@ -209,7 +258,8 @@ function AdminDashboard() {
             {activeSection === "services" && (
               <ServicesManager
                 services={services}
-                onChange={refresh}
+                onSaved={upsertService}
+                onDeleted={removeService}
                 notify={setNotice}
                 confirmAction={requestConfirmation}
               />
@@ -217,7 +267,8 @@ function AdminDashboard() {
             {activeSection === "gallery" && (
               <GalleryManager
                 gallery={gallery}
-                onChange={refresh}
+                onSaved={upsertGalleryItem}
+                onDeleted={removeGalleryItem}
                 notify={setNotice}
                 confirmAction={requestConfirmation}
               />
@@ -225,7 +276,7 @@ function AdminDashboard() {
             {activeSection === "settings" && (
               <SettingsManager
                 settings={settings}
-                onChange={refresh}
+                onSaved={applySettings}
                 notify={setNotice}
               />
             )}
@@ -296,7 +347,7 @@ function Overview({ stats, selectSection, settings }) {
   );
 }
 
-function ServicesManager({ services, onChange, notify, confirmAction }) {
+function ServicesManager({ services, onSaved, onDeleted, notify, confirmAction }) {
   const [editor, setEditor] = useState(null);
   const [openGroups, setOpenGroups] = useState(
     () => new Set(serviceCategories),
@@ -309,8 +360,8 @@ function ServicesManager({ services, onChange, notify, confirmAction }) {
       destructive: true,
       action: async () => {
         await deleteService(item._id);
+        onDeleted(item._id);
         notify("Service deleted");
-        await onChange();
       },
     });
   }
@@ -379,10 +430,10 @@ function ServicesManager({ services, onChange, notify, confirmAction }) {
         <ServiceModal
           service={editor}
           onClose={() => setEditor(null)}
-          onSaved={() => {
+          onSaved={(service) => {
             setEditor(null);
+            onSaved(service);
             notify("Service saved");
-            onChange();
           }}
         />
       )}
@@ -403,10 +454,10 @@ function ServiceModal({ service, onClose, onSaved }) {
     setSaving(true);
     setError("");
     try {
-      service._id
+      const savedService = service._id
         ? await updateService(service._id, form)
         : await createService(form);
-      onSaved();
+      onSaved(savedService);
     } catch (requestError) {
       setError(requestError.message);
     } finally {
@@ -457,7 +508,7 @@ function ServiceModal({ service, onClose, onSaved }) {
   );
 }
 
-function GalleryManager({ gallery, onChange, notify, confirmAction }) {
+function GalleryManager({ gallery, onSaved, onDeleted, notify, confirmAction }) {
   const [editor, setEditor] = useState(null);
   function remove(item) {
     confirmAction({
@@ -468,8 +519,8 @@ function GalleryManager({ gallery, onChange, notify, confirmAction }) {
       destructive: true,
       action: async () => {
         await deleteGalleryItem(item._id);
+        onDeleted(item._id);
         notify("Gallery image deleted");
-        await onChange();
       },
     });
   }
@@ -510,10 +561,10 @@ function GalleryManager({ gallery, onChange, notify, confirmAction }) {
         <GalleryModal
           item={editor}
           onClose={() => setEditor(null)}
-          onSaved={() => {
+          onSaved={(galleryItem) => {
             setEditor(null);
+            onSaved(galleryItem);
             notify("Gallery updated");
-            onChange();
           }}
         />
       )}
@@ -538,10 +589,10 @@ function GalleryModal({ item, onClose, onSaved }) {
     formData.append("caption", caption);
     if (image) formData.append("image", image);
     try {
-      item._id
+      const savedItem = item._id
         ? await updateGalleryItem(item._id, formData)
         : await createGalleryItem(formData);
-      onSaved();
+      onSaved(savedItem);
     } catch (requestError) {
       setError(requestError.message);
     } finally {
@@ -579,7 +630,7 @@ function GalleryModal({ item, onClose, onSaved }) {
   );
 }
 
-function SettingsManager({ settings, onChange, notify }) {
+function SettingsManager({ settings, onSaved, notify }) {
   const [form, setForm] = useState({
     businessName: settings?.businessName || "",
     contactPhone: settings?.contactPhone || "",
@@ -596,9 +647,10 @@ function SettingsManager({ settings, onChange, notify }) {
     formData.append("contactPhone", form.contactPhone);
     if (logo) formData.append("logo", logo);
     try {
-      await updateSettings(formData);
+      const savedSettings = await updateSettings(formData);
+      onSaved(savedSettings);
+      setLogo(null);
       notify("Website settings saved");
-      onChange();
     } catch (requestError) {
       setError(requestError.message);
     } finally {

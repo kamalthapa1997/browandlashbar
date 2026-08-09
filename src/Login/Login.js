@@ -9,10 +9,17 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const [destination, setDestination] = useState(null);
   const navigate = useNavigate();
 
+  const closeTo = (path) => {
+    setDestination(path);
+    setIsOpen(false);
+  };
+
   const handleClose = () => {
-    navigate("/");
+    closeTo("/");
   };
 
   const submitHandler = async (event) => {
@@ -27,7 +34,7 @@ function Login() {
     try {
       setLoading(true);
       await loginAdmin({ username: username.trim(), password });
-      navigate("/admin");
+      closeTo("/admin");
     } catch (err) {
       setError(err.message || "Unable to sign in. Please try again.");
     } finally {
@@ -36,7 +43,12 @@ function Login() {
   };
 
   return (
-    <Modal isOpen={true} onClose={handleClose} maxWidth="520px">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      onExitComplete={() => destination && navigate(destination)}
+      maxWidth="520px"
+    >
       <section className="login__card" aria-label="Admin login form">
         <h1 className="login__title">Admin Login</h1>
         <p className="login__subtitle">

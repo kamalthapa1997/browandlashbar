@@ -15,7 +15,7 @@ const getServices = asyncHandler(async (_request, response) => {
     grouped[service.category].push(service);
   });
 
-  response.json(grouped);
+  response.set("Cache-Control", "no-store").json(grouped);
 });
 
 const createService = asyncHandler(async (request, response) => {

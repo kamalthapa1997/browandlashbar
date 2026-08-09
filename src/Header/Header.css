@@ -1,15 +1,16 @@
 /* =========================================================
    HEADER
-   ========================================================= */
+========================================================= */
 
 .header {
   background: transparent;
   min-height: 0;
 }
 
+
 /* =========================================================
    DESKTOP HEADER
-   ========================================================= */
+========================================================= */
 
 .nav_lists {
   align-items: center;
@@ -26,11 +27,13 @@
   box-sizing: border-box;
 
   display: flex;
+
   justify-content: space-between;
 
   height: 76px;
 
   left: 50%;
+
   margin: 0;
 
   max-width: 1440px;
@@ -38,6 +41,7 @@
   padding: 0 2rem;
 
   position: fixed;
+
   top: 0;
 
   transform: translateX(-50%);
@@ -47,14 +51,17 @@
   z-index: 999;
 }
 
+
 /* =========================================================
    LOGO
-   ========================================================= */
+========================================================= */
 
 .logo-container {
   align-items: center;
 
-  /* display: flex; */
+  display: flex;
+
+  flex-shrink: 0;
 
   height: 76px;
 
@@ -62,9 +69,9 @@
 
   overflow: hidden;
 
-  width: 205px;
+  text-decoration: none;
 
-  flex-shrink: 0;
+  width: 205px;
 }
 
 .header__mainlogo {
@@ -73,6 +80,7 @@
   height: auto;
 
   max-height: 68px;
+
   max-width: 100%;
 
   object-fit: contain;
@@ -80,9 +88,10 @@
   width: auto;
 }
 
+
 /* =========================================================
-   NAVIGATION
-   ========================================================= */
+   DESKTOP NAVIGATION
+========================================================= */
 
 .nav-container,
 .nav-links {
@@ -96,6 +105,10 @@
 }
 
 .nav-link {
+  background: transparent;
+
+  border: 0;
+
   color: var(--color-text);
 
   cursor: pointer;
@@ -119,36 +132,129 @@
   color: var(--color-primary-hover);
 }
 
+
 /* =========================================================
-   MOBILE MENU ICON
-   ========================================================= */
+   MOBILE MENU BUTTON
+========================================================= */
 
 .menu-icon {
-  color: var(--color-primary);
+  align-items: center;
+
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.2);
+
+  border: 1px solid rgba(255, 255, 255, 0.45);
+
+  border-radius: 50%;
+
+  color: #5a263d;
 
   cursor: pointer;
 
+  display: none;
+
+  flex-shrink: 0;
+
+  height: 42px;
+
+  padding: 0;
+
+  width: 42px;
+
+  user-select: none;
+
+  z-index: 1002;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.menu-icon:hover {
+  background: rgba(255, 255, 255, 0.4);
+
+  color: #3f1a2a;
+
+  transform: scale(1.05);
+
+  box-shadow: 0 4px 15px rgba(80, 30, 50, 0.12);
+}
+
+.menu-icon:active {
+  transform: scale(0.94);
+}
+
+
+/* =========================================================
+   HAMBURGER ICON
+========================================================= */
+
+.menu-icon__open {
+  color: #5a263d;
+
+  font-family: Arial, sans-serif;
+
   font-size: 1.9rem;
+
+  font-weight: 700;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   CLOSE ICON
+========================================================= */
+
+.menu-icon__close {
+  color: #3f1a2a;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 2rem;
+
+  font-weight: 700;
 
   line-height: 1;
 
-  padding: 0.35rem;
+  transform: translateY(-1px);
 
-  user-select: none;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.65);
 }
 
-.mobile {
-  display: none;
+
+/* =========================================================
+   MOBILE BACKDROP
+========================================================= */
+
+.mobile-menu-backdrop {
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(250, 246, 241, 0.28);
+
+  backdrop-filter: blur(12px);
+
+  -webkit-backdrop-filter: blur(12px);
+
+  z-index: 999;
 }
+
 
 /* =========================================================
    MOBILE MENU
-   ========================================================= */
+========================================================= */
 
 .mobile-menu {
   background: rgba(249, 98, 159, 0.49);
 
   backdrop-filter: blur(28px);
+
   -webkit-backdrop-filter: blur(28px);
 
   border-left: 1px solid rgba(255, 255, 255, 0.4);
@@ -158,6 +264,8 @@
   box-shadow:
     -10px 0 40px rgba(80, 30, 50, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+  box-sizing: border-box;
 
   display: flex;
 
@@ -176,20 +284,29 @@
   width: min(82vw, 320px);
 
   z-index: 1000;
-
-  box-sizing: border-box;
 }
+
 
 /* =========================================================
    MOBILE MENU LINKS
-   ========================================================= */
+========================================================= */
 
 .mobile-menu .nav-link {
+  background: transparent;
+
+  border: 0;
+
+  font: inherit;
+
   position: relative;
 
   padding: 0.45rem 0 0.75rem;
 
   text-align: left;
+}
+
+.mobile-menu__link {
+  width: 100%;
 }
 
 .mobile-menu .nav-link::after {
@@ -198,9 +315,11 @@
   position: absolute;
 
   left: 50%;
+
   bottom: 0;
 
   width: 100%;
+
   height: 1px;
 
   background: rgba(255, 255, 255, 0.5);
@@ -212,6 +331,11 @@
   animation: navLineExpand 1s ease-out forwards;
 }
 
+
+/* =========================================================
+   MENU LINE ANIMATION
+========================================================= */
+
 @keyframes navLineExpand {
   from {
     transform: translateX(-50%) scaleX(0);
@@ -222,9 +346,10 @@
   }
 }
 
+
 /* =========================================================
    TABLET / MOBILE
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 959px) {
   .desktop {
@@ -232,7 +357,7 @@
   }
 
   .mobile {
-    display: block;
+    display: flex;
   }
 
   .nav_lists {
@@ -262,9 +387,10 @@
   }
 }
 
+
 /* =========================================================
    SMALL MOBILE
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 480px) {
   .nav_lists {
@@ -279,11 +405,36 @@
     max-height: 52px;
   }
 
+  .menu-icon {
+    height: 40px;
+    width: 40px;
+  }
+
+  .menu-icon__close {
+    font-size: 1.9rem;
+  }
+
   .mobile-menu {
     width: min(82vw, 320px);
 
     padding: 2rem 1.75rem;
 
     gap: 2.75rem;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu,
+  .mobile-menu *,
+  .mobile-menu-backdrop,
+  .menu-icon {
+    animation: none !important;
+
+    transition: none !important;
   }
 }
