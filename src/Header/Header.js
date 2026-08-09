@@ -55,14 +55,7 @@ function Header({ sectionId, sectionClass, logoUrl }) {
 
   return (
     <header id={sectionId} className={`${sectionClass} header`}>
-      <div id={sectionId} className="nav_lists">
-        {/* <a href="/">
-          <img
-            src={logoUrl || "/mainlogo.png"}
-            alt="logo"
-            className="header__mainlogo"
-          />
-        </a> */}
+      <div className="nav_lists">
         <Link
           to="/"
           state={{ scrollToTop: true }}
@@ -71,7 +64,10 @@ function Header({ sectionId, sectionClass, logoUrl }) {
           onClick={(event) => {
             if (location.pathname === "/") {
               event.preventDefault();
-              window.scrollTo({ top: 0, behavior: scrollBehavior });
+              window.scrollTo({
+                top: 0,
+                behavior: scrollBehavior,
+              });
             }
           }}
         >
@@ -81,27 +77,31 @@ function Header({ sectionId, sectionClass, logoUrl }) {
             className="header__mainlogo"
           />
         </Link>
+
         <div className="nav-container desktop">
-          <nav className="nav-links desktop">
+          <div className="nav-links">
             <span
               className="nav-link"
               onClick={() => handleSectionClick("services")}
             >
               Services
             </span>
+
             <Link to="/gallery" className="nav-link">
               Gallery
             </Link>
+
             <span
               className="nav-link"
               onClick={() => handleSectionClick("contact")}
             >
               Contact Us
             </span>
+
             <Link to="/login" className="nav-link">
               Login
             </Link>
-          </nav>
+          </div>
         </div>
 
         <div
@@ -111,59 +111,16 @@ function Header({ sectionId, sectionClass, logoUrl }) {
           aria-label="Toggle menu"
           role="button"
           tabIndex={0}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") toggleMenu();
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              toggleMenu();
+            }
           }}
         >
-          {menuOpen ? "\u2715" : "\u2261"} {/* × or ≡ */}
+          {menuOpen ? "×" : "≡"}
         </div>
       </div>
-
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            className="mobile-menu"
-            ref={menuRef}
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.3 }}
-          >
-            <span
-              className="nav-link"
-              onClick={() => {
-                handleSectionClick("services");
-                setMenuOpen(false);
-              }}
-            >
-              Services
-            </span>
-            <Link
-              to="/gallery"
-              className="nav-link"
-              onClick={() => setMenuOpen(false)}
-            >
-              Gallery
-            </Link>
-            <Link
-              to="/login"
-              className="nav-link"
-              onClick={() => setMenuOpen(false)}
-            >
-              Login
-            </Link>
-            <span
-              className="nav-link"
-              onClick={() => {
-                handleSectionClick("contact");
-                setMenuOpen(false);
-              }}
-            >
-              Contact Us
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </header>
   );
 }

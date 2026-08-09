@@ -1,13 +1,14 @@
+
 /* =========================================================
    GALLERY PAGE
-   FULL-SCREEN PORTFOLIO EXPERIENCE
    ========================================================= */
 
 .gallery-page {
   min-height: 100vh;
-  padding: 7rem 1.5rem 2rem;
+  padding: 7rem 1.5rem 3rem;
 
   background: linear-gradient(
+    115deg,
     rgba(250, 246, 241, 0.96),
     rgba(246, 228, 225, 0.84)
   );
@@ -18,14 +19,12 @@
    ========================================================= */
 
 .gallery-page__header {
-  min-height: 16vh;
+  max-width: 1100px;
+  margin: 0 auto 3rem;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-
-  margin: 0 auto;
 
   text-align: center;
 }
@@ -51,7 +50,6 @@
 
   font-size: clamp(2.2rem, 4vw, 3.4rem);
   font-weight: 500;
-
   line-height: 1.15;
 }
 
@@ -68,30 +66,20 @@
   display: flex;
   flex-direction: column;
 
-  gap: 2rem;
+  gap: 4rem;
 }
 
 /* =========================================================
-   EACH FULL-SCREEN GALLERY ITEM
+   GALLERY ITEM
    ========================================================= */
 
 .gallery-item {
-  /*
-    One item occupies almost one full viewport.
-  */
-  min-height: calc(100vh - 9rem);
-
   width: 100%;
 
   display: flex;
   flex-direction: column;
 
-  justify-content: center;
-
-  scroll-snap-align: start;
-
   opacity: 0;
-
   transform: translateY(35px);
 
   transition:
@@ -101,35 +89,32 @@
 
 .gallery-item.is-visible {
   opacity: 1;
-
   transform: translateY(0);
 }
 
 /* =========================================================
-   IMAGE AREA
+   IMAGE CONTAINER
    ========================================================= */
 
 .gallery-item__image {
   width: 100%;
 
-  /*
-    Image area gets most of the screen.
-  */
-  height: calc(100vh - 14rem);
-
-  min-height: 420px;
-
   display: flex;
   align-items: center;
   justify-content: center;
 
+  padding: 1rem;
+
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.42);
 
   border: 1px solid rgba(120, 87, 77, 0.14);
 
-  box-shadow: 0 16px 45px rgba(87, 57, 48, 0.08);
+  box-shadow:
+    0 16px 45px rgba(87, 57, 48, 0.08);
+
+  box-sizing: border-box;
 }
 
 /* =========================================================
@@ -137,25 +122,25 @@
    ========================================================= */
 
 .gallery-item__image img {
-  width: 100%;
-  height: 100%;
-  background: rgba(246, 228, 225, 0.84);
   display: block;
 
-  /*
-    IMPORTANT:
-    contain = never crop the image.
-  */
+  width: 100%;
+  height: auto;
+
+  max-width: 100%;
+
   object-fit: contain;
+
+  background: rgba(246, 228, 225, 0.45);
 
   transition:
     transform 1s cubic-bezier(0.22, 1, 0.36, 1),
     filter 0.8s ease;
 }
 
-/* Subtle image movement */
-.gallery-item.is-visible:hover .gallery-item__image img {
-  transform: scale(1.015);
+/* Subtle hover movement */
+.gallery-item:hover .gallery-item__image img {
+  transform: scale(1.012);
 }
 
 /* =========================================================
@@ -165,12 +150,9 @@
 .gallery-item__caption {
   width: 100%;
 
-  min-height: 80px;
+  padding: 1.15rem 0.35rem 1.2rem;
 
-  padding: 1rem 0.25rem 1rem;
-
-  display: flex;
-  align-items: flex-start;
+  box-sizing: border-box;
 
   border-bottom: 1px solid rgba(92, 67, 59, 0.28);
 }
@@ -178,7 +160,8 @@
 .gallery-item__caption p {
   margin: 0;
 
-  max-width: 900px;
+  width: 100%;
+  max-width: 100%;
 
   color: var(--color-text-secondary);
 
@@ -190,6 +173,7 @@
   text-align: left;
 
   overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 /* =========================================================
@@ -203,6 +187,8 @@
   margin: 2rem auto;
 
   padding: 1rem 1.25rem;
+
+  box-sizing: border-box;
 
   border: 1px solid rgba(120, 87, 77, 0.15);
   border-radius: 10px;
@@ -228,12 +214,21 @@
     padding-right: 2rem;
   }
 
-  .gallery-item {
-    min-height: calc(100vh - 8rem);
+  .gallery-list {
+    gap: 5rem;
   }
 
   .gallery-item__image {
-    height: calc(100vh - 14rem);
+    padding: 1.25rem;
+  }
+
+  .gallery-item__caption {
+    padding: 1.25rem 0.5rem 1.35rem;
+  }
+
+  .gallery-item__caption p {
+    font-size: 1.05rem;
+    line-height: 1.7;
   }
 }
 
@@ -243,21 +238,15 @@
 
 @media (max-width: 1024px) {
   .gallery-page {
-    padding: 6.5rem 1.25rem 1.5rem;
+    padding: 6.5rem 1.25rem 2rem;
   }
 
-  .gallery-page__header {
-    min-height: 15vh;
-  }
-
-  .gallery-item {
-    min-height: calc(100vh - 8rem);
+  .gallery-list {
+    gap: 3.5rem;
   }
 
   .gallery-item__image {
-    height: calc(100vh - 15rem);
-
-    min-height: 380px;
+    padding: 1rem;
   }
 }
 
@@ -267,11 +256,11 @@
 
 @media (max-width: 640px) {
   .gallery-page {
-    padding: 5.8rem 0.85rem 1rem;
+    padding: 5.8rem 0.85rem 1.5rem;
   }
 
   .gallery-page__header {
-    min-height: 14vh;
+    margin-bottom: 2rem;
 
     padding: 0 0.5rem;
   }
@@ -285,32 +274,17 @@
   }
 
   .gallery-list {
-    gap: 1.5rem;
-  }
-
-  .gallery-item {
-    /*
-      Still one image per screen.
-    */
-    min-height: calc(100svh - 7rem);
-
-    justify-content: center;
+    gap: 2.75rem;
   }
 
   .gallery-item__image {
-    /*
-      svh works better on mobile browsers
-      because browser address bars change height.
-    */
-    height: calc(100svh - 13rem);
+    padding: 0.65rem;
 
-    min-height: 300px;
+    border-radius: 4px;
   }
 
   .gallery-item__caption {
-    min-height: 75px;
-
-    padding: 0.8rem 0.15rem 0.9rem;
+    padding: 0.9rem 0.15rem 1rem;
   }
 
   .gallery-item__caption p {
@@ -334,7 +308,12 @@
   }
 
   .gallery-item__image {
-    min-height: 270px;
+    padding: 0.5rem;
+  }
+
+  .gallery-item__caption {
+    padding-top: 0.8rem;
+    padding-bottom: 0.9rem;
   }
 }
 
@@ -354,3 +333,4 @@
     transform: none;
   }
 }
+
