@@ -1,4 +1,4 @@
-import { apiRequest } from "./client";
+import { apiRequest, authenticatedApiRequest } from "./client";
 
 export function loginAdmin(credentials) {
   return apiRequest("/api/admin/login", {
@@ -8,10 +8,10 @@ export function loginAdmin(credentials) {
   });
 }
 
-export function isAuthenticated() {
-  return Boolean(localStorage.getItem("adminToken"));
+export function getCurrentAdmin() {
+  return authenticatedApiRequest("/api/admin/session");
 }
 
 export function logoutAdmin() {
-  localStorage.removeItem("adminToken");
+  return apiRequest("/api/admin/logout", { method: "POST" });
 }

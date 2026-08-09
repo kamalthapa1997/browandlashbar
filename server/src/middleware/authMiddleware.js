@@ -4,34 +4,54 @@ const Admin = require("../models/Admin");
 const asyncHandler = require("../utils/asyncHandler");
 const createHttpError = require("../utils/httpError");
 
-const protect = asyncHandler(async (request, response, next) => {
-  const authorization = request.headers.authorization || "";
+function getCookie(request, name) {
+  const cookieHeader = request.headers.cookie || "";
+  const cookie = cookieHeader
+    .split(";")
+    .map((value) => value.trim())
+    .find((value) => value.startsWith(`${name}=`));
 
-  if (!authorization.startsWith("Bearer ")) {
-    throw createHttpError(401, "Authorization token is required");
+  return cookie ? decodeURIComponent(cookie.slice(name.length + 1)) : null;
+}
+
+const requireAuth = asyncHandler(async (request, _response, next) => {
+  const token = getCookie(request, "admin_session");
+
+  if (!token) {
+    throw createHttpError(401, "Authentication is required");
   }
 
-  const token = authorization.split(" ")[1];
   let decoded;
-
   try {
     decoded = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      throw createHttpError(401, "Authorization token has expired");
-    }
-
-    throw createHttpError(401, "Authorization token is invalid");
+  } catch {
+    throw createHttpError(401, "Authentication is invalid or expired");
   }
 
-  const admin = await Admin.findById(decoded.adminId).select("-password");
+  const admin = await Admin.findById(decoded.adminId).select(
+    "+sessionVersion role username",
+  );
 
-  if (!admin) {
-    throw createHttpError(401, "Admin not found");
+  if (
+    !admin ||
+    admin.role !== "admin" ||
+    decoded.role !== "admin" ||
+    admin.sessionVersion !== decoded.sessionVersion
+  ) {
+    throw createHttpError(401, "Authentication is invalid or expired");
   }
 
   request.admin = admin;
   next();
 });
 
-module.exports = { protect };
+function requireAdmin(request, _response, next) {
+  if (request.admin?.role !== "admin") {
+    next(createHttpError(403, "Administrator access is required"));
+    return;
+  }
+
+  next();
+}
+
+module.exports = { requireAuth, requireAdmin };

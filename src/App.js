@@ -2,6 +2,7 @@ import {
   Routes,
   Route,
   useLocation,
+  useNavigate,
   Navigate,
 } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -17,12 +18,37 @@ import Footer from "./Footer/Footer";
 import AdminDashboard from "./AdminDashboard/AdminDashboard";
 import PageTransition from "./components/PageTransition/PageTransition";
 import { getSettings } from "./api/settingsService";
-import { isAuthenticated } from "./api/authService";
+import { getCurrentAdmin } from "./api/authService";
 
 function RequireAuth({ children }) {
   const location = useLocation();
+  const [isChecking, setIsChecking] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  if (!isAuthenticated()) {
+  useEffect(() => {
+    let isMounted = true;
+
+    getCurrentAdmin()
+      .then(() => {
+        if (isMounted) setIsAuthenticated(true);
+      })
+      .catch(() => {
+        if (isMounted) setIsAuthenticated(false);
+      })
+      .finally(() => {
+        if (isMounted) setIsChecking(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [location.pathname]);
+
+  if (isChecking) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
@@ -46,7 +72,20 @@ function HomePage({ settings }) {
 
 function AppContent() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    function handleAuthenticationFailure() {
+      if (location.pathname !== "/login") {
+        navigate("/login", { replace: true, state: { from: location } });
+      }
+    }
+
+    window.addEventListener("admin-auth-failed", handleAuthenticationFailure);
+    return () =>
+      window.removeEventListener("admin-auth-failed", handleAuthenticationFailure);
+  }, [location, navigate]);
 
   useEffect(() => {
     async function loadSettings() {

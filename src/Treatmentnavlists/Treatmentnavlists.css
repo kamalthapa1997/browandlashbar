@@ -39,7 +39,7 @@
   width: 100%;
   padding: 1rem;
   font-size: 1.1rem;
-  background: var(--color-card);
+  background: #faf6f1eb;
   border: none;
   text-align: left;
   cursor: pointer;
@@ -52,12 +52,12 @@
 }
 
 .treatmentnavlists__btn:hover {
-  background-color: var(--color-secondary-bg);
+  /* background-color: var(--color-secondary-bg); */
   transform: translateY(-2px);
 }
 
 .treatmentnavlists__btn.active {
-  background-color: var(--color-secondary-bg);
+  /* background-color: var(--color-secondary-bg); */
   color: var(--color-primary-hover);
 }
 

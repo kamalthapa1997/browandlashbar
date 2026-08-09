@@ -26,8 +26,7 @@ function Login() {
 
     try {
       setLoading(true);
-      const data = await loginAdmin({ username: username.trim(), password });
-      localStorage.setItem("adminToken", data?.token);
+      await loginAdmin({ username: username.trim(), password });
       navigate("/admin");
     } catch (err) {
       setError(err.message || "Unable to sign in. Please try again.");

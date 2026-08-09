@@ -1,6 +1,14 @@
 const express = require("express");
 
-const { loginAdmin } = require("../controllers/adminController");
+const {
+  getSession,
+  loginAdmin,
+  logoutAdmin,
+} = require("../controllers/adminController");
+const {
+  requireAuth,
+  requireAdmin,
+} = require("../middleware/authMiddleware");
 const { createRateLimiter } = require("../middleware/rateLimitMiddleware");
 
 const router = express.Router();
@@ -10,5 +18,7 @@ const loginRateLimiter = createRateLimiter({
 });
 
 router.post("/login", loginRateLimiter, loginAdmin);
+router.get("/session", requireAuth, requireAdmin, getSession);
+router.post("/logout", requireAuth, requireAdmin, logoutAdmin);
 
 module.exports = router;

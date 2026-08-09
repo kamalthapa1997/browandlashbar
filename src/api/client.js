@@ -1,26 +1,37 @@
 async function request(path, options = {}) {
-  const response = await fetch(path, options);
+  const response = await fetch(path, {
+    ...options,
+    credentials: "include",
+  });
   const contentType = response.headers.get("content-type") || "";
   const data = contentType.includes("application/json")
     ? await response.json()
     : await response.text();
 
   if (!response.ok) {
-    throw new Error(
+    const error = new Error(
       data?.message || data?.error || "The request could not be completed.",
     );
+    error.status = response.status;
+    throw error;
   }
 
   return data;
 }
 
 export function apiRequest(path, options = {}) {
-  const token = localStorage.getItem("adminToken");
-  const headers = new Headers(options.headers);
+  return request(path, options);
+}
 
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
+export async function authenticatedApiRequest(path, options = {}) {
+  try {
+    return await request(path, options);
+  } catch (error) {
+    if (error.status === 401 || error.status === 403) {
+      window.dispatchEvent(
+        new CustomEvent("admin-auth-failed", { detail: { status: error.status } }),
+      );
+    }
+    throw error;
   }
-
-  return request(path, { ...options, headers });
 }

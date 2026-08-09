@@ -1,9 +1,9 @@
-import { apiRequest } from "./client";
+import { apiRequest, authenticatedApiRequest } from "./client";
 
 export function getSettings() {
   return apiRequest("/api/settings");
 }
 
 export function updateSettings(formData) {
-  return apiRequest("/api/settings", { method: "PUT", body: formData });
+  return authenticatedApiRequest("/api/settings", { method: "PUT", body: formData });
 }

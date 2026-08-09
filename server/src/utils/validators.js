@@ -60,8 +60,13 @@ function validateLoginPayload(payload) {
   const username = normalizeString(payload.username);
   const password = typeof payload.password === "string" ? payload.password : "";
 
-  if (!username || !password) {
-    throw createHttpError(400, "Username and password are required");
+  if (
+    !username ||
+    !password ||
+    username.length > 120 ||
+    password.length > 1024
+  ) {
+    throw createHttpError(400, "Invalid login request");
   }
 
   return {

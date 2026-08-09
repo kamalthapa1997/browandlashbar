@@ -8,7 +8,6 @@
   padding: 7rem 1.5rem 2rem;
 
   background: linear-gradient(
-    115deg,
     rgba(250, 246, 241, 0.96),
     rgba(246, 228, 225, 0.84)
   );
@@ -140,7 +139,7 @@
 .gallery-item__image img {
   width: 100%;
   height: 100%;
-
+  background: rgba(246, 228, 225, 0.84);
   display: block;
 
   /*

@@ -1,11 +1,11 @@
-import { apiRequest } from "./client";
+import { apiRequest, authenticatedApiRequest } from "./client";
 
 export function getServices() {
   return apiRequest("/api/services");
 }
 
 export function createService(service) {
-  return apiRequest("/api/services", {
+  return authenticatedApiRequest("/api/services", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(service),
@@ -13,7 +13,7 @@ export function createService(service) {
 }
 
 export function updateService(id, service) {
-  return apiRequest(`/api/services/${id}`, {
+  return authenticatedApiRequest(`/api/services/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(service),
@@ -21,5 +21,5 @@ export function updateService(id, service) {
 }
 
 export function deleteService(id) {
-  return apiRequest(`/api/services/${id}`, { method: "DELETE" });
+  return authenticatedApiRequest(`/api/services/${id}`, { method: "DELETE" });
 }

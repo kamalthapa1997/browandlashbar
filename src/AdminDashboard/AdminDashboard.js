@@ -77,8 +77,12 @@ function AdminDashboard() {
     setMenuOpen(false);
   }
 
-  function performLogout() {
-    logoutAdmin();
+  async function performLogout() {
+    try {
+      await logoutAdmin();
+    } finally {
+      setConfirmation(null);
+    }
     navigate("/", { replace: true });
   }
 
