@@ -1,12 +1,18 @@
 import React from "react";
 import "./Home.css";
+import useRevealOnScroll from "../components/Reveal/useRevealOnScroll";
 
 function Home({ businessName = "Mero Brow & Lash Bar" }) {
+  const welcome = useRevealOnScroll();
+  const title = useRevealOnScroll();
+  const description = useRevealOnScroll();
+  const booking = useRevealOnScroll();
+
   return (
     <div className="home">
-      <p className="aboutus__text">WELCOME TO</p>
-      <h1 className="aboutus__text-title">{businessName}</h1>
-      <p className="aboutus__texts">
+      <p ref={welcome.ref} className={`aboutus__text ${welcome.className}`}>WELCOME TO</p>
+      <h1 ref={title.ref} className={`aboutus__text-title ${title.className}`}>{businessName}</h1>
+      <p ref={description.ref} className={`aboutus__texts ${description.className}`}>
         At Mero Brow &amp; Lash Bar, we specialize in enhancing your natural
         beauty with precision and care. Our experienced team offers a range of
         high-quality services, including{" "}
@@ -37,7 +43,8 @@ function Home({ businessName = "Mero Brow & Lash Bar" }) {
       </div> */}
 
       <button
-        className="aboutus__booknow"
+        ref={booking.ref}
+        className={`aboutus__booknow ${booking.className}`}
         onClick={() =>
           window.open("https://merobrwoandlashbar.square.site/", "_blank")
         }

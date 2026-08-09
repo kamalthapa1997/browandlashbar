@@ -10,6 +10,10 @@ function Header({ sectionId, sectionClass, logoUrl }) {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const scrollBehavior = window.matchMedia("(prefers-reduced-motion: reduce)")
+    .matches
+    ? "auto"
+    : "smooth";
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
@@ -44,7 +48,7 @@ function Header({ sectionId, sectionClass, logoUrl }) {
     } else {
       const element = document.getElementById(sectionId);
       if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+        element.scrollIntoView({ behavior: scrollBehavior });
       }
     }
   };
@@ -59,13 +63,24 @@ function Header({ sectionId, sectionClass, logoUrl }) {
             className="header__mainlogo"
           />
         </a> */}
-        <a href="/" className="logo-container">
+        <Link
+          to="/"
+          state={{ scrollToTop: true }}
+          className="logo-container"
+          aria-label="Mero Brow & Lash Bar home"
+          onClick={(event) => {
+            if (location.pathname === "/") {
+              event.preventDefault();
+              window.scrollTo({ top: 0, behavior: scrollBehavior });
+            }
+          }}
+        >
           <img
             src={logoUrl || "/mainlogo.png"}
             alt="logo"
             className="header__mainlogo"
           />
-        </a>
+        </Link>
         <div className="nav-container desktop">
           <nav className="nav-links desktop">
             <span

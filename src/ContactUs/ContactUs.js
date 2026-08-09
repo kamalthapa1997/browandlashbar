@@ -1,7 +1,10 @@
 import React from "react";
 import "./ContactUs.css";
+import useRevealOnScroll from "../components/Reveal/useRevealOnScroll";
 
 function ContactUs({ sectionId, sectionClass, phoneNumber }) {
+  const title = useRevealOnScroll();
+  const content = useRevealOnScroll();
   const contactPhone = phoneNumber || "+12406021445";
   const handlePhoneClick = () => {
     window.location.href = `tel:${contactPhone.replace(/[^0-9+]/g, "")}`;
@@ -37,8 +40,8 @@ function ContactUs({ sectionId, sectionClass, phoneNumber }) {
 
   return (
     <div id={sectionId} className={`${sectionClass} contact-container`}>
-      <h1 className="contact-title Header__text">Contact Us</h1>
-      <div className="contact-content">
+      <h1 ref={title.ref} className={`contact-title Header__text ${title.className}`}>Contact Us</h1>
+      <div ref={content.ref} className={`contact-content ${content.className}`}>
         <div className="contact-left">
           <div
             className="contact-item clickable"
