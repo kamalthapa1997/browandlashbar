@@ -35,7 +35,10 @@ function validateServicePayload(payload, options = {}) {
     const parsedPrice = Number(payload.price);
 
     if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
-      throw createHttpError(400, "Service price must be a valid non-negative number");
+      throw createHttpError(
+        400,
+        "Service price must be a valid non-negative number",
+      );
     }
 
     nextPayload.price = parsedPrice;
@@ -76,7 +79,8 @@ function validateLoginPayload(payload) {
 }
 
 function validateGalleryPayload(payload) {
-  const caption = payload.caption === undefined ? "" : normalizeString(payload.caption);
+  const caption =
+    payload.caption === undefined ? "" : normalizeString(payload.caption);
 
   if (caption.length > 300) {
     throw createHttpError(400, "Caption must be 300 characters or fewer");
@@ -96,7 +100,10 @@ function validateSettingsPayload(payload) {
     }
 
     if (businessName.length > 120) {
-      throw createHttpError(400, "Business name must be 120 characters or fewer");
+      throw createHttpError(
+        400,
+        "Business name must be 120 characters or fewer",
+      );
     }
 
     updates.businessName = businessName;
@@ -124,10 +131,54 @@ function validateSettingsPayload(payload) {
       (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(businessEmail) ||
         businessEmail.length > 254)
     ) {
-      throw createHttpError(400, "Business email must be a valid email address");
+      throw createHttpError(
+        400,
+        "Business email must be a valid email address",
+      );
     }
 
     updates.businessEmail = businessEmail;
+  }
+
+  if (payload.homepageOffer !== undefined) {
+    const homepageOffer = normalizeString(payload.homepageOffer);
+
+    if (homepageOffer.length > 200) {
+      throw createHttpError(
+        400,
+        "Homepage offer must be 200 characters or fewer",
+      );
+    }
+
+    updates.homepageOffer = homepageOffer;
+  }
+
+  if (payload.homepageOfferLink !== undefined) {
+    const homepageOfferLink = normalizeString(payload.homepageOfferLink);
+
+    if (!homepageOfferLink) {
+      updates.homepageOfferLink = "";
+    } else {
+      if (homepageOfferLink.length > 2048) {
+        throw createHttpError(400, "Homepage offer link is too long");
+      }
+
+      let parsed;
+      try {
+        parsed = new URL(homepageOfferLink);
+      } catch (err) {
+        throw createHttpError(400, "Homepage offer link must be a valid URL");
+      }
+
+      if (!["http:", "https:"].includes(parsed.protocol)) {
+        throw createHttpError(
+          400,
+          "Homepage offer link must use http or https protocol",
+        );
+      }
+
+      updates.homepageOfferLink = homepageOfferLink;
+    }
   }
 
   const addressLimits = {

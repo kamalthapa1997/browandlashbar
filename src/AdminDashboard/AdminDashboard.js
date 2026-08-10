@@ -40,6 +40,8 @@ const settingsFields = [
   "city",
   "state",
   "zipCode",
+  "homepageOfferLink",
+  "homepageOffer",
 ];
 
 function toSettingsForm(settings = {}) {
@@ -57,7 +59,9 @@ function findErrorField(message, fieldMatchers) {
 }
 
 function InlineFormError({ message }) {
-  return message ? <p className="form-error form-error--inline">{message}</p> : null;
+  return message ? (
+    <p className="form-error form-error--inline">{message}</p>
+  ) : null;
 }
 
 function AdminDashboard({ onSettingsUpdated }) {
@@ -714,6 +718,24 @@ function SettingsManager({ settings, onSaved, notify }) {
 
   async function submit(event) {
     event.preventDefault();
+    // Client-side validation for homepageOfferLink
+    if (form.homepageOfferLink !== undefined) {
+      const raw = (form.homepageOfferLink || "").trim();
+      if (raw) {
+        try {
+          const parsed = new URL(raw);
+          if (!["http:", "https:"].includes(parsed.protocol)) {
+            setError("Offer link must use http or https protocol");
+            setErrorField("homepageOfferLink");
+            return;
+          }
+        } catch (e) {
+          setError("Offer link must be a valid URL");
+          setErrorField("homepageOfferLink");
+          return;
+        }
+      }
+    }
     const formData = new FormData();
     appendChangedFields(formData);
     if (logo) formData.append("logo", logo);
@@ -747,6 +769,8 @@ function SettingsManager({ settings, onSaved, notify }) {
           city: ["city"],
           state: ["state"],
           zipCode: ["zip", "zipcode"],
+          homepageOfferLink: ["homepage", "link", "offer", "book"],
+          homepageOffer: ["homepage", "offer", "announcement"],
           logo: ["image", "jpg", "png", "webp", "upload"],
         }) || "",
       );
@@ -773,7 +797,9 @@ function SettingsManager({ settings, onSaved, notify }) {
               }
             />
           </label>
-          <InlineFormError message={errorField === "businessName" ? error : ""} />
+          <InlineFormError
+            message={errorField === "businessName" ? error : ""}
+          />
           <label>
             Contact phone
             <input
@@ -783,7 +809,9 @@ function SettingsManager({ settings, onSaved, notify }) {
               }
             />
           </label>
-          <InlineFormError message={errorField === "contactPhone" ? error : ""} />
+          <InlineFormError
+            message={errorField === "contactPhone" ? error : ""}
+          />
           <label>
             Business email
             <input
@@ -795,7 +823,9 @@ function SettingsManager({ settings, onSaved, notify }) {
               placeholder="hello@example.com"
             />
           </label>
-          <InlineFormError message={errorField === "businessEmail" ? error : ""} />
+          <InlineFormError
+            message={errorField === "businessEmail" ? error : ""}
+          />
           <label>
             Street address
             <input
@@ -806,7 +836,9 @@ function SettingsManager({ settings, onSaved, notify }) {
               placeholder="123 Main Street"
             />
           </label>
-          <InlineFormError message={errorField === "streetAddress" ? error : ""} />
+          <InlineFormError
+            message={errorField === "streetAddress" ? error : ""}
+          />
           <label>
             Suite / Apt number (optional)
             <input
@@ -817,7 +849,9 @@ function SettingsManager({ settings, onSaved, notify }) {
               placeholder="Suite 205"
             />
           </label>
-          <InlineFormError message={errorField === "suiteNumber" ? error : ""} />
+          <InlineFormError
+            message={errorField === "suiteNumber" ? error : ""}
+          />
           <label>
             City
             <input
@@ -843,6 +877,44 @@ function SettingsManager({ settings, onSaved, notify }) {
             />
           </label>
           <InlineFormError message={errorField === "zipCode" ? error : ""} />
+          <label>
+            Offer Book Now Link
+            <input
+              value={form.homepageOfferLink}
+              onChange={(e) =>
+                setForm({ ...form, homepageOfferLink: e.target.value })
+              }
+              placeholder="https://example.com/special-offer"
+            />
+            <small className="help-text">
+              Enter the URL where visitors should be sent when they click Book
+              Now. Leave empty to use the default booking link.
+            </small>
+          </label>
+          <InlineFormError
+            message={errorField === "homepageOfferLink" ? error : ""}
+          />
+
+          <label>
+            Homepage Offer
+            <textarea
+              maxLength="200"
+              rows={2}
+              value={form.homepageOffer}
+              className="adminDashboard__offer-textarea"
+              onChange={(e) =>
+                setForm({ ...form, homepageOffer: e.target.value })
+              }
+              placeholder="Enter a short promotional message to display above the navigation bar"
+            />
+            <small className="help-text">
+              Enter a promotional message to display above the navigation bar.
+              Leave empty to hide the offer bar.
+            </small>
+          </label>
+          <InlineFormError
+            message={errorField === "homepageOffer" ? error : ""}
+          />
         </section>
         <section className="admin-panel settings-card">
           <h2>Brand logo</h2>

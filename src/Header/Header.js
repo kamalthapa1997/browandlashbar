@@ -3,10 +3,21 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./Header.css";
 
-function Header({ sectionId, sectionClass, logoUrl }) {
+const DISMISS_PREFIX = "homepage-offer-dismissed:";
+const DEFAULT_BOOKING_URL = "https://merobrowandlashbar.square.site";
+
+function Header({
+  sectionId,
+  sectionClass,
+  logoUrl,
+  homepageOffer,
+  homepageOfferLink,
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
+  const headerRef = useRef(null);
+  const [dismissed, setDismissed] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,6 +53,87 @@ function Header({ sectionId, sectionClass, logoUrl }) {
     };
   }, [menuOpen]);
 
+  // Offer handling
+  const offerText =
+    typeof homepageOffer === "string" ? homepageOffer.trim() : "";
+  const hasOffer = offerText.length > 0;
+  const storageKey = hasOffer
+    ? DISMISS_PREFIX + encodeURIComponent(offerText)
+    : null;
+
+  // Compute the URL for the Book Now action; fall back to default if invalid/empty
+  const rawLink =
+    typeof homepageOfferLink === "string" ? homepageOfferLink.trim() : "";
+  let offerUrl = DEFAULT_BOOKING_URL;
+  if (rawLink) {
+    try {
+      const parsed = new URL(rawLink);
+      if (["http:", "https:"].includes(parsed.protocol)) {
+        offerUrl = rawLink;
+      }
+    } catch (e) {
+      // invalid URL -> fall back to default
+      offerUrl = DEFAULT_BOOKING_URL;
+    }
+  }
+
+  useEffect(() => {
+    if (!hasOffer) {
+      setDismissed(false);
+      return;
+    }
+    try {
+      const stored = sessionStorage.getItem(storageKey);
+      setDismissed(Boolean(stored));
+    } catch (e) {
+      setDismissed(false);
+    }
+  }, [storageKey, hasOffer]);
+
+  function closeOffer() {
+    if (!storageKey) return;
+    try {
+      sessionStorage.setItem(storageKey, "1");
+    } catch (e) {
+      // ignore
+    }
+    setDismissed(true);
+  }
+
+  // Keep CSS variable --header-height in sync with rendered header height
+  function updateHeaderHeight() {
+    const el = headerRef.current;
+    if (!el) return;
+    const h = el.offsetHeight || 76;
+    try {
+      el.style.setProperty("--header-height", `${h}px`);
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  function updateDocumentHeaderVar() {
+    const el = headerRef.current;
+    if (!el) return;
+    const h = el.offsetHeight || 76;
+    try {
+      document.documentElement.style.setProperty("--header-height", `${h}px`);
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  useEffect(() => {
+    updateHeaderHeight();
+    updateDocumentHeaderVar();
+    const onResize = () => {
+      updateHeaderHeight();
+      updateDocumentHeaderVar();
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [hasOffer, dismissed]);
+
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
@@ -63,7 +155,54 @@ function Header({ sectionId, sectionClass, logoUrl }) {
   };
 
   return (
-    <header id={sectionId} className={`${sectionClass || ""} header`}>
+    <header
+      ref={headerRef}
+      id={sectionId}
+      className={`${sectionClass || ""} header`}
+    >
+      <AnimatePresence>
+        {hasOffer && !dismissed && (
+          <motion.div
+            className="header__offer"
+            initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
+            animate={
+              shouldReduceMotion
+                ? { opacity: 1 }
+                : { opacity: 1, height: "auto" }
+            }
+            exit={
+              shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }
+            }
+            transition={{ duration: shouldReduceMotion ? 0 : 0.18 }}
+          >
+            <div className="header__offer-inner">
+              <a
+                className="header__offer-book"
+                href={offerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Book now"
+              >
+                Book Now
+              </a>
+
+              <div className="header__offer-text" aria-live="polite">
+                {offerText}
+              </div>
+
+              <button
+                type="button"
+                className="header__offer-close"
+                onClick={closeOffer}
+                aria-label="Close offer"
+              >
+                ×
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="nav_lists">
         <Link
           to="/"

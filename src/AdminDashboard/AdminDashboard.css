@@ -915,9 +915,24 @@ body {
 
 .admin-form input:focus,
 .admin-form select:focus,
-.settings-card input:focus {
+.settings-card input:focus,
+.adminDashboard__offer-textarea:focus {
   border-color: var(--admin-pink);
   box-shadow: 0 0 0 3px rgba(249, 98, 159, 0.12);
+}
+.adminDashboard__offer-textarea {
+  background: #fff;
+  border: 1px solid #e5d9de;
+  border-radius: 12px;
+  color: var(--admin-ink);
+  font: inherit;
+  min-height: 48px;
+  outline: none;
+  padding: 0.7rem 0.8rem;
+  transition:
+    border-color var(--admin-transition),
+    box-shadow var(--admin-transition);
+  width: 100%;
 }
 
 /* =========================

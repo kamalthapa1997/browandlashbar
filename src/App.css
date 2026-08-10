@@ -63,8 +63,9 @@
 .section {
   width: 100%;
   min-height: 100vh;
-  padding: 64px 16px;
   display: flex;
+  padding-top: calc(var(--header-height, 76px) + 16px);
+  padding-inline: 16px;
   flex-direction: column;
   /* justify-content: center; */
   /* align-items: center; */

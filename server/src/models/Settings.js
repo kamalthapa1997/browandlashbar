@@ -53,10 +53,20 @@ const settingsSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    homepageOffer: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    homepageOfferLink: {
+      type: String,
+      trim: true,
+      default: "",
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("Settings", settingsSchema);

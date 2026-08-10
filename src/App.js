@@ -90,7 +90,10 @@ function AppContent() {
 
     window.addEventListener("admin-auth-failed", handleAuthenticationFailure);
     return () =>
-      window.removeEventListener("admin-auth-failed", handleAuthenticationFailure);
+      window.removeEventListener(
+        "admin-auth-failed",
+        handleAuthenticationFailure,
+      );
   }, [location, navigate]);
 
   useEffect(() => {
@@ -144,6 +147,8 @@ function AppContent() {
           sectionId="home"
           sectionClass="headermain header-section"
           logoUrl={settings?.logoUrl}
+          homepageOffer={settings?.homepageOffer}
+          homepageOfferLink={settings?.homepageOfferLink}
         />
       )}
 
