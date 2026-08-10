@@ -1,17 +1,23 @@
-import { apiRequest, authenticatedApiRequest } from "./client";
+import {
+  apiRequest,
+  authenticatedApiRequest,
+  resetAuthenticationFailure,
+} from "./client";
 
-export function loginAdmin(credentials) {
-  return apiRequest("/api/admin/login", {
+export async function loginAdmin(credentials) {
+  const response = await apiRequest("/api/admin/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
   });
+  resetAuthenticationFailure();
+  return response;
 }
 
 export function getCurrentAdmin() {
-  return authenticatedApiRequest("/api/admin/session");
+  return apiRequest("/api/admin/session");
 }
 
 export function logoutAdmin() {
-  return apiRequest("/api/admin/logout", { method: "POST" });
+  return authenticatedApiRequest("/api/admin/logout", { method: "POST" });
 }

@@ -296,6 +296,7 @@ body {
   justify-content: flex-end;
   margin-bottom: 1.75rem;
   min-height: 46px;
+  position: relative;
 }
 
 .admin-topbar div {
@@ -361,22 +362,22 @@ body {
    ALERTS
 ========================= */
 
-.admin-notice,
 .admin-error {
   border-radius: 13px;
   margin-bottom: 1rem;
   padding: 0.9rem 1rem;
 }
 
-.admin-notice {
-  background: #edf8f1;
-  color: var(--admin-success);
-}
-
 .admin-error,
 .form-error {
   background: #fff0f3;
   color: var(--admin-danger);
+}
+
+.form-error--inline {
+  font-size: 0.8rem;
+  margin: -0.45rem 0 1rem;
+  padding: 0.55rem 0.7rem;
 }
 
 .admin-error button {
@@ -386,6 +387,30 @@ body {
   cursor: pointer;
   font-weight: 700;
   text-decoration: underline;
+}
+
+.admin-toast {
+  border-radius: 11px;
+  box-shadow: var(--admin-shadow-md);
+  font-size: 0.84rem;
+  font-weight: 700;
+  max-width: min(360px, calc(100vw - 2rem));
+  padding: 0.7rem 0.9rem;
+  pointer-events: none;
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  z-index: 99999;
+}
+
+.admin-toast--success {
+  background: #edf8f1;
+  color: var(--admin-success);
+}
+
+.admin-toast--error {
+  background: #fff0f3;
+  color: var(--admin-danger);
 }
 
 /* =========================
@@ -849,6 +874,14 @@ body {
   margin: 0 0 1.25rem;
 }
 
+.settings-actions {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+}
+
 /* =========================
    FORMS
 ========================= */
@@ -1013,6 +1046,18 @@ body {
 /* =========================
    RESPONSIVE
 ========================= */
+
+@media (max-width: 959px) {
+  .admin-topbar .admin-toast {
+    display: block;
+    left: auto;
+    max-width: calc(100vw - 2rem);
+    position: fixed;
+    right: 1rem;
+    top: 1rem;
+    z-index: 99999;
+  }
+}
 
 @media (min-width: 600px) {
   .admin-main {

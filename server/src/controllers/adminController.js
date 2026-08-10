@@ -47,7 +47,13 @@ const loginAdmin = asyncHandler(async (request, response) => {
 });
 
 const getSession = asyncHandler(async (request, response) => {
+  if (!request.admin) {
+    response.json({ authenticated: false });
+    return;
+  }
+
   response.json({
+    authenticated: true,
     admin: {
       id: request.admin._id,
       username: request.admin.username,

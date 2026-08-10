@@ -33,15 +33,27 @@ function Login() {
 
     try {
       setLoading(true);
-      await loginAdmin({ username: username.trim(), password });
+
+      await loginAdmin({
+        username: username.trim(),
+        password,
+      });
+
       closeTo("/admin");
     } catch (err) {
-      setError(err.message || "Unable to sign in. Please try again.");
+      if (err?.status === 401) {
+        setError("Invalid username or password.");
+      } else if (err?.status === 403) {
+        setError("You do not have permission to access the admin area.");
+      } else if (err?.status === 429) {
+        setError("Too many login attempts. Please try again later.");
+      } else {
+        setError("Unable to sign in. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <Modal
       isOpen={isOpen}

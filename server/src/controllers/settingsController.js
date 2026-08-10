@@ -24,13 +24,7 @@ const upsertSettings = asyncHandler(async (request, response) => {
   const previousLogoPublicId = settings.logoPublicId;
   const uploadedLogoPublicId = request.file ? request.file.filename : null;
 
-  if (updates.businessName !== undefined) {
-    settings.businessName = updates.businessName;
-  }
-
-  if (updates.contactPhone !== undefined) {
-    settings.contactPhone = updates.contactPhone;
-  }
+  Object.assign(settings, updates);
 
   if (request.file) {
     settings.logoUrl = request.file.path;

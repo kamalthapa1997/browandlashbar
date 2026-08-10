@@ -1,1 +1,72 @@
-.file-upload { margin-bottom: 1rem; }.file-upload__input { height: 1px!important; opacity: 0; overflow: hidden; position: absolute; width: 1px!important; }.file-upload__dropzone { align-items: center; background: #eaf7ff; border: 1px dashed #78b9d9; border-radius: 14px; color: var(--color-text); cursor: pointer; display: flex!important; flex-direction: column; gap: .45rem; justify-content: center; min-height: 180px; padding: 1.2rem; text-align: center; transition: background .2s ease, border-color .2s ease, transform .2s ease; }.file-upload__dropzone:hover { background: #dff3ff; border-color: #3184ad; transform: translateY(-1px); }.file-upload__visual { align-items: center; background: var(--color-card); border-radius: 50%; color: #176b92; display: flex; font-size: 1.6rem; height: 44px; justify-content: center; width: 44px; }.file-upload__title { font-weight: 800; }.file-upload__help { color: var(--color-text-secondary); font-size: .82rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.file-upload__button { background: #176b92; border-radius: 8px; color: #fff; font-size: .82rem; font-weight: 700; margin-top: .25rem; padding: .45rem .75rem; }.file-upload__preview { border-radius: 9px; height: 88px; max-width: 100%; object-fit: contain; width: 150px; }
+.file-upload {
+  margin-bottom: 1rem;
+}
+.file-upload__input {
+  height: 1px !important;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  width: 1px !important;
+}
+.file-upload__dropzone {
+  align-items: center;
+  background: #eaf7ff;
+  border: 1px dashed #78b9d9;
+  border-radius: 14px;
+  color: var(--color-text);
+  cursor: pointer;
+  display: flex !important;
+  flex-direction: column;
+  gap: 0.45rem;
+  justify-content: center;
+  min-height: 180px;
+  padding: 1.2rem;
+  text-align: center;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+.file-upload__dropzone:hover {
+  background: #dff3ff;
+  border-color: #3184ad;
+  transform: translateY(-1px);
+}
+.file-upload__visual {
+  align-items: center;
+  background: var(--color-card);
+  border-radius: 50%;
+  color: #176b92;
+  display: flex;
+  font-size: 1.6rem;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+.file-upload__title {
+  font-weight: 800;
+}
+.file-upload__help {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-upload__button {
+  background: #176b92;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+  padding: 0.45rem 0.75rem;
+}
+.file-upload__preview {
+  border-radius: 9px;
+  height: 88px;
+  max-width: 100%;
+  object-fit: contain;
+  width: 150px;
+}

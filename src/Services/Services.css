@@ -7,8 +7,8 @@
   text-align: center;
 }
 .services__header {
-  color: var(--color-text);
-  font-family: Georgia, "Times New Roman", serif;
+  color: #d63384;
+  font-family: CormorantGaramond, "Times New Roman", serif;
   font-size: clamp(2rem, 4vw, 3rem);
   margin-bottom: 1rem;
 }
@@ -24,7 +24,7 @@
 }
 .services__paragraph {
   color: var(--color-text-secondary);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: CormorantGaramond, "Times New Roman", serif;
   line-height: 1.7;
   margin: 0 auto 1.5rem;
   max-width: 670px;
@@ -34,6 +34,7 @@
 }
 .services__cards.is-visible .treatment-card {
   animation: service-card-reveal 0.36s ease-out both;
+  border: 1px solid #ffd1dc;
 }
 .services__cards.is-visible .treatment-card:nth-child(2) {
   animation-delay: 0.06s;

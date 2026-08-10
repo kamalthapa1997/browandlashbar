@@ -116,6 +116,44 @@ function validateSettingsPayload(payload) {
     updates.contactPhone = contactPhone;
   }
 
+  if (payload.businessEmail !== undefined) {
+    const businessEmail = normalizeString(payload.businessEmail).toLowerCase();
+
+    if (
+      businessEmail &&
+      (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(businessEmail) ||
+        businessEmail.length > 254)
+    ) {
+      throw createHttpError(400, "Business email must be a valid email address");
+    }
+
+    updates.businessEmail = businessEmail;
+  }
+
+  const addressLimits = {
+    streetAddress: 160,
+    suiteNumber: 80,
+    city: 80,
+    state: 60,
+    zipCode: 10,
+  };
+
+  for (const [field, limit] of Object.entries(addressLimits)) {
+    if (payload[field] === undefined) continue;
+
+    const value = normalizeString(payload[field]);
+
+    if (value.length > limit) {
+      throw createHttpError(400, `${field} is too long`);
+    }
+
+    if (field === "zipCode" && value && !/^\d{5}(?:-\d{4})?$/.test(value)) {
+      throw createHttpError(400, "ZIP code must be a valid US ZIP code");
+    }
+
+    updates[field] = value;
+  }
+
   return updates;
 }
 

@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Modal from "../components/Modal/Modal";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import FileUpload from "../components/FileUpload/FileUpload";
@@ -30,6 +31,35 @@ const navItems = [
   ["settings", "Settings", "⚙"],
 ];
 
+const settingsFields = [
+  "businessName",
+  "contactPhone",
+  "businessEmail",
+  "streetAddress",
+  "suiteNumber",
+  "city",
+  "state",
+  "zipCode",
+];
+
+function toSettingsForm(settings = {}) {
+  return Object.fromEntries(
+    settingsFields.map((field) => [field, settings[field] || ""]),
+  );
+}
+
+function findErrorField(message, fieldMatchers) {
+  const normalizedMessage = (message || "").toLowerCase();
+
+  return Object.entries(fieldMatchers).find(([, terms]) =>
+    terms.some((term) => normalizedMessage.includes(term)),
+  )?.[0];
+}
+
+function InlineFormError({ message }) {
+  return message ? <p className="form-error form-error--inline">{message}</p> : null;
+}
+
 function AdminDashboard({ onSettingsUpdated }) {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("overview");
@@ -38,7 +68,7 @@ function AdminDashboard({ onSettingsUpdated }) {
   const [gallery, setGallery] = useState([]);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [notice, setNotice] = useState("");
+  const [toast, setToast] = useState(null);
   const [error, setError] = useState("");
   const [confirmation, setConfirmation] = useState(null);
 
@@ -67,10 +97,10 @@ function AdminDashboard({ onSettingsUpdated }) {
     refresh();
   }, []);
   useEffect(() => {
-    if (!notice) return undefined;
-    const timer = window.setTimeout(() => setNotice(""), 3500);
+    if (!toast) return undefined;
+    const timer = window.setTimeout(() => setToast(null), 3000);
     return () => window.clearTimeout(timer);
-  }, [notice]);
+  }, [toast]);
 
   function selectSection(section) {
     setActiveSection(section);
@@ -88,6 +118,10 @@ function AdminDashboard({ onSettingsUpdated }) {
 
   function requestConfirmation(config) {
     setConfirmation(config);
+  }
+
+  function showToast(message, type = "success") {
+    setToast({ message, type });
   }
 
   function upsertService(service) {
@@ -219,6 +253,7 @@ function AdminDashboard({ onSettingsUpdated }) {
             <p>Welcome back</p>
             <h1>{navItems.find(([id]) => id === activeSection)?.[1]}</h1>
           </div>
+          <TopbarToast toast={toast} />
           <button
             className="admin-profile"
             onClick={() =>
@@ -234,11 +269,6 @@ function AdminDashboard({ onSettingsUpdated }) {
             MB
           </button>
         </header>
-        {notice && (
-          <div className="admin-notice" role="status">
-            ✓ {notice}
-          </div>
-        )}
         {error && (
           <div className="admin-error" role="alert">
             {error} <button onClick={refresh}>Try again</button>
@@ -260,7 +290,7 @@ function AdminDashboard({ onSettingsUpdated }) {
                 services={services}
                 onSaved={upsertService}
                 onDeleted={removeService}
-                notify={setNotice}
+                notify={showToast}
                 confirmAction={requestConfirmation}
               />
             )}
@@ -269,7 +299,7 @@ function AdminDashboard({ onSettingsUpdated }) {
                 gallery={gallery}
                 onSaved={upsertGalleryItem}
                 onDeleted={removeGalleryItem}
-                notify={setNotice}
+                notify={showToast}
                 confirmAction={requestConfirmation}
               />
             )}
@@ -277,7 +307,7 @@ function AdminDashboard({ onSettingsUpdated }) {
               <SettingsManager
                 settings={settings}
                 onSaved={applySettings}
-                notify={setNotice}
+                notify={showToast}
               />
             )}
           </div>
@@ -347,7 +377,13 @@ function Overview({ stats, selectSection, settings }) {
   );
 }
 
-function ServicesManager({ services, onSaved, onDeleted, notify, confirmAction }) {
+function ServicesManager({
+  services,
+  onSaved,
+  onDeleted,
+  notify,
+  confirmAction,
+}) {
   const [editor, setEditor] = useState(null);
   const [openGroups, setOpenGroups] = useState(
     () => new Set(serviceCategories),
@@ -448,18 +484,28 @@ function ServiceModal({ service, onClose, onSaved }) {
     category: service.category || serviceCategories[0],
   });
   const [error, setError] = useState("");
+  const [errorField, setErrorField] = useState("");
   const [saving, setSaving] = useState(false);
   async function submit(event) {
     event.preventDefault();
     setSaving(true);
     setError("");
+    setErrorField("");
     try {
       const savedService = service._id
         ? await updateService(service._id, form)
         : await createService(form);
       onSaved(savedService);
     } catch (requestError) {
-      setError(requestError.message);
+      const message = requestError.message || "Unable to save service.";
+      setError(message);
+      setErrorField(
+        findErrorField(message, {
+          name: ["service name", "name"],
+          price: ["price"],
+          category: ["category"],
+        }) || "",
+      );
     } finally {
       setSaving(false);
     }
@@ -471,7 +517,6 @@ function ServiceModal({ service, onClose, onSaved }) {
           title={service._id ? "Edit service" : "Add service"}
           onClose={onClose}
         />
-        {error && <p className="form-error">{error}</p>}
         <label>
           Service name
           <input
@@ -480,6 +525,7 @@ function ServiceModal({ service, onClose, onSaved }) {
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
         </label>
+        <InlineFormError message={errorField === "name" ? error : ""} />
         <label>
           Price
           <input
@@ -491,6 +537,7 @@ function ServiceModal({ service, onClose, onSaved }) {
             onChange={(e) => setForm({ ...form, price: e.target.value })}
           />
         </label>
+        <InlineFormError message={errorField === "price" ? error : ""} />
         <label>
           Category
           <select
@@ -502,13 +549,21 @@ function ServiceModal({ service, onClose, onSaved }) {
             ))}
           </select>
         </label>
+        <InlineFormError message={errorField === "category" ? error : ""} />
         <FormActions onClose={onClose} saving={saving} label="Save service" />
+        <InlineFormError message={!errorField ? error : ""} />
       </form>
     </Modal>
   );
 }
 
-function GalleryManager({ gallery, onSaved, onDeleted, notify, confirmAction }) {
+function GalleryManager({
+  gallery,
+  onSaved,
+  onDeleted,
+  notify,
+  confirmAction,
+}) {
   const [editor, setEditor] = useState(null);
   function remove(item) {
     confirmAction({
@@ -576,15 +631,18 @@ function GalleryModal({ item, onClose, onSaved }) {
   const [caption, setCaption] = useState(item.caption || "");
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
+  const [errorField, setErrorField] = useState("");
   const [saving, setSaving] = useState(false);
   async function submit(event) {
     event.preventDefault();
     if (!item._id && !image) {
       setError("Choose an image to upload.");
+      setErrorField("image");
       return;
     }
     setSaving(true);
     setError("");
+    setErrorField("");
     const formData = new FormData();
     formData.append("caption", caption);
     if (image) formData.append("image", image);
@@ -594,7 +652,14 @@ function GalleryModal({ item, onClose, onSaved }) {
         : await createGalleryItem(formData);
       onSaved(savedItem);
     } catch (requestError) {
-      setError(requestError.message);
+      const message = requestError.message || "Unable to save image.";
+      setError(message);
+      setErrorField(
+        findErrorField(message, {
+          caption: ["caption"],
+          image: ["image", "jpg", "png", "webp", "upload"],
+        }) || "",
+      );
     } finally {
       setSaving(false);
     }
@@ -606,7 +671,6 @@ function GalleryModal({ item, onClose, onSaved }) {
           title={item._id ? "Edit gallery image" : "Upload gallery image"}
           onClose={onClose}
         />
-        {error && <p className="form-error">{error}</p>}
         <label>
           Caption
           <input
@@ -616,6 +680,7 @@ function GalleryModal({ item, onClose, onSaved }) {
             placeholder="Describe this work"
           />
         </label>
+        <InlineFormError message={errorField === "caption" ? error : ""} />
         <FileUpload
           label="Upload image"
           helpText="JPG, PNG, or WEBP image files"
@@ -624,35 +689,67 @@ function GalleryModal({ item, onClose, onSaved }) {
           onChange={setImage}
           required={!item._id}
         />
+        <InlineFormError message={errorField === "image" ? error : ""} />
         <FormActions onClose={onClose} saving={saving} label="Save image" />
+        <InlineFormError message={!errorField ? error : ""} />
       </form>
     </Modal>
   );
 }
 
 function SettingsManager({ settings, onSaved, notify }) {
-  const [form, setForm] = useState({
-    businessName: settings?.businessName || "",
-    contactPhone: settings?.contactPhone || "",
-  });
+  const initialSettingsRef = useRef(toSettingsForm(settings));
+  const [form, setForm] = useState(() => toSettingsForm(settings));
   const [logo, setLogo] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [errorField, setErrorField] = useState("");
+
+  function appendChangedFields(formData) {
+    Object.entries(form).forEach(([field, value]) => {
+      const initialValue = initialSettingsRef.current[field] || "";
+      if (value !== initialValue) formData.append(field, value);
+    });
+  }
+
   async function submit(event) {
     event.preventDefault();
+    const formData = new FormData();
+    appendChangedFields(formData);
+    if (logo) formData.append("logo", logo);
+
+    if (![...formData.keys()].length) {
+      notify("No changes to save");
+      return;
+    }
+
     setSaving(true);
     setError("");
-    const formData = new FormData();
-    formData.append("businessName", form.businessName);
-    formData.append("contactPhone", form.contactPhone);
-    if (logo) formData.append("logo", logo);
+    setErrorField("");
     try {
       const savedSettings = await updateSettings(formData);
+      const nextForm = toSettingsForm(savedSettings);
       onSaved(savedSettings);
+      initialSettingsRef.current = nextForm;
+      setForm(nextForm);
       setLogo(null);
-      notify("Website settings saved");
+      notify("Settings saved");
     } catch (requestError) {
-      setError(requestError.message);
+      const message = requestError.message || "Unable to save settings.";
+      setError(message);
+      setErrorField(
+        findErrorField(message, {
+          businessName: ["business name"],
+          contactPhone: ["contact phone"],
+          businessEmail: ["business email", "email address"],
+          streetAddress: ["street address", "streetaddress"],
+          suiteNumber: ["suite", "apartment", "suitenumber"],
+          city: ["city"],
+          state: ["state"],
+          zipCode: ["zip", "zipcode"],
+          logo: ["image", "jpg", "png", "webp", "upload"],
+        }) || "",
+      );
     } finally {
       setSaving(false);
     }
@@ -664,7 +761,6 @@ function SettingsManager({ settings, onSaved, notify }) {
         description="Update the details shown on your public website."
       />
       <form className="settings-grid" onSubmit={submit}>
-        {error && <p className="form-error">{error}</p>}
         <section className="admin-panel settings-card">
           <h2>Business details</h2>
           <label>
@@ -677,19 +773,76 @@ function SettingsManager({ settings, onSaved, notify }) {
               }
             />
           </label>
+          <InlineFormError message={errorField === "businessName" ? error : ""} />
           <label>
             Contact phone
             <input
-              required
               value={form.contactPhone}
               onChange={(e) =>
                 setForm({ ...form, contactPhone: e.target.value })
               }
             />
           </label>
-          <button className="button button--primary" disabled={saving}>
-            {saving ? "Saving…" : "Save Settings"}
-          </button>
+          <InlineFormError message={errorField === "contactPhone" ? error : ""} />
+          <label>
+            Business email
+            <input
+              type="email"
+              value={form.businessEmail}
+              onChange={(e) =>
+                setForm({ ...form, businessEmail: e.target.value })
+              }
+              placeholder="hello@example.com"
+            />
+          </label>
+          <InlineFormError message={errorField === "businessEmail" ? error : ""} />
+          <label>
+            Street address
+            <input
+              value={form.streetAddress}
+              onChange={(e) =>
+                setForm({ ...form, streetAddress: e.target.value })
+              }
+              placeholder="123 Main Street"
+            />
+          </label>
+          <InlineFormError message={errorField === "streetAddress" ? error : ""} />
+          <label>
+            Suite / Apt number (optional)
+            <input
+              value={form.suiteNumber}
+              onChange={(e) =>
+                setForm({ ...form, suiteNumber: e.target.value })
+              }
+              placeholder="Suite 205"
+            />
+          </label>
+          <InlineFormError message={errorField === "suiteNumber" ? error : ""} />
+          <label>
+            City
+            <input
+              value={form.city}
+              onChange={(e) => setForm({ ...form, city: e.target.value })}
+            />
+          </label>
+          <InlineFormError message={errorField === "city" ? error : ""} />
+          <label>
+            State
+            <input
+              value={form.state}
+              onChange={(e) => setForm({ ...form, state: e.target.value })}
+            />
+          </label>
+          <InlineFormError message={errorField === "state" ? error : ""} />
+          <label>
+            ZIP code
+            <input
+              inputMode="numeric"
+              value={form.zipCode}
+              onChange={(e) => setForm({ ...form, zipCode: e.target.value })}
+            />
+          </label>
+          <InlineFormError message={errorField === "zipCode" ? error : ""} />
         </section>
         <section className="admin-panel settings-card">
           <h2>Brand logo</h2>
@@ -700,12 +853,44 @@ function SettingsManager({ settings, onSaved, notify }) {
             existingPreview={settings?.logoUrl}
             onChange={setLogo}
           />
-          <button className="button button--primary" disabled={saving}>
-            {saving ? "Saving…" : "Save Logo"}
-          </button>
+          <InlineFormError message={errorField === "logo" ? error : ""} />
         </section>
+        <div className="settings-actions">
+          <button
+            type="submit"
+            className="button button--primary"
+            disabled={saving}
+          >
+            {saving ? "Saving…" : "Save Settings"}
+          </button>
+          <InlineFormError message={!errorField ? error : ""} />
+        </div>
       </form>
     </>
+  );
+}
+
+function TopbarToast({ toast }) {
+  const shouldReduceMotion = useReducedMotion();
+
+  return (
+    <AnimatePresence>
+      {toast && (
+        <motion.div
+          className={`admin-toast admin-toast--${toast.type}`}
+          role={toast.type === "error" ? "alert" : "status"}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={shouldReduceMotion ? undefined : { opacity: 0, y: -8 }}
+          transition={{
+            duration: shouldReduceMotion ? 0 : 0.2,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          {toast.type === "error" ? "!" : "✓"} {toast.message}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

@@ -29,8 +29,8 @@ function RequireAuth({ children }) {
     let isMounted = true;
 
     getCurrentAdmin()
-      .then(() => {
-        if (isMounted) setIsAuthenticated(true);
+      .then((session) => {
+        if (isMounted) setIsAuthenticated(Boolean(session?.authenticated));
       })
       .catch(() => {
         if (isMounted) setIsAuthenticated(false);
@@ -64,6 +64,12 @@ function HomePage({ settings }) {
         sectionId="contact"
         sectionClass="section contact-section"
         phoneNumber={settings?.contactPhone}
+        businessEmail={settings?.businessEmail}
+        streetAddress={settings?.streetAddress}
+        suiteNumber={settings?.suiteNumber}
+        city={settings?.city}
+        state={settings?.state}
+        zipCode={settings?.zipCode}
       />
       <Footer />
     </>
@@ -88,17 +94,25 @@ function AppContent() {
   }, [location, navigate]);
 
   useEffect(() => {
+    if (location.pathname === "/admin") return undefined;
+
+    let isCurrent = true;
+
     async function loadSettings() {
       try {
         const data = await getSettings();
-        setSettings(data);
+        if (isCurrent) setSettings(data);
       } catch {
-        setSettings(null);
+        if (isCurrent) setSettings(null);
       }
     }
 
     loadSettings();
-  }, []);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [location.pathname]);
 
   const showHeader = location.pathname !== "/admin";
 
