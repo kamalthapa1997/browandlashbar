@@ -6,8 +6,12 @@
   max-width: 1440px;
   align-items: center;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   margin: auto;
+  min-width: 0;
+  overflow-x: clip;
+  width: 100%;
 }
 
 .App-logo {

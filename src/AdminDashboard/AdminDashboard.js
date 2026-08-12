@@ -218,11 +218,7 @@ function AdminDashboard({ onSettingsUpdated }) {
         className={`admin-sidebar ${menuOpen ? "admin-sidebar--open" : ""}`}
       >
         <div className="admin-brand">
-          <span>MB</span>
-          <div>
-            <strong>Mero Brow</strong>
-            <small>Admin panel</small>
-          </div>
+          <strong>Admin panel</strong>
         </div>
         <nav aria-label="Dashboard sections">
           {navItems.map(([id, label, icon]) => (
@@ -254,7 +250,7 @@ function AdminDashboard({ onSettingsUpdated }) {
       <main className="admin-main">
         <header className="admin-topbar">
           <div>
-            <p>Welcome back</p>
+            {/* <p>Welcome back</p> */}
             <h1>{navItems.find(([id]) => id === activeSection)?.[1]}</h1>
           </div>
           <TopbarToast toast={toast} />
@@ -970,7 +966,7 @@ function SectionHeading({ title, description, action, onAction }) {
   return (
     <header className="section-heading">
       <div>
-        <h2>{title}</h2>
+        {/* <h2>{title}</h2> */}
         <p>{description}</p>
       </div>
       {action && (

@@ -13,6 +13,7 @@ import Services from "./Services/Services";
 import ContactUs from "./ContactUs/ContactUs";
 import Gallery from "./Gallery/Gallery.js";
 import Home from "./Home/Home.js";
+import Reviews from "./Reviews/Reviews";
 import Login from "./Login/Login";
 import Footer from "./Footer/Footer";
 import AdminDashboard from "./AdminDashboard/AdminDashboard";
@@ -59,6 +60,7 @@ function HomePage({ settings }) {
   return (
     <>
       <Home businessName={settings?.businessName} />
+      <Reviews />
       <Services sectionId="services" sectionClass="section services-section" />
       <ContactUs
         sectionId="contact"

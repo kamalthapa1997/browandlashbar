@@ -648,6 +648,7 @@ body {
   gap: 1rem;
   justify-content: space-between;
   margin-bottom: 1rem;
+  align-items: center;
 }
 
 .section-heading h2 {
