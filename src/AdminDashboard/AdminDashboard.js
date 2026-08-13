@@ -100,6 +100,18 @@ function AdminDashboard({ onSettingsUpdated }) {
   useEffect(() => {
     refresh();
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [menuOpen]);
+
   useEffect(() => {
     if (!toast) return undefined;
     const timer = window.setTimeout(() => setToast(null), 3000);
@@ -194,12 +206,14 @@ function AdminDashboard({ onSettingsUpdated }) {
         className="admin-menu-button"
         onClick={() => setMenuOpen(true)}
         aria-label="Open navigation"
+        aria-controls="admin-navigation"
+        aria-expanded={menuOpen}
       >
         ☰
       </button>
       <button
         className="admin-mobile-home"
-        onClick={() => navigate("/admin")}
+        onClick={() => navigate("/")}
         aria-label="Go to website home"
       >
         <img
@@ -215,6 +229,7 @@ function AdminDashboard({ onSettingsUpdated }) {
         />
       )}
       <aside
+        id="admin-navigation"
         className={`admin-sidebar ${menuOpen ? "admin-sidebar--open" : ""}`}
       >
         <div className="admin-brand">

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./Header.css";
 
@@ -138,9 +138,23 @@ function Header({
     setMenuOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [menuOpen]);
+
   const handleSectionClick = (sectionId) => {
-    if (location.pathname !== "/") {
-      navigate(`/#${sectionId}`);
+    setMenuOpen(false);
+    const targetHash = `#${sectionId}`;
+
+    if (location.pathname !== "/" || location.hash !== targetHash) {
+      navigate({ pathname: "/", hash: targetHash });
       return;
     }
 
@@ -153,6 +167,16 @@ function Header({
       });
     }
   };
+
+  const sectionLinkClass = (sectionId) =>
+    `nav-link${
+      location.pathname === "/" && location.hash === `#${sectionId}`
+        ? " is-active"
+        : ""
+    }`;
+
+  const routeLinkClass = ({ isActive }) =>
+    `nav-link${isActive ? " is-active" : ""}`;
 
   return (
     <header
@@ -210,6 +234,7 @@ function Header({
           className="logo-container"
           aria-label="Mero Brow & Lash Bar home"
           onClick={(event) => {
+            setMenuOpen(false);
             if (location.pathname === "/") {
               event.preventDefault();
 
@@ -231,27 +256,27 @@ function Header({
           <nav className="nav-links" aria-label="Desktop navigation">
             <button
               type="button"
-              className="nav-link"
+              className={sectionLinkClass("services")}
               onClick={() => handleSectionClick("services")}
             >
               Services
             </button>
 
-            <Link to="/gallery" className="nav-link">
+            <NavLink to="/gallery" className={routeLinkClass}>
               Gallery
-            </Link>
+            </NavLink>
 
             <button
               type="button"
-              className="nav-link"
+              className={sectionLinkClass("contact")}
               onClick={() => handleSectionClick("contact")}
             >
               Contact Us
             </button>
 
-            <Link to="/login" className="nav-link">
+            <NavLink to="/login" className={routeLinkClass}>
               Login
-            </Link>
+            </NavLink>
           </nav>
         </div>
 
@@ -262,6 +287,7 @@ function Header({
           ref={toggleRef}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
         >
           <span className={menuOpen ? "menu-icon__close" : "menu-icon__open"}>
             {menuOpen ? "×" : "≡"}
@@ -285,6 +311,7 @@ function Header({
               />
 
               <motion.nav
+                id="mobile-navigation"
                 ref={menuRef}
                 className="mobile-menu"
                 aria-label="Mobile navigation"
@@ -315,7 +342,7 @@ function Header({
               >
                 <button
                   type="button"
-                  className="nav-link mobile-menu__link"
+                  className={`${sectionLinkClass("services")} mobile-menu__link`}
                   onClick={() => {
                     setMenuOpen(false);
                     handleSectionClick("services");
@@ -324,17 +351,19 @@ function Header({
                   Services
                 </button>
 
-                <Link
+                <NavLink
                   to="/gallery"
-                  className="nav-link mobile-menu__link"
+                  className={({ isActive }) =>
+                    `${routeLinkClass({ isActive })} mobile-menu__link`
+                  }
                   onClick={() => setMenuOpen(false)}
                 >
                   Gallery
-                </Link>
+                </NavLink>
 
                 <button
                   type="button"
-                  className="nav-link mobile-menu__link"
+                  className={`${sectionLinkClass("contact")} mobile-menu__link`}
                   onClick={() => {
                     setMenuOpen(false);
                     handleSectionClick("contact");
@@ -343,13 +372,15 @@ function Header({
                   Contact Us
                 </button>
 
-                <Link
+                <NavLink
                   to="/login"
-                  className="nav-link mobile-menu__link"
+                  className={({ isActive }) =>
+                    `${routeLinkClass({ isActive })} mobile-menu__link`
+                  }
                   onClick={() => setMenuOpen(false)}
                 >
                   Login
-                </Link>
+                </NavLink>
               </motion.nav>
             </>
           )}

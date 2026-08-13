@@ -93,6 +93,34 @@
   background-color: var(--color-background);
 }
 
+.not-found {
+  width: 100%;
+  min-height: 100vh;
+  padding: calc(var(--header-height, 76px) + 5rem) 1.5rem 5rem;
+  text-align: center;
+}
+
+.not-found h1 {
+  margin-bottom: 1rem;
+}
+
+.not-found p {
+  margin: 0 auto 1.5rem;
+}
+
+.not-found__eyebrow {
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.not-found__link {
+  color: var(--color-primary-hover);
+  font-weight: 700;
+}
+
 h1 {
   font-size: 2rem;
   margin-bottom: 20px;

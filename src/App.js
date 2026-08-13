@@ -1,6 +1,7 @@
 import {
   Routes,
   Route,
+  Link,
   useLocation,
   useNavigate,
   Navigate,
@@ -78,6 +79,19 @@ function HomePage({ settings }) {
   );
 }
 
+function NotFound() {
+  return (
+    <section className="not-found" aria-labelledby="not-found-title">
+      <p className="not-found__eyebrow">Page not found</p>
+      <h1 id="not-found-title">We couldn’t find that page.</h1>
+      <p>The link may be outdated, or the page may have moved.</p>
+      <Link className="not-found__link" to="/">
+        Return home
+      </Link>
+    </section>
+  );
+}
+
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -122,20 +136,20 @@ function AppContent() {
   const showHeader = location.pathname !== "/admin";
 
   useEffect(() => {
-    if (location.pathname !== "/") return;
-
     const frame = requestAnimationFrame(() => {
       const reducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
       const behavior = reducedMotion ? "auto" : "smooth";
 
-      if (location.hash) {
+      if (location.pathname === "/" && location.hash) {
         document
           .getElementById(location.hash.slice(1))
           ?.scrollIntoView({ behavior, block: "start" });
-      } else if (location.state?.scrollToTop) {
+      } else if (location.pathname === "/" && location.state?.scrollToTop) {
         window.scrollTo({ top: 0, behavior });
+      } else if (location.pathname !== "/") {
+        window.scrollTo({ top: 0, behavior: "auto" });
       }
     });
 
@@ -168,6 +182,7 @@ function AppContent() {
                 </RequireAuth>
               }
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </PageTransition>
       </AnimatePresence>

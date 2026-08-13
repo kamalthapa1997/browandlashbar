@@ -386,6 +386,15 @@
   transform: translateX(-50%) scaleX(1);
 }
 
+.nav-link.is-active {
+  color: #9f6268;
+}
+
+.nav-link.is-active::after,
+.nav-link:focus-visible::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
 /* =========================================================
    MOBILE MENU BUTTON
    ========================================================= */
@@ -539,7 +548,10 @@
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 
-  overflow: hidden;
+  max-height: calc(100dvh - var(--header-height, 76px) - 0.75rem);
+
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* =========================================================
@@ -621,6 +633,11 @@
   color: #b9797d;
 
   background: rgba(255, 255, 255, 0.28);
+}
+
+.mobile-menu .nav-link.is-active {
+  background: rgba(255, 255, 255, 0.38);
+  color: #9f6268;
 }
 
 /* =========================================================
