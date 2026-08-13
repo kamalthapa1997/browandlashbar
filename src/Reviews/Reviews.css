@@ -1,406 +1,906 @@
+/* =========================================================
+   REVIEWS SECTION
+   Premium warm-neutral / muted rose theme
+   ========================================================= */
+
 .reviews-section {
-  background: linear-gradient(180deg, #f6e4e1 0%, #faf6f1 100%);
-  color: var(--color-text);
-  font-family: Georgia, "Times New Roman", serif;
+  --reviews-bg-start: #f5f0ec;
+  --reviews-bg-end: #fbf9f7;
+
+  --reviews-card: #ffffff;
+  --reviews-text: #2d2927;
+  --reviews-text-soft: #756d68;
+  --reviews-muted: #9a8f89;
+
+  --reviews-accent: #9a6570;
+  --reviews-accent-dark: #79505a;
+  --reviews-accent-soft: #eadcdf;
+
+  --reviews-border: #e6ded9;
+  --reviews-star: #c28b35;
+  --reviews-google: #4285f4;
+
+  background: linear-gradient(
+    180deg,
+    var(--reviews-bg-start) 0%,
+    var(--reviews-bg-end) 100%
+  );
+
+  color: var(--reviews-text);
+
+  /*
+   * Inter gives the section a much cleaner professional UI feel.
+   * The heading gets a more editorial serif treatment below.
+   */
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
   overflow-x: clip;
-  padding: clamp(4.5rem, 9vw, 7.5rem) clamp(1rem, 5vw, 4rem);
+
+  padding: clamp(4.5rem, 8vw, 7rem) clamp(1rem, 5vw, 4rem);
+
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
+
+/* =========================================================
+   INNER
+   ========================================================= */
 
 .reviews-inner {
-  margin: 0 auto;
+  width: 100%;
   max-width: 1200px;
   min-width: 0;
-  width: 100%;
+
+  margin: 0 auto;
+
+  box-sizing: border-box;
 }
 
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 .reviews-header {
-  align-items: end;
   display: flex;
-  gap: 2rem;
+  align-items: flex-end;
   justify-content: space-between;
+
+  width: 100%;
+  min-width: 0;
+
+  gap: 2rem;
+
   margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 
 .reviews-heading {
   max-width: 625px;
+  min-width: 0;
 }
 
+/* =========================================================
+   EYEBROW
+   ========================================================= */
+
 .reviews-eyebrow {
-  color: var(--color-primary-hover);
   display: block;
-  font-family: inherit;
-  font-size: 0.72rem;
+
+  color: var(--reviews-accent-dark);
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
-  margin-bottom: 0.7rem;
+
+  letter-spacing: 0.17em;
+
+  margin-bottom: 0.75rem;
+
   text-transform: uppercase;
 }
 
+/* =========================================================
+   MAIN HEADING
+   ========================================================= */
+
 .reviews-heading h2 {
-  color: #d63384;
+  color: var(--reviews-text);
+
+  /*
+   * More editorial / luxury appearance.
+   */
+  font-family: "DM Serif Display", Georgia, "Times New Roman", serif;
+
   font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 500;
+
+  font-weight: 400;
+
   letter-spacing: -0.025em;
+
   line-height: 1.08;
+
   margin: 0;
 }
 
 .reviews-heading p {
-  color: var(--color-text-secondary);
-  font-family: inherit;
-  font-size: clamp(0.98rem, 1.7vw, 1.08rem);
-  line-height: 1.6;
+  color: var(--reviews-text-soft);
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: clamp(0.92rem, 1.5vw, 1rem);
+
+  line-height: 1.65;
+
   margin: 1rem 0 0;
+
   max-width: 540px;
+
   text-align: left;
 }
 
+/* =========================================================
+   RATING SUMMARY
+   ========================================================= */
+
 .reviews-rating {
   align-items: center;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  box-shadow: 0 8px 22px rgba(58, 42, 39, 0.05);
+
+  background: rgba(255, 255, 255, 0.8);
+
+  border: 1px solid var(--reviews-border);
+
+  border-radius: 12px;
+
+  box-shadow: 0 8px 24px rgba(50, 39, 35, 0.05);
+
   display: flex;
+
   flex: 0 0 auto;
+
   gap: 0.85rem;
-  padding: 0.85rem 1rem;
+
+  padding: 0.8rem 0.95rem;
 }
 
 .reviews-rating__score {
-  color: var(--color-text);
-  font-size: 2rem;
-  font-weight: 600;
+  color: var(--reviews-text);
+
+  font-size: 1.9rem;
+
+  font-weight: 650;
+
   letter-spacing: -0.06em;
+
   line-height: 1;
 }
 
 .reviews-rating__details {
   display: grid;
-  gap: 0.24rem;
+
+  gap: 0.25rem;
 }
 
 .reviews-rating__stars,
 .review-card__stars {
-  color: #d59b2c;
   display: flex;
+
+  color: var(--reviews-star);
+
   font-family: Arial, sans-serif;
-  font-size: 0.95rem;
-  gap: 0.13rem;
+
+  font-size: 0.9rem;
+
+  gap: 0.12rem;
+
   letter-spacing: 0;
 }
 
 .reviews-rating__details > span {
-  color: var(--color-text-secondary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.74rem;
+  color: var(--reviews-muted);
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.7rem;
+
   white-space: nowrap;
 }
 
+/* =========================================================
+   STARS
+   ========================================================= */
+
 .review-star {
-  color: #decfc8;
+  color: #ddd5d1;
 }
+
 .review-star--filled {
-  color: #d59b2c;
+  color: var(--reviews-star);
 }
+
+/* =========================================================
+   CAROUSEL
+   ========================================================= */
 
 .reviews-carousel {
+  position: relative;
+
+  width: 100%;
   max-width: 100%;
   min-width: 0;
-  padding: 0.75rem;
-  position: relative;
-  width: 100%;
+
+  padding: 0.5rem;
+
+  box-sizing: border-box;
 }
 
+/* =========================================================
+   VIEWPORT
+   ========================================================= */
+
 .reviews-carousel__viewport {
-  contain: inline-size;
   display: flex;
-  flex: none;
-  gap: 1.25rem;
+
+  width: 100%;
   max-width: 100%;
   min-width: 0;
+
+  flex: none;
+
+  gap: 1rem;
+
   overflow-x: auto;
-  overscroll-behavior-inline: contain;
+  overflow-y: hidden;
+
   padding: 0;
-  scrollbar-color: rgba(183, 110, 121, 0.42) transparent;
-  scroll-behavior: smooth;
-  scroll-padding-inline: 0.75rem;
-  scroll-snap-type: x mandatory;
+
+  /*
+   * Keeps the scrolling content isolated from the page.
+   */
+  contain: inline-size;
+
+  overscroll-behavior-inline: contain;
+
+  scrollbar-color: rgba(154, 101, 112, 0.35) transparent;
+
+  scrollbar-width: thin;
+
   -webkit-overflow-scrolling: touch;
-  width: 100%;
+
+  box-sizing: border-box;
 }
 
 .reviews-carousel__viewport::-webkit-scrollbar {
-  height: 5px;
+  height: 4px;
 }
+
+.reviews-carousel__viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .reviews-carousel__viewport::-webkit-scrollbar-thumb {
-  background: rgba(183, 110, 121, 0.42);
+  background: rgba(154, 101, 112, 0.35);
+
   border-radius: 999px;
 }
 
 .reviews-carousel__viewport:focus-visible {
+  outline: 2px solid var(--reviews-accent);
+
   outline-offset: 4px;
 }
 
+/* =========================================================
+   REVIEW CARD
+   ========================================================= */
+
+/*
+ * Main change:
+ *
+ * Desktop cards are now much closer to the tablet proportions.
+ * They are narrower, shorter, and more compact.
+ *
+ * This prevents long review cards from looking stretched.
+ */
+
 .review-card {
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  box-shadow: 0 10px 28px rgba(58, 42, 39, 0.07);
+  flex: 0 0 calc((100% - 1rem) / 2.25);
+
+  width: calc((100% - 1rem) / 2.25);
+
+  max-width: 340px;
+
+  min-height: 242px;
+
+  padding: 1.2rem;
+  background: var(--reviews-card);
+
+  border: 1px solid var(--reviews-border);
+
+  border-radius: 14px;
+
+  box-shadow: 0 8px 24px rgba(48, 38, 34, 0.055);
+
   display: flex;
-  flex: 0 0 calc((100% - 2.5rem) / 3);
+
   flex-direction: column;
-  max-width: 100%;
-  min-height: 285px;
-  min-width: 0;
-  padding: clamp(1.25rem, 2.3vw, 1.65rem);
+
+  box-sizing: border-box;
+
   scroll-snap-align: start;
+
   transition:
     box-shadow 0.22s ease,
     transform 0.22s ease;
 }
 
 .review-card:hover {
-  box-shadow: var(--shadow-lifted);
-  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(48, 38, 34, 0.09);
+
+  transform: translateY(-2px);
 }
 
-.review-card__meta,
-.review-card__reviewer,
-.review-card__bottom {
-  align-items: center;
-  display: flex;
-}
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
 
 .review-card__meta {
+  align-items: center;
+
+  display: flex;
+
   justify-content: space-between;
-  margin-bottom: 1.1rem;
+
+  gap: 0.8rem;
+
+  min-width: 0;
+
+  margin-bottom: 0.8rem;
 }
 
 .review-card__reviewer {
-  gap: 0.7rem;
+  align-items: center;
+
+  display: flex;
+
+  gap: 0.65rem;
+
   min-width: 0;
+
+  max-width: 100%;
 }
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
 
 .review-card__avatar {
   align-items: center;
-  background: var(--color-secondary-bg);
-  border: 1px solid #edcfca;
+
+  background: var(--reviews-accent-soft);
+
+  border: 1px solid #dfc9cd;
+
   border-radius: 50%;
-  color: var(--color-primary-hover);
+
+  color: var(--reviews-accent-dark);
+
   display: flex;
+
   flex: 0 0 auto;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.78rem;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.75rem;
+
   font-weight: 700;
-  height: 2.4rem;
+
+  height: 2.25rem;
+
   justify-content: center;
-  width: 2.4rem;
+
+  width: 2.25rem;
 }
+
+/* =========================================================
+   AUTHOR
+   ========================================================= */
 
 .review-card__author {
   display: grid;
-  gap: 0.18rem;
+
+  gap: 0.16rem;
+
   min-width: 0;
+
+  max-width: 100%;
 }
+
 .review-card__author strong {
-  color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.88rem;
+  color: var(--reviews-text);
+
+  display: block;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.84rem;
+
+  font-weight: 650;
+
   line-height: 1.2;
+
+  max-width: 100%;
+
   overflow: hidden;
+
   text-overflow: ellipsis;
+
   white-space: nowrap;
 }
-.review-card__author span,
-.review-card__source {
-  color: var(--color-text-secondary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.74rem;
+
+.review-card__author span {
+  color: var(--reviews-muted);
+
+  display: block;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.69rem;
+
+  line-height: 1.3;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
 }
+
+/* =========================================================
+   GOOGLE
+   ========================================================= */
 
 .review-card__google {
   align-items: center;
-  color: #5f6368;
+
+  color: #666;
+
   display: flex;
+
+  flex: 0 0 auto;
+
   font-family: Arial, sans-serif;
-  font-size: 0.72rem;
-  gap: 0.28rem;
+
+  font-size: 0.68rem;
+
+  gap: 0.25rem;
 }
+
 .review-card__google-icon {
-  color: #4285f4;
-  font-size: 1.08rem;
+  color: var(--reviews-google);
+
+  font-size: 1rem;
+
   font-weight: 700;
+
   line-height: 1;
 }
 
+/* =========================================================
+   CARD STARS
+   ========================================================= */
+
 .review-card__stars {
-  font-size: 1rem;
-  margin-bottom: 1rem;
+  font-size: 0.9rem;
+
+  margin-bottom: 0.7rem;
 }
+
+/* =========================================================
+   REVIEW TEXT
+   ========================================================= */
+
 .review-card__text {
-  color: var(--color-text-secondary);
-  font-family: inherit;
-  font-size: 0.98rem;
+  color: var(--reviews-text-soft);
+
+  /*
+   * Use a clean sans-serif for review content.
+   * This makes longer reviews much easier to scan.
+   */
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.88rem;
+
   font-style: normal;
-  line-height: 1.65;
+
+  line-height: 1.58;
+
   margin: 0;
+
+  max-width: 100%;
+
+  min-width: 0;
+
   overflow-wrap: anywhere;
+
+  word-break: break-word;
 }
+
+/* =========================================================
+   GOOGLE SOURCE
+   ========================================================= */
 
 .review-card__source {
   align-items: center;
+
+  color: var(--reviews-muted);
+
   display: flex;
+
   gap: 0.35rem;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.68rem;
+
   margin-top: auto;
-  padding-top: 1.35rem;
-}
-.review-card__verified {
-  align-items: center;
-  background: #4285f4;
-  border-radius: 50%;
-  color: #fff;
-  display: inline-flex;
-  font-family: Arial, sans-serif;
-  font-size: 0.56rem;
-  font-weight: 700;
-  height: 0.9rem;
-  justify-content: center;
-  width: 0.9rem;
+
+  padding-top: 0.9rem;
 }
 
-.reviews-carousel__controls {
-  display: flex;
-  gap: 0.55rem;
-  justify-content: flex-end;
-  margin: 0 0 0.8rem;
-}
-.reviews-nav {
+.review-card__verified {
   align-items: center;
-  background: transparent;
-  border: 1px solid #d9bbb5;
+
+  background: var(--reviews-google);
+
   border-radius: 50%;
-  color: var(--color-primary-hover);
-  cursor: pointer;
-  display: inline-flex;
-  font-size: 1.1rem;
-  height: 2.5rem;
-  justify-content: center;
-  line-height: 1;
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
-  width: 2.5rem;
-}
-.reviews-nav:hover {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
+
   color: #fff;
-  transform: translateY(-1px);
+
+  display: inline-flex;
+
+  flex: 0 0 auto;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 0.52rem;
+
+  font-weight: 700;
+
+  height: 0.85rem;
+
+  justify-content: center;
+
+  width: 0.85rem;
 }
+
+/* =========================================================
+   GOOGLE FOOTER
+   ========================================================= */
 
 .reviews-footer {
   display: flex;
+
   justify-content: center;
+
   margin-top: clamp(1.75rem, 3vw, 2.5rem);
 }
+
 .reviews-google-link {
   align-items: center;
-  color: var(--color-primary-hover);
+
+  color: var(--reviews-accent-dark);
+
   display: inline-flex;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.88rem;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.8rem;
+
   font-weight: 600;
+
   gap: 0.45rem;
+
   text-decoration: none;
+
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
 }
+
 .reviews-google-link:hover {
-  color: var(--color-text);
+  color: var(--reviews-text);
 }
+
 .reviews-google-link__icon {
-  color: #4285f4;
-  font-size: 1.15rem;
+  color: var(--reviews-google);
+
+  font-size: 1.1rem;
+
   font-weight: 700;
 }
+
 .reviews-google-link__arrow {
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
+
+/* =========================================================
+   LOADING
+   ========================================================= */
 
 .reviews-section--loading {
   align-items: center;
+
   display: flex;
+
   justify-content: center;
+
   min-height: 300px;
 }
+
 .reviews-loading {
-  color: var(--color-text-secondary);
+  color: var(--reviews-text-soft);
+
   display: grid;
-  font-family: Georgia, "Times New Roman", serif;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
   gap: 0.65rem;
+
   justify-items: center;
 }
+
 .reviews-loading__stars {
-  color: #d59b2c;
+  color: var(--reviews-star);
+
   letter-spacing: 0.12em;
 }
+
+/* =========================================================
+   TABLET
+   ========================================================= */
 
 @media (max-width: 959px) {
   .reviews-section {
     padding-inline: clamp(1.5rem, 5vw, 3rem);
   }
+
   .reviews-header {
     align-items: flex-start;
+
     flex-direction: column;
+
     gap: 1.35rem;
   }
+
+  .reviews-heading {
+    max-width: 625px;
+  }
+
   .review-card {
-    flex-basis: calc((100% - 1.25rem) / 2);
+    /*
+     * Tablet remains the reference size.
+     */
+    flex: 0 0 calc((100% - 1rem) / 2.25);
+
+    width: calc((100% - 1rem) / 2.25);
+
+    max-width: 340px;
+
+    min-height: 242px;
+
+    padding: 1.2rem;
   }
 }
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 599px) {
   .reviews-section {
     padding: 4rem 1rem;
   }
+
   .reviews-header {
     margin-bottom: 1.7rem;
   }
+
   .reviews-heading h2 {
     font-size: 2.15rem;
   }
+
   .reviews-rating {
     width: 100%;
+
+    box-sizing: border-box;
   }
-  .review-card { flex-basis: 100%; min-height: 270px; }
+
+  .reviews-carousel {
+    padding: 0.35rem;
+  }
+
   .reviews-carousel__viewport {
-    gap: 1rem;
+    gap: 0.8rem;
   }
-  .reviews-carousel__controls {
-    display: none;
+
+  .review-card {
+    /*
+     * Keep the same compact proportions as tablet.
+     */
+    flex: 0 0 86%;
+
+    width: 86%;
+
+    max-width: 330px;
+
+    min-height: 232px;
+
+    padding: 1.15rem;
   }
+
   .review-card__google-label {
     display: none;
   }
+
+  .review-card__text {
+    font-size: 0.87rem;
+
+    line-height: 1.58;
+  }
 }
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+  .reviews-section {
+    padding-inline: 0.9rem;
+  }
+
+  .reviews-heading h2 {
+    font-size: 2rem;
+  }
+
+  .reviews-rating {
+    gap: 0.7rem;
+
+    padding: 0.8rem 0.9rem;
+  }
+
+  .reviews-rating__score {
+    font-size: 1.85rem;
+  }
+
+  .reviews-rating__details > span {
+    font-size: 0.68rem;
+  }
+
+  .reviews-carousel {
+    padding-inline: 0.2rem;
+  }
+
+  .reviews-carousel__viewport {
+    gap: 0.8rem;
+  }
+
+  .review-card {
+    flex: 0 0 88%;
+
+    width: 88%;
+
+    max-width: 320px;
+
+    min-height: 225px;
+
+    padding: 1.1rem;
+  }
+
+  .review-card__avatar {
+    height: 2.15rem;
+
+    width: 2.15rem;
+  }
+
+  .review-card__author strong {
+    font-size: 0.82rem;
+  }
+
+  .review-card__author span {
+    font-size: 0.67rem;
+  }
+
+  .review-card__text {
+    font-size: 0.85rem;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
 
 @media (max-width: 380px) {
   .reviews-section {
-    padding-inline: 0.85rem;
+    padding-inline: 0.8rem;
   }
+
   .reviews-heading h2 {
-    font-size: 1.95rem;
+    font-size: 1.9rem;
+  }
+
+  .review-card {
+    flex-basis: 90%;
+
+    width: 90%;
+
+    max-width: 305px;
+
+    min-height: 220px;
   }
 }
 
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
-  .reviews-carousel__viewport {
-    scroll-behavior: auto;
-  }
-  .review-card,
-  .reviews-nav {
+  .review-card {
     transition: none;
   }
 }

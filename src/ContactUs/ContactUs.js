@@ -26,7 +26,6 @@ function ContactUs({
     window.location.href = `mailto:${businessEmail}?subject=Inquiry`;
   };
 
-  // Build city/state and complete address
   const cityState = [city, state].filter(Boolean).join(", ");
 
   const addressLines = [
@@ -54,13 +53,44 @@ function ContactUs({
     { day: "Sunday", hours: "10:00 AM - 6:00 PM" },
   ];
 
-  // Highlight today's day
   const today = new Date().toLocaleString("en-us", {
     weekday: "long",
   });
 
   return (
-    <div id={sectionId} className={`${sectionClass} contact-container`}>
+    <div id={sectionId} className={`${sectionClass || ""} contact-container`}>
+      {/* =====================================================
+          VINTAGE DECORATIONS
+          ===================================================== */}
+
+      <div
+        className="contact-decoration contact-decoration--top"
+        aria-hidden="true"
+      />
+
+      <div
+        className="contact-decoration contact-decoration--bottom"
+        aria-hidden="true"
+      />
+
+      <div
+        className="contact-botanical contact-botanical--left"
+        aria-hidden="true"
+      >
+        ❦
+      </div>
+
+      <div
+        className="contact-botanical contact-botanical--right"
+        aria-hidden="true"
+      >
+        ❧
+      </div>
+
+      {/* =====================================================
+          TITLE
+          ===================================================== */}
+
       <h1
         ref={title.ref}
         className={`contact-title Header__text ${title.className}`}
@@ -68,64 +98,95 @@ function ContactUs({
         Contact Us
       </h1>
 
-      <div ref={content.ref} className={`contact-content ${content.className}`}>
-        {/* Phone */}
-        <div className="contact-us__item">
-          <button
-            type="button"
-            onClick={handlePhoneClick}
-            className="contact-us__link"
-          >
-            <span className="contact-us__icon">📞</span>
-            <span className="contact-infos">{contactPhone}</span>
-          </button>
-        </div>
+      <div className="contact-title-line" aria-hidden="true">
+        <span />
+        <b>✦</b>
+        <span />
+      </div>
 
-        {/* Email */}
-        {businessEmail && (
+      {/* =====================================================
+          MAIN CONTENT
+          ===================================================== */}
+
+      <div ref={content.ref} className={`contact-content ${content.className}`}>
+        {/* ===================================================
+            CONTACT INFORMATION
+            =================================================== */}
+
+        <div className="contact-us__infos">
+          {/* Phone */}
           <div className="contact-us__item">
             <button
               type="button"
-              onClick={handleEmailClick}
+              onClick={handlePhoneClick}
               className="contact-us__link"
             >
-              <span className="contact-us__icon">📧</span>
-              <span className="contact-infos">{businessEmail}</span>
+              <span className="contact-us__icon">📞</span>
+
+              <span className="contact-infos">{contactPhone}</span>
             </button>
           </div>
-        )}
 
-        {/* Address */}
+          {/* Email */}
+          {businessEmail && (
+            <div className="contact-us__item">
+              <button
+                type="button"
+                onClick={handleEmailClick}
+                className="contact-us__link"
+              >
+                <span className="contact-us__icon">📧</span>
 
-        {/* Address */}
-        {addressLines.length > 0 && (
-          <div
-            className="contact-item clickable"
-            onClick={handleAddressClick}
-            role="button"
-            tabIndex={0}
-          >
-            <span className="contact-icon">📍</span>
+                <span className="contact-infos">{businessEmail}</span>
+              </button>
+            </div>
+          )}
 
-            <span className="contact-text">
-              <span className="contact-address-line">
-                {[streetAddress, suiteNumber].filter(Boolean).join(", ")}
+          {/* Address */}
+          {addressLines.length > 0 && (
+            <div
+              className="contact-item clickable"
+              onClick={handleAddressClick}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  handleAddressClick();
+                }
+              }}
+            >
+              <span className="contact-icon">📍</span>
+
+              <span className="contact-text">
+                <span className="contact-address-line">
+                  {[streetAddress, suiteNumber].filter(Boolean).join(", ")}
+                </span>
+
+                <span className="contact-address-line">
+                  {[cityState, zipCode].filter(Boolean).join(" ")}
+                </span>
               </span>
+            </div>
+          )}
+        </div>
 
-              <span className="contact-address-line">
-                {[cityState, zipCode].filter(Boolean).join(" ")}
-              </span>
-            </span>
-          </div>
-        )}
+        {/* ===================================================
+            OPENING HOURS
+            =================================================== */}
 
-        {/* Opening Hours */}
-        <div className="contact-us__item">
+        <div className="contact-us__hours-section">
           <div className="contact-us__opening-hours-container">
             <h3 className="contact-us__hours-title">
               <span className="contact-us__icon">⏰</span>
-             <span className="contact-infos"> Opening Hours</span>
+
+              <span>Opening Hours</span>
             </h3>
+
+            <div className="contact-hours-divider">
+              <span />
+              <span>✦</span>
+              <span />
+            </div>
 
             <div className="contact-us__hours-grid">
               {openingHours.map((item, index) => (

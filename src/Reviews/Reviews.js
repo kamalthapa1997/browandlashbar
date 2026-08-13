@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getReviews } from "../api/reviewsService";
 import "./Reviews.css";
 
@@ -35,12 +35,12 @@ function ReviewStars({ rating = 5 }) {
   );
 }
 
-function ReviewCard({ review }) {
+function ReviewCard({ review, isDuplicate = false }) {
   const author = review.authorName || "Anonymous";
   const rating = Number(review.rating) || 5;
 
   return (
-    <article className="review-card">
+    <article className="review-card" aria-hidden={isDuplicate || undefined}>
       <div className="review-card__meta">
         <div className="review-card__reviewer">
           <div className="review-card__avatar" aria-hidden="true">
@@ -76,6 +76,9 @@ export default function Reviews() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const carouselRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  const resumeTimerRef = useRef(null);
+  const isPausedRef = useRef(false);
 
   useEffect(() => {
     let mounted = true;
@@ -104,8 +107,58 @@ export default function Reviews() {
   const reviews = useMemo(() => {
     if (!data?.reviews?.length) return [];
 
-    return data.reviews.filter((review) => review && review.text);
+    return data.reviews.filter((review) => {
+      const rating = Number(review?.rating);
+
+      return review?.text && (rating === 4.9 || rating === 5);
+    });
   }, [data]);
+
+  const pauseAutoplay = useCallback(() => {
+    isPausedRef.current = true;
+    window.clearTimeout(resumeTimerRef.current);
+  }, []);
+
+  const resumeAutoplay = useCallback((delay = 1200) => {
+    window.clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = window.setTimeout(() => {
+      isPausedRef.current = false;
+    }, delay);
+  }, []);
+
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let lastTimestamp = null;
+
+    const animate = (timestamp) => {
+      if (!reducedMotion.matches && !isPausedRef.current && carousel) {
+        const duplicateStart = carousel.querySelector(
+          '.review-card[aria-hidden="true"]',
+        );
+        const loopPoint = duplicateStart?.offsetLeft || 0;
+
+        if (loopPoint > carousel.clientWidth) {
+          const elapsed = lastTimestamp ? timestamp - lastTimestamp : 0;
+          carousel.scrollLeft += elapsed * 0.018;
+
+          if (carousel.scrollLeft >= loopPoint) {
+            carousel.scrollLeft -= loopPoint;
+          }
+        }
+      }
+
+      lastTimestamp = timestamp;
+      animationFrameRef.current = window.requestAnimationFrame(animate);
+    };
+
+    animationFrameRef.current = window.requestAnimationFrame(animate);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameRef.current);
+      window.clearTimeout(resumeTimerRef.current);
+    };
+  }, [reviews]);
 
   if (loading) {
     return (
@@ -126,18 +179,7 @@ export default function Reviews() {
   const rating = data.rating ? Number(data.rating).toFixed(1) : "5.0";
   const reviewCount = data.userRatingCount || reviews.length;
 
-  const scrollReviews = (direction) => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
-
-    const firstCard = carousel.querySelector(".review-card");
-    const gap = Number.parseFloat(getComputedStyle(carousel).gap) || 0;
-    const amount = firstCard
-      ? firstCard.offsetWidth + gap
-      : carousel.clientWidth * 0.85;
-
-    carousel.scrollBy({ left: direction * amount, behavior: "smooth" });
-  };
+  const marqueeReviews = [...reviews, ...reviews];
 
   return (
     <section className="reviews-section" aria-labelledby="reviews-heading">
@@ -170,38 +212,27 @@ export default function Reviews() {
 
         <div className="reviews-carousel">
           <div
-            className="reviews-carousel__controls"
-            aria-label="Review carousel controls"
-          >
-            <button
-              type="button"
-              className="reviews-nav reviews-nav--left"
-              onClick={() => scrollReviews(-1)}
-              aria-label="Previous reviews"
-            >
-              <span aria-hidden="true">←</span>
-            </button>
-
-            <button
-              type="button"
-              className="reviews-nav reviews-nav--right"
-              onClick={() => scrollReviews(1)}
-              aria-label="Next reviews"
-            >
-              <span aria-hidden="true">→</span>
-            </button>
-          </div>
-
-          <div
             className="reviews-carousel__viewport"
             ref={carouselRef}
             aria-label="Client reviews"
             tabIndex="0"
+            onMouseEnter={pauseAutoplay}
+            onMouseLeave={() => resumeAutoplay(300)}
+            onFocus={pauseAutoplay}
+            onBlur={() => resumeAutoplay()}
+            onPointerDown={pauseAutoplay}
+            onPointerUp={() => resumeAutoplay()}
+            onPointerCancel={() => resumeAutoplay()}
+            onWheel={() => {
+              pauseAutoplay();
+              resumeAutoplay(1800);
+            }}
           >
-            {reviews.map((review, index) => (
+            {marqueeReviews.map((review, index) => (
               <ReviewCard
                 review={review}
-                key={`${review.authorName || "review"}-${review.time || index}`}
+                isDuplicate={index >= reviews.length}
+                key={`${review.authorName || "review"}-${review.time || index}-${index}`}
               />
             ))}
           </div>

@@ -66,7 +66,7 @@
 
 .section {
   width: 100%;
-  min-height: 100vh;
+  /* min-height: 100vh; */
   display: flex;
   padding-top: calc(var(--header-height, 76px) + 16px);
   padding-inline: 16px;

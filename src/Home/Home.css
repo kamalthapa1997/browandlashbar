@@ -1,88 +1,605 @@
+/* =========================================================
+   HOME / HERO
+   Vintage Luxury Salon
+   ========================================================= */
+
 .home {
+  --home-ivory: #f8f1e8;
+  --home-cream: #f1e4d7;
+  --home-rose: #b9797d;
+  --home-rose-light: #d5a5a3;
+  --home-brown: #66504a;
+  --home-gold: #b59a72;
+
+  position: relative;
+  isolation: isolate;
+
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
   align-items: center;
-  background:
-    linear-gradient(
-      115deg,
-      rgba(250, 246, 241, 0.96),
-      rgba(246, 228, 225, 0.84)
-    ),
-    url("../Images/home.jpg") center/cover;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  padding: 8rem clamp(1.25rem, 5vw, 4rem) 5rem;
+
+  text-align: center;
+
+  /*
+   * The image is intentionally faded into the vintage
+   * cream background.
+   */
+  background: linear-gradient(
+    to bottom,
+    rgba(248, 241, 232, 0.18) 0%,
+    rgba(248, 241, 232, 0.28) 28%,
+    rgba(248, 241, 232, 0.7) 58%,
+    rgba(248, 241, 232, 0.96) 82%,
+    #f8f1e8 100%
+  );
+  background-color: var(--home-ivory);
+}
+
+/* =========================================================
+   SECONDARY WARM OVERLAY
+   ========================================================= */
+
+.home::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: -2;
+
+  background: radial-gradient(
+    ellipse at center,
+    transparent 30%,
+    rgba(85, 60, 50, 0.06) 100%
+  );
+
+  opacity: 0.8;
+}
+
+/* =========================================================
+   BOTTOM FADE
+   This is what makes the image disappear into the
+   vintage background.
+   ========================================================= */
+
+.home::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 48%;
+
+  pointer-events: none;
+
+  z-index: -1;
+
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(248, 241, 232, 0.35) 20%,
+    rgba(248, 241, 232, 0.78) 55%,
+    #f8f1e8 100%
+  );
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.home-content {
+  position: relative;
+
+  width: 100%;
+  max-width: 850px;
+
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  margin: 0;
-  min-height: 100vh;
-  padding: 9rem 2rem 4rem;
-  text-align: center;
+  align-items: center;
+
+  z-index: 2;
 }
+
+/* =========================================================
+   WELCOME TEXT
+   ========================================================= */
+
 .aboutus__text {
-  color: var(--color-primary);
+  color: var(--home-rose);
+
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 0.82rem;
+
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+
   font-weight: 700;
-  letter-spacing: 0.18em;
-  margin: 0 0 0.75rem;
+
+  letter-spacing: 0.28em;
+
+  line-height: 1.5;
+
+  margin: 0 0 0.8rem;
+
   text-transform: uppercase;
+
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
 }
+
+/* =========================================================
+   BUSINESS NAME
+   ========================================================= */
+
 .aboutus__text-title {
-  color: #ffc0cb;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2.35rem, 6vw, 4.6rem);
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  line-height: 1.03;
-  margin: 0 0 1.35rem;
-  max-width: 800px;
-}
-.aboutus__texts {
-  color: var(--color-text-secondary);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1rem, 2vw, 1.18rem);
-  height: auto;
-  line-height: 1.7;
+  color: #b9797d;
+
+  font-family: CormorantGaramond, Georgia, "Times New Roman", serif;
+
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+
+  font-weight: 600;
+
+  letter-spacing: -0.025em;
+
+  line-height: 0.98;
+
   margin: 0;
-  max-width: 670px;
-  overflow: visible;
+
+  max-width: 900px;
+
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8),
+    0 3px 12px rgba(95, 70, 60, 0.08);
 }
+
+/* =========================================================
+   TITLE DIVIDER
+   ========================================================= */
+
+.home-title-divider {
+  width: min(260px, 65vw);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 0.7rem;
+
+  margin: 1.35rem auto 1.7rem;
+}
+
+.home-title-divider span {
+  flex: 1;
+
+  height: 1px;
+
+  background: linear-gradient(to right, transparent, rgba(181, 154, 114, 0.75));
+}
+
+.home-title-divider span:last-child {
+  background: linear-gradient(to left, transparent, rgba(181, 154, 114, 0.75));
+}
+
+.home-title-divider b {
+  color: var(--home-gold);
+
+  font-size: 0.65rem;
+
+  font-weight: 400;
+}
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.aboutus__texts {
+  color: var(--home-brown);
+
+  font-family: CormorantGaramond, Georgia, "Times New Roman", serif;
+
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+
+  font-weight: 500;
+
+  line-height: 1.75;
+
+  letter-spacing: 0.005em;
+
+  margin: 0;
+
+  max-width: 700px;
+
+  text-wrap: balance;
+
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.65);
+}
+
+/* =========================================================
+   HIGHLIGHTED SERVICES
+   ========================================================= */
+
 .highlight {
-  color: var(--color-primary-hover);
+  color: var(--home-rose);
+
   font-weight: 700;
+
+  position: relative;
 }
+
+/* =========================================================
+   BOOKING BUTTON
+   ========================================================= */
+
 .aboutus__booknow {
-  background: var(--color-primary);
-  border: 0;
-  border-radius: 12px;
-  box-shadow: 0 9px 18px rgba(183, 110, 121, 0.22);
-  color: var(--color-card);
+  position: relative;
+
+  margin-top: 2.2rem;
+
+  padding: 0.95rem 1.8rem;
+
+  min-height: 52px;
+
+  border: 1px solid rgba(255, 255, 255, 0.65);
+
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, #b9797d, #a96c71);
+
+  color: #fffaf7;
+
   cursor: pointer;
-  font-size: 1rem;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.95rem;
+
   font-weight: 700;
-  margin-top: 2rem;
-  padding: 0.9rem 1.4rem;
+
+  letter-spacing: 0.04em;
+
+  box-shadow:
+    0 10px 25px rgba(150, 84, 93, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
   transition:
-    background 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
 }
+
 .aboutus__booknow:hover {
-  background: var(--color-primary-hover);
-  box-shadow: 0 13px 26px rgba(150, 84, 93, 0.26);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #a96c71, #955d63);
+
+  box-shadow:
+    0 14px 30px rgba(150, 84, 93, 0.27),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+
+  transform: translateY(-3px);
 }
+
+.aboutus__booknow:active {
+  transform: translateY(-1px);
+}
+
 .aboutus__booknow:focus-visible {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 3px;
+  outline: 3px solid var(--home-gold);
+
+  outline-offset: 4px;
 }
+
+/* =========================================================
+   VINTAGE DECORATIVE CIRCLES
+   ========================================================= */
+
+.home-decoration {
+  position: absolute;
+
+  pointer-events: none;
+
+  z-index: 1;
+
+  border-radius: 50%;
+}
+
+/* Top-left */
+
+.home-decoration--top {
+  width: clamp(280px, 35vw, 500px);
+  height: clamp(280px, 35vw, 500px);
+
+  top: -280px;
+  left: -240px;
+
+  border: 1px solid rgba(115, 82, 70, 0.13);
+
+  box-shadow:
+    0 0 0 25px rgba(115, 82, 70, 0.025),
+    0 0 0 55px rgba(115, 82, 70, 0.018);
+}
+
+/* Bottom-right */
+
+.home-decoration--bottom {
+  width: 300px;
+  height: 300px;
+
+  right: -190px;
+  bottom: -200px;
+
+  border: 1px solid rgba(185, 121, 125, 0.14);
+
+  box-shadow: 0 0 0 25px rgba(185, 121, 125, 0.025);
+}
+
+/* =========================================================
+   BOTANICAL DETAILS
+   ========================================================= */
+
+.home-botanical {
+  position: absolute;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  z-index: 1;
+
+  font-family: Georgia, serif;
+
+  color: var(--home-rose);
+
+  opacity: 0.1;
+}
+
+/* Left botanical */
+
+.home-botanical--left {
+  left: 6%;
+  top: 23%;
+
+  font-size: clamp(5rem, 9vw, 9rem);
+
+  transform: rotate(-25deg) scaleX(-1);
+}
+
+/* Right botanical */
+
+.home-botanical--right {
+  right: 7%;
+  bottom: 18%;
+
+  font-size: clamp(4rem, 8vw, 7rem);
+
+  color: var(--home-gold);
+
+  opacity: 0.09;
+
+  transform: rotate(20deg);
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
 @media (max-width: 959px) {
   .home {
-    min-height: 720px;
-    padding: 7.5rem 1.25rem 3.25rem;
+    min-height: 100vh;
+
+    padding: 7.5rem clamp(1.5rem, 7vw, 4rem) 4rem;
+
+    background-position: center top;
   }
+
   .aboutus__text-title {
-    font-size: 2.6rem;
+    font-size: clamp(2.8rem, 7vw, 4.2rem);
   }
+
   .aboutus__texts {
-    line-height: 1.62;
+    max-width: 650px;
+
+    font-size: 1.1rem;
+
+    line-height: 1.7;
+  }
+
+  .home-botanical--left {
+    left: -25px;
+
+    font-size: 6rem;
+
+    opacity: 0.07;
+  }
+
+  .home-botanical--right {
+    right: -15px;
+
+    font-size: 5rem;
+
+    opacity: 0.07;
+  }
+
+  .home-decoration--top {
+    width: 350px;
+    height: 350px;
+
+    top: -220px;
+    left: -220px;
+  }
+
+  .home-decoration--bottom {
+    width: 250px;
+    height: 250px;
+
+    right: -160px;
+    bottom: -170px;
   }
 }
-@media (min-width: 600px) and (max-width: 959px) { .home { padding-inline: clamp(2rem, 7vw, 4rem); }.aboutus__text-title { font-size: clamp(2.8rem, 7vw, 3.5rem); } }
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .home {
+    min-height: 100vh;
+
+    padding: 7rem 1.15rem 3.5rem;
+
+    /*
+     * Slightly move the image upward on phones
+     * so the important part remains visible.
+     */
+    background-position: center top;
+
+    background-size: auto 72vh;
+
+    background-repeat: no-repeat;
+
+    background-color: var(--home-ivory);
+  }
+
+  /* Stronger fade on mobile */
+
+  .home::after {
+    height: 62%;
+
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(248, 241, 232, 0.25) 10%,
+      rgba(248, 241, 232, 0.7) 38%,
+      rgba(248, 241, 232, 0.94) 65%,
+      #f8f1e8 100%
+    );
+  }
+
+  .home-content {
+    max-width: 100%;
+  }
+
+  .aboutus__text {
+    font-size: 0.72rem;
+
+    letter-spacing: 0.24em;
+
+    margin-bottom: 0.7rem;
+  }
+
+  .aboutus__text-title {
+    font-size: clamp(2.45rem, 11vw, 3.5rem);
+
+    line-height: 1;
+
+    max-width: 100%;
+  }
+
+  .home-title-divider {
+    width: min(220px, 70vw);
+
+    margin: 1.2rem auto 1.45rem;
+  }
+
+  .aboutus__texts {
+    font-size: 1rem;
+
+    line-height: 1.68;
+
+    max-width: 100%;
+  }
+
+  .aboutus__booknow {
+    width: auto;
+
+    min-height: 50px;
+
+    margin-top: 1.8rem;
+
+    padding: 0.85rem 1.5rem;
+
+    font-size: 0.9rem;
+  }
+
+  .home-botanical--left {
+    left: -30px;
+    top: 18%;
+
+    font-size: 4.5rem;
+
+    opacity: 0.055;
+  }
+
+  .home-botanical--right {
+    right: -20px;
+    bottom: 8%;
+
+    font-size: 4rem;
+
+    opacity: 0.055;
+  }
+
+  .home-decoration--top {
+    width: 280px;
+    height: 280px;
+
+    top: -180px;
+    left: -170px;
+  }
+
+  .home-decoration--bottom {
+    width: 220px;
+    height: 220px;
+
+    right: -140px;
+    bottom: -140px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .home {
+    padding: 6.5rem 0.9rem 3rem;
+  }
+
+  .aboutus__text-title {
+    font-size: 2.25rem;
+  }
+
+  .aboutus__texts {
+    font-size: 0.94rem;
+
+    line-height: 1.62;
+  }
+
+  .aboutus__booknow {
+    font-size: 0.86rem;
+
+    padding: 0.8rem 1.3rem;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .aboutus__booknow {
+    transition: none;
+  }
+}

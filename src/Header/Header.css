@@ -1,323 +1,512 @@
 /* =========================================================
    HEADER
-========================================================= */
+   Vintage Luxury Salon
+   ========================================================= */
 
 .header {
-  background: transparent;
-  min-height: 0;
+  --header-height: 76px;
+
   position: fixed;
+
   top: 0;
   left: 0;
   right: 0;
-  z-index: 999;
-  /* CSS variable set from JS to reflect current header height */
-  --header-height: 76px;
-}
 
-/* Offer bar integrated into header */
-.header__offer {
   width: 100%;
-  background: #0b0b0b;
-  color: #ffffff;
-  font-size: 15px;
-  line-height: 1.2;
-}
 
-.header__offer-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-}
+  min-height: 0;
 
-.header__offer-book {
-  color: #ffffff;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 6px 10px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.header__offer-text {
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 8px;
-}
-
-.header__offer-close {
-  background: transparent;
-  border: none;
-  color: #ffffff;
-  font-size: 20px;
-  line-height: 1;
-  padding: 6px 8px;
-  cursor: pointer;
-}
-
-@media (max-width: 640px) {
-  .header__offer-inner {
-    grid-template-columns: auto 1fr auto;
-    padding: 10px;
-  }
-
-  .header__offer-text {
-    white-space: normal;
-    font-size: 14px;
-  }
-
-  .header__offer-book {
-    padding: 6px 8px;
-    font-size: 14px;
-  }
+  z-index: 999;
 }
 
 /* =========================================================
-   DESKTOP HEADER
-========================================================= */
+   OFFER BAR
+   ========================================================= */
 
-.nav_lists {
+.header__offer {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  color: #fffaf7;
+
+  background: linear-gradient(135deg, #72565a, #62494d);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.9rem;
+
+  line-height: 1.3;
+
+  box-shadow: 0 2px 12px rgba(70, 40, 40, 0.12);
+}
+
+.header__offer-inner {
+  width: 100%;
+
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  box-sizing: border-box;
+
+  display: grid;
+
+  grid-template-columns:
+    auto
+    1fr
+    auto;
+
   align-items: center;
 
-  background: rgba(250, 246, 241, 0.92);
+  gap: 1rem;
 
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  padding: 0.55rem 1rem;
+}
 
-  border-bottom: 1px solid var(--color-border);
+/* =========================================================
+   OFFER BOOK BUTTON
+   ========================================================= */
 
-  box-shadow: 0 3px 18px rgba(58, 42, 39, 0.05);
+.header__offer-book {
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-width: 75px;
+
+  padding: 0.38rem 0.8rem;
+
+  border: 1px solid rgba(255, 255, 255, 0.42);
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  color: #fffaf7;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.78rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.04em;
+
+  text-decoration: none;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.header__offer-book:hover {
+  background: rgba(255, 255, 255, 0.17);
+
+  border-color: rgba(255, 255, 255, 0.65);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   OFFER TEXT
+   ========================================================= */
+
+.header__offer-text {
+  min-width: 0;
+
+  padding: 0 0.5rem;
+
+  color: #fffaf7;
+
+  text-align: center;
+
+  font-size: 0.82rem;
+
+  font-weight: 500;
+
+  letter-spacing: 0.025em;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+/* =========================================================
+   OFFER CLOSE
+   ========================================================= */
+
+.header__offer-close {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: #fffaf7;
+
+  cursor: pointer;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 1.5rem;
+
+  font-weight: 300;
+
+  line-height: 1;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.header__offer-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+
+  transform: rotate(90deg);
+}
+
+/* =========================================================
+   MAIN NAVIGATION
+   ========================================================= */
+
+.nav_lists {
+  position: relative;
+
+  width: 100%;
+
+  height: 76px;
 
   box-sizing: border-box;
 
   display: flex;
 
+  align-items: center;
+
   justify-content: space-between;
 
-  height: 76px;
+  padding: 0 clamp(1rem, 4vw, 2.5rem);
 
   margin: 0 auto;
 
   max-width: 1440px;
 
-  padding: 0 2rem;
+  background: rgba(248, 241, 232, 0.91);
 
-  position: relative;
+  border-bottom: 1px solid rgba(115, 82, 70, 0.14);
 
-  width: 100%;
+  box-shadow: 0 4px 22px rgba(80, 55, 48, 0.07);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* =========================================================
+   SUBTLE PAPER GRAIN
+   ========================================================= */
+
+.nav_lists::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background-image: radial-gradient(
+    rgba(95, 70, 60, 0.08) 0.55px,
+    transparent 0.55px
+  );
+
+  background-size: 5px 5px;
+
+  opacity: 0.12;
 }
 
 /* =========================================================
    LOGO
-========================================================= */
+   ========================================================= */
 
 .logo-container {
-  align-items: center;
+  position: relative;
+
+  z-index: 2;
 
   display: flex;
 
-  flex-shrink: 0;
+  align-items: center;
+
+  justify-content: center;
+
+  width: 205px;
 
   height: 76px;
 
-  justify-content: center;
+  flex-shrink: 0;
 
   overflow: hidden;
 
   text-decoration: none;
-
-  width: 205px;
 }
 
 .header__mainlogo {
   display: block;
 
-  height: auto;
-
-  max-height: 68px;
+  width: auto;
 
   max-width: 100%;
 
+  height: auto;
+
+  max-height: 66px;
+
   object-fit: contain;
 
-  width: auto;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.logo-container:hover .header__mainlogo {
+  transform: scale(1.015);
+
+  opacity: 0.92;
 }
 
 /* =========================================================
    DESKTOP NAVIGATION
-========================================================= */
+   ========================================================= */
 
-.nav-container,
-.nav-links {
-  align-items: center;
+.nav-container {
+  position: relative;
+
+  z-index: 2;
 
   display: flex;
+
+  align-items: center;
 }
 
 .nav-links {
-  gap: clamp(1rem, 2.5vw, 2.25rem);
-}
+  display: flex;
 
-.nav-link {
-  background: transparent;
+  align-items: center;
 
-  border: 0;
-
-  color: var(--color-text);
-
-  cursor: pointer;
-
-  font-family: Georgia, "Times New Roman", serif;
-
-  font-size: 0.96rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.03em;
-
-  text-decoration: none;
-
-  transition:
-    color 0.2s ease,
-    opacity 0.2s ease;
-}
-
-.nav-link:hover {
-  color: var(--color-primary-hover);
+  gap: clamp(1.2rem, 2.7vw, 2.5rem);
 }
 
 /* =========================================================
-   MOBILE MENU BUTTON
-========================================================= */
+   NAV LINKS
+   ========================================================= */
 
-.menu-icon {
+.nav-link {
+  position: relative;
+
+  display: inline-flex;
+
   align-items: center;
 
   justify-content: center;
 
-  background: rgba(255, 255, 255, 0.2);
+  padding: 0.45rem 0;
 
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 0;
 
-  border-radius: 50%;
+  background: transparent;
 
-  color: #5a263d;
+  color: #66504a;
 
   cursor: pointer;
 
+  font-family: CormorantGaramond, Georgia, "Times New Roman", serif;
+
+  font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+
+  font-weight: 600;
+
+  letter-spacing: 0.035em;
+
+  line-height: 1.2;
+
+  text-decoration: none;
+
+  transition: color 0.22s ease;
+}
+
+/* Vintage underline */
+
+.nav-link::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+
+  bottom: -3px;
+
+  width: 100%;
+
+  height: 1px;
+
+  background: linear-gradient(to right, transparent, #b59a72, transparent);
+
+  transform: translateX(-50%) scaleX(0);
+
+  transform-origin: center;
+
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover {
+  color: #b9797d;
+}
+
+.nav-link:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* =========================================================
+   MOBILE MENU BUTTON
+   ========================================================= */
+
+.menu-icon {
+  position: relative;
+
+  z-index: 1002;
+
   display: none;
 
-  flex-shrink: 0;
+  align-items: center;
 
-  height: 42px;
+  justify-content: center;
+
+  width: 43px;
+  height: 43px;
 
   padding: 0;
 
-  width: 42px;
+  flex-shrink: 0;
 
-  user-select: none;
+  border: 1px solid rgba(115, 82, 70, 0.2);
 
-  z-index: 1002;
+  border-radius: 50%;
+
+  background: rgba(255, 250, 245, 0.72);
+
+  color: #66504a;
+
+  cursor: pointer;
+
+  box-shadow: 0 3px 12px rgba(80, 55, 48, 0.06);
 
   transition:
     background 0.2s ease,
     transform 0.2s ease,
-    color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 .menu-icon:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 250, 245, 0.95);
 
-  color: #3f1a2a;
+  transform: scale(1.04);
 
-  transform: scale(1.05);
-
-  box-shadow: 0 4px 15px rgba(80, 30, 50, 0.12);
+  box-shadow: 0 5px 16px rgba(80, 55, 48, 0.1);
 }
 
 .menu-icon:active {
-  transform: scale(0.94);
+  transform: scale(0.95);
 }
 
 /* =========================================================
-   HAMBURGER ICON
-========================================================= */
+   HAMBURGER
+   ========================================================= */
 
 .menu-icon__open {
-  color: #5a263d;
+  color: #66504a;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 1.75rem;
+
+  font-weight: 400;
+
+  line-height: 1;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   CLOSE
+   ========================================================= */
+
+.menu-icon__close {
+  color: #b9797d;
 
   font-family: Arial, sans-serif;
 
   font-size: 1.9rem;
 
-  font-weight: 700;
-
-  line-height: 1;
-}
-
-/* =========================================================
-   CLOSE ICON
-========================================================= */
-
-.menu-icon__close {
-  color: #3f1a2a;
-
-  font-family: Arial, sans-serif;
-
-  font-size: 2rem;
-
-  font-weight: 700;
+  font-weight: 300;
 
   line-height: 1;
 
   transform: translateY(-1px);
-
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.65);
 }
 
 /* =========================================================
    MOBILE BACKDROP
-========================================================= */
+   ========================================================= */
 
 .mobile-menu-backdrop {
   position: fixed;
 
   inset: 0;
 
-  background: rgba(250, 246, 241, 0.28);
-
-  backdrop-filter: blur(12px);
-
-  -webkit-backdrop-filter: blur(12px);
-
   z-index: 999;
+
+  background: rgba(73, 49, 43, 0.18);
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 /* =========================================================
    MOBILE MENU
-========================================================= */
+   ========================================================= */
 
 .mobile-menu {
-  background-color: rgb(247 203 220);
+  position: fixed;
 
-  backdrop-filter: blur(28px);
+  top: var(--header-height, 76px);
 
-  -webkit-backdrop-filter: blur(28px);
+  right: 0;
 
-  border-left: 1px solid rgba(255, 255, 255, 0.4);
+  z-index: 1000;
 
-  border-radius: 24px 0 0 24px;
+  width: min(82vw, 340px);
 
-  box-shadow:
-    -10px 0 40px rgba(80, 30, 50, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  min-height: 360px;
 
   box-sizing: border-box;
 
@@ -325,82 +514,126 @@
 
   flex-direction: column;
 
-  gap: 3.25rem;
+  align-items: stretch;
 
-  padding: 2.25rem;
+  gap: 0.4rem;
 
-  position: fixed;
+  padding: 1.5rem 1.4rem 2rem;
 
-  right: 0;
+  background: linear-gradient(
+    145deg,
+    rgba(250, 244, 236, 0.98),
+    rgba(242, 229, 216, 0.98)
+  );
 
-  top: var(--header-height, 76px);
+  border: 1px solid rgba(115, 82, 70, 0.13);
 
-  width: min(82vw, 320px);
+  border-right: 0;
 
-  z-index: 1000;
+  border-top-left-radius: 22px;
+
+  border-bottom-left-radius: 22px;
+
+  box-shadow: -12px 15px 40px rgba(73, 49, 43, 0.14);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  overflow: hidden;
 }
 
 /* =========================================================
-   MOBILE MENU LINKS
-========================================================= */
+   MOBILE MENU DECORATIVE GRAIN
+   ========================================================= */
 
-.mobile-menu .nav-link {
-  background: transparent;
-
-  border: 0;
-
-  font: inherit;
-
-  position: relative;
-
-  padding: 0.45rem 0 0.75rem;
-
-  text-align: left;
-}
-
-.mobile-menu__link {
-  width: 100%;
-}
-
-.mobile-menu .nav-link::after {
+.mobile-menu::before {
   content: "";
 
   position: absolute;
 
-  left: 50%;
+  inset: 0;
 
-  bottom: 0;
+  pointer-events: none;
+
+  background-image: radial-gradient(
+    rgba(95, 70, 60, 0.09) 0.55px,
+    transparent 0.55px
+  );
+
+  background-size: 5px 5px;
+
+  opacity: 0.15;
+}
+
+/* =========================================================
+   MOBILE MENU DECORATIVE CIRCLE
+   ========================================================= */
+
+.mobile-menu::after {
+  content: "";
+
+  position: absolute;
+
+  width: 240px;
+  height: 240px;
+
+  right: -150px;
+  bottom: -150px;
+
+  border: 1px solid rgba(185, 121, 125, 0.16);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   MOBILE LINKS
+   ========================================================= */
+
+.mobile-menu .nav-link {
+  position: relative;
+
+  z-index: 2;
 
   width: 100%;
 
-  height: 1px;
+  justify-content: flex-start;
 
-  background: rgba(255, 255, 255, 0.5);
+  box-sizing: border-box;
 
-  transform: translateX(-50%) scaleX(0);
+  padding: 1rem 0.65rem;
 
-  transform-origin: center;
+  color: #66504a;
 
-  animation: navLineExpand 1s ease-out forwards;
+  font-size: 1.15rem;
+
+  border-bottom: 1px solid rgba(115, 82, 70, 0.1);
+
+  text-align: left;
+}
+
+.mobile-menu .nav-link::after {
+  display: none;
+}
+
+.mobile-menu .nav-link:hover {
+  color: #b9797d;
+
+  background: rgba(255, 255, 255, 0.28);
 }
 
 /* =========================================================
-   MENU LINE ANIMATION
-========================================================= */
+   MOBILE MENU LAST LINK
+   ========================================================= */
 
-@keyframes navLineExpand {
-  from {
-    transform: translateX(-50%) scaleX(0);
-  }
-
-  to {
-    transform: translateX(-50%) scaleX(1);
-  }
+.mobile-menu .nav-link:last-child {
+  border-bottom: 0;
 }
 
 /* =========================================================
-   TABLET / MOBILE
-========================================================= */
+   TABLET
+   ========================================================= */
 
 @media (max-width: 959px) {
   .desktop {
@@ -414,33 +647,71 @@
   .nav_lists {
     height: 64px;
 
-    left: 0;
-
-    max-width: none;
-
     padding: 0 1rem;
 
-    transform: none;
-
-    width: 100%;
-
-    border-radius: 0;
+    max-width: none;
   }
 
   .logo-container {
-    height: 64px;
-
     width: 165px;
+
+    height: 64px;
   }
 
   .header__mainlogo {
     max-height: 55px;
   }
+
+  .mobile-menu {
+    top: var(--header-height, 64px);
+  }
+}
+
+/* =========================================================
+   MOBILE OFFER
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .header__offer-inner {
+    grid-template-columns:
+      auto
+      1fr
+      auto;
+
+    gap: 0.5rem;
+
+    padding: 0.45rem 0.65rem;
+  }
+
+  .header__offer-book {
+    min-width: auto;
+
+    padding: 0.35rem 0.65rem;
+
+    font-size: 0.72rem;
+  }
+
+  .header__offer-text {
+    padding: 0;
+
+    font-size: 0.74rem;
+
+    white-space: normal;
+
+    line-height: 1.25;
+  }
+
+  .header__offer-close {
+    width: 28px;
+    height: 28px;
+
+    font-size: 1.35rem;
+  }
 }
 
 /* =========================================================
    SMALL MOBILE
-========================================================= */
+   ========================================================= */
 
 @media (max-width: 480px) {
   .nav_lists {
@@ -456,32 +727,57 @@
   }
 
   .menu-icon {
-    height: 40px;
     width: 40px;
-  }
-
-  .menu-icon__close {
-    font-size: 1.9rem;
+    height: 40px;
   }
 
   .mobile-menu {
-    width: min(82vw, 320px);
+    width: min(84vw, 320px);
 
-    padding: 2rem 1.75rem;
+    min-height: 340px;
 
-    gap: 2.75rem;
+    padding: 1.25rem 1.15rem 1.75rem;
+  }
+
+  .mobile-menu .nav-link {
+    padding: 0.9rem 0.5rem;
+
+    font-size: 1.08rem;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .header__offer-text {
+    font-size: 0.68rem;
+  }
+
+  .header__offer-book {
+    font-size: 0.68rem;
+
+    padding: 0.3rem 0.55rem;
+  }
+
+  .logo-container {
+    width: 140px;
+  }
+
+  .header__mainlogo {
+    max-height: 49px;
   }
 }
 
 /* =========================================================
    REDUCED MOTION
-========================================================= */
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .mobile-menu,
-  .mobile-menu *,
-  .mobile-menu-backdrop,
-  .menu-icon {
+  .header *,
+  .header *::before,
+  .header *::after {
     animation: none !important;
 
     transition: none !important;
