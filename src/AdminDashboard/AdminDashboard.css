@@ -198,6 +198,7 @@ button {
   display: flex;
   gap: 0.75rem;
   margin: 0.4rem 0 2.5rem;
+  justify-content: center;
 }
 
 .admin-brand > span {
@@ -451,12 +452,7 @@ button {
 ========================================================= */
 
 .admin-hero {
-  background: linear-gradient(
-    135deg,
-    #fff 0%,
-    #fff8fb 65%,
-    #fff0f6 100%
-  );
+  background: linear-gradient(135deg, #fff 0%, #fff8fb 65%, #fff0f6 100%);
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
   box-shadow: var(--admin-shadow-sm);
@@ -900,6 +896,141 @@ button {
 }
 
 /* =========================================================
+   FAQ MANAGEMENT
+========================================================= */
+
+.faq-manager-controls {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
+  margin-bottom: 0.85rem;
+}
+
+.faq-manager-controls input,
+.faq-manager-controls select {
+  background: #fff;
+  border: 1px solid var(--admin-border);
+  border-radius: 11px;
+  color: var(--admin-ink);
+  font: inherit;
+  min-height: 45px;
+  padding: 0.65rem 0.75rem;
+  width: 100%;
+}
+
+.faq-manager-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.faq-admin-card {
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-md);
+  box-shadow: var(--admin-shadow-sm);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 1rem;
+}
+
+.faq-admin-card__copy {
+  min-width: 0;
+}
+.faq-admin-card h2 {
+  font-size: 1rem;
+  line-height: 1.35;
+  margin: 0 0 0.45rem;
+  overflow-wrap: anywhere;
+}
+.faq-admin-card__copy > p {
+  color: var(--admin-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 0 0 0.75rem;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+.faq-admin-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.faq-admin-card__meta span {
+  background: #f8f3f5;
+  border-radius: 999px;
+  color: var(--admin-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.3rem 0.55rem;
+}
+.faq-admin-card__meta .is-active {
+  background: #edf8f1;
+  color: var(--admin-success);
+}
+.faq-admin-card__meta .is-inactive {
+  background: #fff0f3;
+  color: var(--admin-danger);
+}
+.faq-empty-state h2 {
+  color: var(--admin-ink);
+  font-size: 1.1rem;
+  margin: 0 0 0.45rem;
+}
+.faq-empty-state p {
+  line-height: 1.55;
+  margin: 0 auto 1rem;
+  max-width: 460px;
+}
+.faq-form textarea {
+  background: #fff;
+  border: 1px solid #e5d9de;
+  border-radius: 12px;
+  color: var(--admin-ink);
+  font: inherit;
+  max-width: 100%;
+  min-height: 140px;
+  outline: none;
+  padding: 0.7rem 0.8rem;
+  resize: vertical;
+  width: 100%;
+}
+.faq-form textarea:focus {
+  border-color: var(--admin-pink);
+  box-shadow: 0 0 0 3px rgba(249, 98, 159, 0.12);
+}
+.faq-form__details {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr 1fr;
+}
+.faq-form__active {
+  align-items: center;
+  display: flex !important;
+  font-weight: 600 !important;
+  grid-template-columns: auto 1fr !important;
+  margin-top: 0.25rem;
+}
+.faq-form__active input {
+  accent-color: var(--admin-pink);
+  min-height: auto !important;
+  padding: 0 !important;
+  width: 18px !important;
+}
+.sr-only {
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* =========================================================
    SETTINGS
 ========================================================= */
 
@@ -947,6 +1078,7 @@ button {
 
 .admin-form input,
 .admin-form select,
+.admin-form textarea,
 .settings-card input,
 .adminDashboard__offer-textarea {
   background: #fff;
@@ -971,6 +1103,7 @@ button {
 
 .admin-form input:focus,
 .admin-form select:focus,
+.admin-form textarea:focus,
 .settings-card input:focus,
 .adminDashboard__offer-textarea:focus {
   border-color: var(--admin-pink);
@@ -1185,7 +1318,7 @@ button {
   }
 
   .admin-topbar {
-    margin-bottom: 1rem;
+    display: none;
   }
 
   .admin-hero {
@@ -1232,6 +1365,19 @@ button {
 
   .card-actions button {
     flex: 1;
+  }
+
+  .faq-manager-controls,
+  .faq-form__details {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-admin-card {
+    flex-direction: column;
+  }
+
+  .faq-admin-card .card-actions {
+    width: 100%;
   }
 
   .admin-business-card {
@@ -1293,6 +1439,11 @@ button {
     max-width: calc(100vw - 1.5rem);
     padding: 1.25rem;
   }
+
+  /* .admin-sidebar--open {
+    padding-top: 3rem;
+    gap: 1rem;
+  } */
 }
 
 /* =========================================================

@@ -89,6 +89,47 @@ function validateGalleryPayload(payload) {
   return { caption };
 }
 
+function validateFaqPayload(payload, options = {}) {
+  const { partial = false } = options;
+  const nextPayload = {};
+  const faqCategories = require("../constants/faqCategories");
+
+  if (!partial || payload.question !== undefined) {
+    const question = normalizeString(payload.question);
+    if (!question) throw createHttpError(400, "FAQ question is required");
+    if (question.length > 240) throw createHttpError(400, "FAQ question must be 240 characters or fewer");
+    nextPayload.question = question;
+  }
+
+  if (!partial || payload.answer !== undefined) {
+    const answer = normalizeString(payload.answer);
+    if (!answer) throw createHttpError(400, "FAQ answer is required");
+    if (answer.length > 3000) throw createHttpError(400, "FAQ answer must be 3000 characters or fewer");
+    nextPayload.answer = answer;
+  }
+
+  if (!partial || payload.category !== undefined) {
+    const category = normalizeString(payload.category);
+    if (!faqCategories.includes(category)) throw createHttpError(400, "FAQ category is invalid");
+    nextPayload.category = category;
+  }
+
+  if (!partial || payload.displayOrder !== undefined) {
+    const displayOrder = Number(payload.displayOrder);
+    if (!Number.isInteger(displayOrder) || displayOrder < 0) {
+      throw createHttpError(400, "Display order must be a non-negative whole number");
+    }
+    nextPayload.displayOrder = displayOrder;
+  }
+
+  if (!partial || payload.isActive !== undefined) {
+    if (typeof payload.isActive !== "boolean") throw createHttpError(400, "FAQ status is invalid");
+    nextPayload.isActive = payload.isActive;
+  }
+
+  return nextPayload;
+}
+
 function validateSettingsPayload(payload) {
   const updates = {};
 
@@ -210,6 +251,7 @@ function validateSettingsPayload(payload) {
 
 module.exports = {
   validateGalleryPayload,
+  validateFaqPayload,
   validateLoginPayload,
   validateObjectId,
   validateServicePayload,

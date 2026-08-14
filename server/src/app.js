@@ -6,6 +6,7 @@ const serviceRoutes = require("./routes/serviceRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const reviewsRoutes = require("./routes/reviewsRoutes");
+const faqRoutes = require("./routes/faqRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/reviews", reviewsRoutes);
+app.use("/api/faqs", faqRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

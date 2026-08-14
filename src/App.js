@@ -17,6 +17,7 @@ import Home from "./Home/Home.js";
 import Reviews from "./Reviews/Reviews";
 import Login from "./Login/Login";
 import Footer from "./Footer/Footer";
+import Faq from "./components/FAQ/Faq";
 import AdminDashboard from "./AdminDashboard/AdminDashboard";
 import PageTransition from "./components/PageTransition/PageTransition";
 import { getSettings } from "./api/settingsService";
@@ -74,6 +75,7 @@ function HomePage({ settings }) {
         state={settings?.state}
         zipCode={settings?.zipCode}
       />
+      <Faq />
       <Footer />
     </>
   );
@@ -113,7 +115,7 @@ function AppContent() {
   }, [location, navigate]);
 
   useEffect(() => {
-    if (location.pathname === "/admin") return undefined;
+    if (location.pathname.startsWith("/admin")) return undefined;
 
     let isCurrent = true;
 
@@ -133,7 +135,10 @@ function AppContent() {
     };
   }, [location.pathname]);
 
-  const showHeader = location.pathname !== "/admin";
+  const showHeader = !location.pathname.startsWith("/admin");
+  const pageTransitionKey = location.pathname.startsWith("/admin")
+    ? "/admin"
+    : location.pathname;
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -169,13 +174,13 @@ function AppContent() {
       )}
 
       <AnimatePresence mode="sync" initial={false}>
-        <PageTransition key={location.pathname}>
+        <PageTransition key={pageTransitionKey}>
           <Routes location={location}>
             <Route path="/" element={<HomePage settings={settings} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route
-              path="/admin"
+              path="/admin/*"
               element={
                 <RequireAuth>
                   <AdminDashboard onSettingsUpdated={setSettings} />

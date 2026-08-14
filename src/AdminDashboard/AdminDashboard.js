@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Modal from "../components/Modal/Modal";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
@@ -19,6 +19,12 @@ import {
 } from "../api/galleryService";
 import { getSettings, updateSettings } from "../api/settingsService";
 import {
+  createFaq,
+  deleteFaq,
+  getAdminFaqs,
+  updateFaq,
+} from "../api/faqService";
+import {
   serviceCategories,
   serviceCategoryLabels,
 } from "../constants/serviceCategories";
@@ -28,6 +34,7 @@ const navItems = [
   ["overview", "Overview", "⌂"],
   ["services", "Services", "✦"],
   ["gallery", "Gallery", "▧"],
+  ["faq", "FAQ", "?"],
   ["settings", "Settings", "⚙"],
 ];
 
@@ -66,10 +73,14 @@ function InlineFormError({ message }) {
 
 function AdminDashboard({ onSettingsUpdated }) {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState("overview");
+  const location = useLocation();
+  const [activeSection, setActiveSection] = useState(
+    location.pathname === "/admin/faq" ? "faq" : "overview",
+  );
   const [menuOpen, setMenuOpen] = useState(false);
   const [services, setServices] = useState([]);
   const [gallery, setGallery] = useState([]);
+  const [faqs, setFaqs] = useState([]);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
@@ -82,14 +93,16 @@ function AdminDashboard({ onSettingsUpdated }) {
     setLoading(true);
     setError("");
     try {
-      const [nextServices, nextGallery, nextSettings] = await Promise.all([
+      const [nextServices, nextGallery, nextSettings, nextFaqs] = await Promise.all([
         getServices(),
         getGallery(),
         getSettings(),
+        getAdminFaqs(),
       ]);
       setServices(nextServices || {});
       setGallery(Array.isArray(nextGallery) ? nextGallery : []);
       setSettings(nextSettings || {});
+      setFaqs(Array.isArray(nextFaqs) ? nextFaqs : []);
     } catch (requestError) {
       setError(requestError.message || "Unable to load dashboard data.");
     } finally {
@@ -100,6 +113,14 @@ function AdminDashboard({ onSettingsUpdated }) {
   useEffect(() => {
     refresh();
   }, []);
+
+  useEffect(() => {
+    setActiveSection(
+      location.pathname === "/admin/faq"
+        ? "faq"
+        : location.state?.adminSection || "overview",
+    );
+  }, [location.pathname, location.state]);
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -120,6 +141,11 @@ function AdminDashboard({ onSettingsUpdated }) {
 
   function selectSection(section) {
     setActiveSection(section);
+    if (section === "faq" && location.pathname !== "/admin/faq") {
+      navigate("/admin/faq");
+    } else if (section !== "faq" && location.pathname !== "/admin") {
+      navigate("/admin", { state: { adminSection: section } });
+    }
     setMenuOpen(false);
   }
 
@@ -184,6 +210,20 @@ function AdminDashboard({ onSettingsUpdated }) {
     setGallery((current) => current.filter((item) => item._id !== itemId));
   }
 
+  function upsertFaq(faq) {
+    setFaqs((current) =>
+      [...current.filter((item) => item._id !== faq._id), faq].sort(
+        (first, second) =>
+          first.displayOrder - second.displayOrder ||
+          new Date(first.createdAt) - new Date(second.createdAt),
+      ),
+    );
+  }
+
+  function removeFaq(faqId) {
+    setFaqs((current) => current.filter((item) => item._id !== faqId));
+  }
+
   function applySettings(nextSettings) {
     setSettings(nextSettings);
     onSettingsUpdated?.(nextSettings);
@@ -192,6 +232,7 @@ function AdminDashboard({ onSettingsUpdated }) {
   const stats = [
     ["Services", serviceList.length, "✦", "services"],
     ["Gallery images", gallery.length, "▧", "gallery"],
+    ["FAQs", faqs.length, "?", "faq"],
     [
       "Service groups",
       Object.keys(services).filter((key) => services[key]?.length).length,
@@ -203,6 +244,7 @@ function AdminDashboard({ onSettingsUpdated }) {
   return (
     <div className="admin-shell">
       <button
+        type="button"
         className="admin-menu-button"
         onClick={() => setMenuOpen(true)}
         aria-label="Open navigation"
@@ -212,6 +254,7 @@ function AdminDashboard({ onSettingsUpdated }) {
         ☰
       </button>
       <button
+        type="button"
         className="admin-mobile-home"
         onClick={() => navigate("/")}
         aria-label="Go to website home"
@@ -223,6 +266,7 @@ function AdminDashboard({ onSettingsUpdated }) {
       </button>
       {menuOpen && (
         <button
+          type="button"
           className="admin-scrim"
           onClick={() => setMenuOpen(false)}
           aria-label="Close navigation"
@@ -238,6 +282,7 @@ function AdminDashboard({ onSettingsUpdated }) {
         <nav aria-label="Dashboard sections">
           {navItems.map(([id, label, icon]) => (
             <button
+              type="button"
               key={id}
               onClick={() => selectSection(id)}
               className={activeSection === id ? "is-active" : ""}
@@ -248,6 +293,7 @@ function AdminDashboard({ onSettingsUpdated }) {
           ))}
         </nav>
         <button
+          type="button"
           className="admin-logout"
           onClick={() =>
             requestConfirmation({
@@ -270,6 +316,7 @@ function AdminDashboard({ onSettingsUpdated }) {
           </div>
           <TopbarToast toast={toast} />
           <button
+            type="button"
             className="admin-profile"
             onClick={() =>
               requestConfirmation({
@@ -318,6 +365,15 @@ function AdminDashboard({ onSettingsUpdated }) {
                 confirmAction={requestConfirmation}
               />
             )}
+            {activeSection === "faq" && (
+              <FaqManager
+                faqs={faqs}
+                onSaved={upsertFaq}
+                onDeleted={removeFaq}
+                notify={showToast}
+                confirmAction={requestConfirmation}
+              />
+            )}
             {activeSection === "settings" && (
               <SettingsManager
                 settings={settings}
@@ -350,7 +406,7 @@ function Overview({ stats, selectSection, settings }) {
           <p className="admin-eyebrow">Business overview</p>
           <h2>Everything is looking polished.</h2>
           <p>
-            Manage your services, gallery, and website details from one place.
+            Manage your services, gallery, FAQs, and website details from one place.
           </p>
         </div>
         <button
@@ -707,6 +763,178 @@ function GalleryModal({ item, onClose, onSaved }) {
         <InlineFormError message={errorField === "image" ? error : ""} />
         <FormActions onClose={onClose} saving={saving} label="Save image" />
         <InlineFormError message={!errorField ? error : ""} />
+      </form>
+    </Modal>
+  );
+}
+
+const faqCategories = ["General", "Brows", "Lashes", "Waxing", "Appointments"];
+
+function FaqManager({ faqs, onSaved, onDeleted, notify, confirmAction }) {
+  const [editor, setEditor] = useState(null);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
+  const visibleFaqs = faqs.filter((faq) => {
+    const matchesSearch = `${faq.question} ${faq.answer}`
+      .toLowerCase()
+      .includes(search.trim().toLowerCase());
+    return matchesSearch && (category === "All" || faq.category === category);
+  });
+
+  function remove(faq) {
+    confirmAction({
+      title: "Delete FAQ?",
+      message: "Are you sure you want to delete this frequently asked question?",
+      confirmLabel: "Delete",
+      destructive: true,
+      action: async () => {
+        await deleteFaq(faq._id);
+        onDeleted(faq._id);
+        notify("FAQ deleted");
+      },
+    });
+  }
+
+  return (
+    <>
+      <SectionHeading
+        title="FAQ Management"
+        description="Manage frequently asked questions displayed on your website."
+        action="Add FAQ"
+        onAction={() => setEditor({ displayOrder: faqs.length })}
+      />
+      {faqs.length > 0 && (
+        <div className="faq-manager-controls">
+          <label>
+            <span className="sr-only">Search FAQs</span>
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search FAQs"
+            />
+          </label>
+          <label>
+            <span className="sr-only">Filter by category</span>
+            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+              <option value="All">All categories</option>
+              {faqCategories.map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </label>
+        </div>
+      )}
+      <section className="faq-manager-list" aria-label="Frequently asked questions">
+        {faqs.length === 0 ? (
+          <div className="admin-panel empty-state faq-empty-state">
+            <h2>No FAQs yet.</h2>
+            <p>Add your first frequently asked question to help customers find answers quickly.</p>
+            <button className="button button--primary" onClick={() => setEditor({ displayOrder: 0 })}>+ Add FAQ</button>
+          </div>
+        ) : visibleFaqs.length ? (
+          visibleFaqs.map((faq) => (
+            <article className="admin-panel faq-admin-card" key={faq._id}>
+              <div className="faq-admin-card__copy">
+                <h2>{faq.question}</h2>
+                <p>{faq.answer}</p>
+                <div className="faq-admin-card__meta">
+                  <span>{faq.category}</span>
+                  <span className={faq.isActive ? "is-active" : "is-inactive"}>
+                    {faq.isActive ? "Active" : "Inactive"}
+                  </span>
+                  <span>Order {faq.displayOrder}</span>
+                </div>
+              </div>
+              <div className="card-actions">
+                <button onClick={() => setEditor(faq)}>Edit</button>
+                <button className="button--danger-text" onClick={() => remove(faq)}>Delete</button>
+              </div>
+            </article>
+          ))
+        ) : (
+          <div className="admin-panel empty-state">No FAQs match your search.</div>
+        )}
+      </section>
+      {editor && (
+        <FaqModal
+          faq={editor}
+          onClose={() => setEditor(null)}
+          onSaved={(faq) => {
+            setEditor(null);
+            onSaved(faq);
+            notify("FAQ saved");
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+function FaqModal({ faq, onClose, onSaved }) {
+  const [form, setForm] = useState({
+    question: faq.question || "",
+    answer: faq.answer || "",
+    category: faq.category || "General",
+    displayOrder: faq.displayOrder ?? 0,
+    isActive: faq.isActive ?? true,
+  });
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function submit(event) {
+    event.preventDefault();
+    if (!form.question.trim() || !form.answer.trim()) {
+      setError("Question and answer are required.");
+      return;
+    }
+    if (!Number.isInteger(Number(form.displayOrder)) || Number(form.displayOrder) < 0) {
+      setError("Display order must be a non-negative whole number.");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    try {
+      const payload = { ...form, displayOrder: Number(form.displayOrder) };
+      const savedFaq = faq._id
+        ? await updateFaq(faq._id, payload)
+        : await createFaq(payload);
+      onSaved(savedFaq);
+    } catch (requestError) {
+      setError(requestError.message || "Unable to save FAQ.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Modal isOpen onClose={onClose} maxWidth="640px">
+      <form className="admin-form faq-form" onSubmit={submit}>
+        <ModalHeading title={faq._id ? "Edit FAQ" : "Add FAQ"} />
+        <label>
+          Question
+          <input required maxLength="240" value={form.question} onChange={(event) => setForm({ ...form, question: event.target.value })} />
+        </label>
+        <label>
+          Answer
+          <textarea required rows={6} maxLength="3000" value={form.answer} onChange={(event) => setForm({ ...form, answer: event.target.value })} />
+        </label>
+        <div className="faq-form__details">
+          <label>
+            Category
+            <select value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>
+              {faqCategories.map((category) => <option key={category}>{category}</option>)}
+            </select>
+          </label>
+          <label>
+            Display order
+            <input required min="0" step="1" type="number" value={form.displayOrder} onChange={(event) => setForm({ ...form, displayOrder: event.target.value })} />
+          </label>
+        </div>
+        <label className="faq-form__active">
+          <input type="checkbox" checked={form.isActive} onChange={(event) => setForm({ ...form, isActive: event.target.checked })} />
+          <span>Active — show this FAQ on the public website</span>
+        </label>
+        <InlineFormError message={error} />
+        <FormActions onClose={onClose} saving={saving} label="Save FAQ" />
       </form>
     </Modal>
   );

@@ -1,17 +1,92 @@
-
 /* =========================================================
    GALLERY PAGE
+   Premium editorial / luxury salon portfolio
    ========================================================= */
 
 .gallery-page {
+  --gallery-bg-top: #faf6f1;
+  --gallery-bg-middle: #f7e9e6;
+  --gallery-bg-bottom: #f8f2ed;
+
+  --gallery-text: var(--color-text);
+  --gallery-muted: var(--color-text-secondary);
+  --gallery-primary: var(--color-primary);
+
+  position: relative;
+
   min-height: 100vh;
-  padding: 7rem 1.5rem 3rem;
+
+  overflow: hidden;
+
+  padding: 8rem 2rem 5rem;
+
+  background:
+    radial-gradient(
+      circle at 50% 12%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.45) 24%,
+      rgba(255, 255, 255, 0) 52%
+    ),
+    linear-gradient(
+      180deg,
+      var(--gallery-bg-top) 0%,
+      var(--gallery-bg-middle) 45%,
+      var(--gallery-bg-bottom) 100%
+    );
+
+  color: var(--gallery-text);
+}
+
+/* =========================================================
+   SOFT BACKGROUND FADE
+   ========================================================= */
+
+.gallery-page::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 42rem;
+
+  pointer-events: none;
+
+  background: radial-gradient(
+    ellipse at center top,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.35) 35%,
+    rgba(255, 255, 255, 0) 72%
+  );
+
+  z-index: 0;
+}
+
+/* Fade the background toward the bottom */
+
+.gallery-page::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 28rem;
+
+  pointer-events: none;
 
   background: linear-gradient(
-    115deg,
-    rgba(250, 246, 241, 0.96),
-    rgba(246, 228, 225, 0.84)
+    to bottom,
+    rgba(248, 242, 237, 0),
+    rgba(248, 242, 237, 0.75),
+    rgba(248, 242, 237, 1)
   );
+
+  z-index: 0;
 }
 
 /* =========================================================
@@ -19,8 +94,13 @@
    ========================================================= */
 
 .gallery-page__header {
-  max-width: 1100px;
-  margin: 0 auto 3rem;
+  position: relative;
+
+  z-index: 1;
+
+  width: min(100%, 1100px);
+
+  margin: 0 auto 4rem;
 
   display: flex;
   flex-direction: column;
@@ -29,44 +109,83 @@
   text-align: center;
 }
 
+/* Small eyebrow */
+
 .gallery-page__header p {
-  margin: 0 0 0.55rem;
+  position: relative;
 
-  color: var(--color-primary);
+  margin: 0 0 0.9rem;
 
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
+  color: var(--gallery-primary);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.76rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.22em;
 
   text-transform: uppercase;
 }
 
+/* Decorative line */
+
+.gallery-page__header p::before,
+.gallery-page__header p::after {
+  content: "";
+
+  display: inline-block;
+
+  width: 28px;
+
+  height: 1px;
+
+  margin: 0 0.8rem;
+
+  vertical-align: middle;
+
+  background: rgba(183, 110, 121, 0.38);
+}
+
+/* Main title */
+
 .gallery-page__header h1 {
+  max-width: 800px;
+
   margin: 0;
 
-  color: var(--color-text);
+  color: var(--gallery-text);
 
   font-family: Georgia, "Times New Roman", serif;
 
-  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-size: clamp(2.35rem, 5vw, 4rem);
+
   font-weight: 500;
-  line-height: 1.15;
+
+  letter-spacing: -0.035em;
+
+  line-height: 1.08;
 }
 
 /* =========================================================
-   GALLERY
+   GALLERY LIST
    ========================================================= */
 
 .gallery-list {
-  width: 100%;
-  max-width: 1100px;
+  position: relative;
+
+  z-index: 1;
+
+  width: min(100%, 1180px);
 
   margin: 0 auto;
 
   display: flex;
+
   flex-direction: column;
 
-  gap: 4rem;
+  gap: 5rem;
 }
 
 /* =========================================================
@@ -74,47 +193,83 @@
    ========================================================= */
 
 .gallery-item {
+  position: relative;
+
   width: 100%;
 
   display: flex;
+
   flex-direction: column;
 
   opacity: 0;
-  transform: translateY(35px);
+
+  transform: translateY(32px);
 
   transition:
     opacity 0.8s ease,
-    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .gallery-item.is-visible {
   opacity: 1;
+
   transform: translateY(0);
 }
 
 /* =========================================================
-   IMAGE CONTAINER
+   IMAGE FRAME
    ========================================================= */
 
 .gallery-item__image {
+  position: relative;
+
   width: 100%;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
   padding: 1rem;
 
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.42);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.72),
+    rgba(248, 234, 230, 0.55)
+  );
 
-  border: 1px solid rgba(120, 87, 77, 0.14);
+  border: 1px solid rgba(120, 87, 77, 0.12);
+
+  border-radius: 18px;
 
   box-shadow:
-    0 16px 45px rgba(87, 57, 48, 0.08);
+    0 12px 30px rgba(87, 57, 48, 0.06),
+    0 28px 65px rgba(87, 57, 48, 0.06);
 
-  box-sizing: border-box;
+  isolation: isolate;
+}
+
+/* Inner soft highlight */
+
+.gallery-item__image::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  border-radius: inherit;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(120, 87, 77, 0.05);
+
+  z-index: 2;
 }
 
 /* =========================================================
@@ -122,25 +277,41 @@
    ========================================================= */
 
 .gallery-item__image img {
+  position: relative;
+
+  z-index: 1;
+
   display: block;
 
   width: 100%;
+
   height: auto;
 
   max-width: 100%;
 
   object-fit: contain;
 
-  background: rgba(246, 228, 225, 0.45);
+  border-radius: 10px;
+
+  background: rgba(246, 228, 225, 0.28);
 
   transition:
-    transform 1s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.8s ease;
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.6s ease;
 }
 
-/* Subtle hover movement */
-.gallery-item:hover .gallery-item__image img {
-  transform: scale(1.012);
+/* Desktop hover */
+
+@media (min-width: 961px) {
+  .gallery-item:hover .gallery-item__image {
+    box-shadow:
+      0 16px 38px rgba(87, 57, 48, 0.08),
+      0 32px 75px rgba(87, 57, 48, 0.08);
+  }
+
+  .gallery-item:hover .gallery-item__image img {
+    transform: scale(1.018);
+  }
 }
 
 /* =========================================================
@@ -150,52 +321,60 @@
 .gallery-item__caption {
   width: 100%;
 
-  padding: 1.15rem 0.35rem 1.2rem;
+  padding: 1.2rem 0.35rem 0;
 
-  box-sizing: border-box;
-
-  border-bottom: 1px solid rgba(92, 67, 59, 0.28);
+  border-bottom: 1px solid rgba(92, 67, 59, 0.16);
 }
 
 .gallery-item__caption p {
-  margin: 0;
+  width: min(100%, 850px);
 
-  width: 100%;
-  max-width: 100%;
+  margin: 0 0 1.15rem;
 
-  color: var(--color-text-secondary);
+  color: var(--gallery-muted);
 
   font-family: Georgia, "Times New Roman", serif;
 
   font-size: 1rem;
-  line-height: 1.65;
+
+  line-height: 1.7;
 
   text-align: left;
 
   overflow-wrap: anywhere;
-  word-break: normal;
 }
 
 /* =========================================================
-   ERROR / EMPTY
+   ERROR / EMPTY STATES
    ========================================================= */
 
 .gallery-error,
 .gallery-empty {
-  width: min(100%, 1100px);
+  position: relative;
+
+  z-index: 1;
+
+  width: min(100%, 850px);
 
   margin: 2rem auto;
 
-  padding: 1rem 1.25rem;
+  padding: 1.15rem 1.35rem;
 
   box-sizing: border-box;
 
-  border: 1px solid rgba(120, 87, 77, 0.15);
-  border-radius: 10px;
+  border: 1px solid rgba(120, 87, 77, 0.12);
 
-  background: rgba(255, 255, 255, 0.55);
+  border-radius: 14px;
 
-  color: var(--color-text-secondary);
+  background: rgba(255, 255, 255, 0.5);
+
+  box-shadow: 0 10px 30px rgba(87, 57, 48, 0.04);
+
+  color: var(--gallery-muted);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  line-height: 1.6;
 
   text-align: center;
 }
@@ -205,30 +384,62 @@
 }
 
 /* =========================================================
-   LAPTOP
+   LARGE DESKTOP
    ========================================================= */
 
-@media (min-width: 1025px) {
+@media (min-width: 1200px) {
   .gallery-page {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    padding-left: 3rem;
+
+    padding-right: 3rem;
+  }
+
+  .gallery-page__header {
+    margin-bottom: 4.5rem;
   }
 
   .gallery-list {
-    gap: 5rem;
+    gap: 6rem;
   }
 
   .gallery-item__image {
     padding: 1.25rem;
+
+    border-radius: 20px;
   }
 
   .gallery-item__caption {
-    padding: 1.25rem 0.5rem 1.35rem;
+    padding-top: 1.35rem;
   }
 
   .gallery-item__caption p {
     font-size: 1.05rem;
-    line-height: 1.7;
+  }
+}
+
+/* =========================================================
+   DESKTOP / LAPTOP
+   ========================================================= */
+
+@media (min-width: 961px) and (max-width: 1199px) {
+  .gallery-page {
+    padding: 7.5rem 2rem 4rem;
+  }
+
+  .gallery-page__header {
+    margin-bottom: 3.75rem;
+  }
+
+  .gallery-list {
+    width: min(100%, 1050px);
+
+    gap: 4.5rem;
+  }
+
+  .gallery-item__image {
+    padding: 1rem;
+
+    border-radius: 18px;
   }
 }
 
@@ -236,17 +447,67 @@
    TABLET
    ========================================================= */
 
-@media (max-width: 1024px) {
+@media (min-width: 641px) and (max-width: 960px) {
   .gallery-page {
-    padding: 6.5rem 1.25rem 2rem;
+    min-height: 100vh;
+
+    padding: 6.75rem 1.5rem 3.5rem;
+  }
+
+  .gallery-page__header {
+    width: min(100%, 760px);
+
+    margin-bottom: 3.25rem;
+  }
+
+  .gallery-page__header p {
+    font-size: 0.72rem;
+
+    letter-spacing: 0.19em;
+  }
+
+  .gallery-page__header p::before,
+  .gallery-page__header p::after {
+    width: 22px;
+
+    margin-left: 0.6rem;
+    margin-right: 0.6rem;
+  }
+
+  .gallery-page__header h1 {
+    font-size: clamp(2.25rem, 6vw, 3.2rem);
   }
 
   .gallery-list {
-    gap: 3.5rem;
+    width: min(100%, 760px);
+
+    gap: 3.75rem;
   }
 
   .gallery-item__image {
-    padding: 1rem;
+    padding: 0.85rem;
+
+    border-radius: 16px;
+
+    box-shadow:
+      0 10px 28px rgba(87, 57, 48, 0.055),
+      0 22px 50px rgba(87, 57, 48, 0.045);
+  }
+
+  .gallery-item__image img {
+    border-radius: 9px;
+  }
+
+  .gallery-item__caption {
+    padding: 1rem 0.25rem 0;
+  }
+
+  .gallery-item__caption p {
+    margin-bottom: 1rem;
+
+    font-size: 0.98rem;
+
+    line-height: 1.65;
   }
 }
 
@@ -256,40 +517,86 @@
 
 @media (max-width: 640px) {
   .gallery-page {
-    padding: 5.8rem 0.85rem 1.5rem;
+    min-height: 100vh;
+
+    padding: 5.8rem 0.85rem 2.5rem;
+  }
+
+  .gallery-page::before {
+    height: 30rem;
+  }
+
+  .gallery-page::after {
+    height: 18rem;
   }
 
   .gallery-page__header {
-    margin-bottom: 2rem;
+    width: 100%;
 
-    padding: 0 0.5rem;
+    margin-bottom: 2.5rem;
+
+    padding: 0 0.35rem;
   }
 
   .gallery-page__header p {
-    font-size: 0.7rem;
+    margin-bottom: 0.75rem;
+
+    font-size: 0.66rem;
+
+    letter-spacing: 0.17em;
+  }
+
+  .gallery-page__header p::before,
+  .gallery-page__header p::after {
+    width: 16px;
+
+    margin-left: 0.45rem;
+    margin-right: 0.45rem;
   }
 
   .gallery-page__header h1 {
-    font-size: 2rem;
+    max-width: 340px;
+
+    font-size: clamp(1.95rem, 9vw, 2.45rem);
+
+    line-height: 1.1;
   }
 
   .gallery-list {
-    gap: 2.75rem;
+    width: 100%;
+
+    gap: 3rem;
   }
 
   .gallery-item__image {
-    padding: 0.65rem;
+    padding: 0.5rem;
 
-    border-radius: 4px;
+    border-radius: 14px;
+
+    box-shadow:
+      0 8px 22px rgba(87, 57, 48, 0.055),
+      0 18px 38px rgba(87, 57, 48, 0.04);
+  }
+
+  .gallery-item__image img {
+    border-radius: 8px;
   }
 
   .gallery-item__caption {
-    padding: 0.9rem 0.15rem 1rem;
+    padding: 0.85rem 0.1rem 0;
   }
 
   .gallery-item__caption p {
-    font-size: 0.94rem;
+    margin-bottom: 0.9rem;
+
+    font-size: 0.92rem;
+
     line-height: 1.6;
+  }
+
+  /* Disable hover-style scaling on touch devices */
+  .gallery-item:hover .gallery-item__image img {
+    transform: none;
   }
 }
 
@@ -300,37 +607,59 @@
 @media (max-width: 380px) {
   .gallery-page {
     padding-left: 0.7rem;
+
     padding-right: 0.7rem;
+  }
+
+  .gallery-page__header {
+    margin-bottom: 2.2rem;
   }
 
   .gallery-page__header h1 {
     font-size: 1.8rem;
   }
 
+  .gallery-list {
+    gap: 2.5rem;
+  }
+
   .gallery-item__image {
-    padding: 0.5rem;
+    padding: 0.4rem;
+
+    border-radius: 12px;
   }
 
   .gallery-item__caption {
-    padding-top: 0.8rem;
-    padding-bottom: 0.9rem;
+    padding-top: 0.75rem;
+  }
+
+  .gallery-item__caption p {
+    font-size: 0.88rem;
+
+    line-height: 1.55;
   }
 }
 
 /* =========================================================
-   ACCESSIBILITY
+   ACCESSIBILITY / REDUCED MOTION
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   .gallery-item,
+  .gallery-item__image,
   .gallery-item__image img {
     transition: none !important;
+
     animation: none !important;
   }
 
   .gallery-item {
     opacity: 1;
+
+    transform: none;
+  }
+
+  .gallery-item:hover .gallery-item__image img {
     transform: none;
   }
 }
-

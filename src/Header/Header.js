@@ -274,6 +274,14 @@ function Header({
               Contact Us
             </button>
 
+            <button
+              type="button"
+              className={sectionLinkClass("faq")}
+              onClick={() => handleSectionClick("faq")}
+            >
+              FAQ
+            </button>
+
             <NavLink to="/login" className={routeLinkClass}>
               Login
             </NavLink>
@@ -370,6 +378,17 @@ function Header({
                   }}
                 >
                   Contact Us
+                </button>
+
+                <button
+                  type="button"
+                  className={`${sectionLinkClass("faq")} mobile-menu__link`}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleSectionClick("faq");
+                  }}
+                >
+                  FAQ
                 </button>
 
                 <NavLink
