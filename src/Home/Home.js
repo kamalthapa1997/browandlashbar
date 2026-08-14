@@ -67,7 +67,7 @@ function Home({ businessName = "Mero Brow & Lash Bar" }) {
           ref={booking.ref}
           className={`aboutus__booknow ${booking.className}`}
           onClick={() =>
-            window.open("https://merobrowandlashbar.square.site", "_blank")
+            window.open("https://merobrwoandlashbar.square.site/", "_blank")
           }
         >
           Book an Appointment
