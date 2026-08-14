@@ -1111,34 +1111,6 @@ button {
 }
 
 /* =========================================================
-   LOGO PREVIEW
-========================================================= */
-
-.settings-logo-preview {
-  align-items: center;
-  background: #fff8fb;
-  border: 1px dashed #decbd4;
-  border-radius: 14px;
-  display: flex;
-  height: 145px;
-  justify-content: center;
-  margin-bottom: 1rem;
-  overflow: hidden;
-}
-
-.settings-logo-preview img {
-  height: 100%;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-.settings-logo-preview span {
-  color: var(--admin-pink);
-  font-size: 1.6rem;
-  font-weight: 800;
-}
-
-/* =========================================================
    MODALS
 ========================================================= */
 
@@ -1278,19 +1250,6 @@ button {
 }
 
 .form-actions .button {
-  width: 100%;
-}
-
-/* =========================================================
-   IMAGE PREVIEW
-========================================================= */
-
-.form-image-preview {
-  border-radius: 14px;
-  display: block;
-  max-height: 220px;
-  max-width: 100%;
-  object-fit: cover;
   width: 100%;
 }
 
@@ -1440,10 +1399,6 @@ button {
     padding: 1.25rem;
   }
 
-  /* .admin-sidebar--open {
-    padding-top: 3rem;
-    gap: 1rem;
-  } */
 }
 
 /* =========================================================

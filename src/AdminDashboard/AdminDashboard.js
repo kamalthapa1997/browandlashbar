@@ -93,12 +93,13 @@ function AdminDashboard({ onSettingsUpdated }) {
     setLoading(true);
     setError("");
     try {
-      const [nextServices, nextGallery, nextSettings, nextFaqs] = await Promise.all([
-        getServices(),
-        getGallery(),
-        getSettings(),
-        getAdminFaqs(),
-      ]);
+      const [nextServices, nextGallery, nextSettings, nextFaqs] =
+        await Promise.all([
+          getServices(),
+          getGallery(),
+          getSettings(),
+          getAdminFaqs(),
+        ]);
       setServices(nextServices || {});
       setGallery(Array.isArray(nextGallery) ? nextGallery : []);
       setSettings(nextSettings || {});
@@ -256,8 +257,18 @@ function AdminDashboard({ onSettingsUpdated }) {
       <button
         type="button"
         className="admin-mobile-home"
-        onClick={() => navigate("/")}
-        aria-label="Go to website home"
+        onClick={() =>
+          requestConfirmation({
+            title: "Sign out?",
+
+            message: "Are you sure you want to sign out?",
+
+            confirmLabel: "Yes, Sign Out",
+
+            action: performLogout,
+          })
+        }
+        aria-label="Sign out and navigate to homepage"
       >
         <img
           src={settings?.logoUrl || "/mainlogo.png"}
@@ -311,7 +322,6 @@ function AdminDashboard({ onSettingsUpdated }) {
       <main className="admin-main">
         <header className="admin-topbar">
           <div>
-            {/* <p>Welcome back</p> */}
             <h1>{navItems.find(([id]) => id === activeSection)?.[1]}</h1>
           </div>
           <TopbarToast toast={toast} />
@@ -327,6 +337,7 @@ function AdminDashboard({ onSettingsUpdated }) {
               })
             }
             title="Sign out"
+            aria-label="Sign out"
           >
             MB
           </button>
@@ -406,7 +417,8 @@ function Overview({ stats, selectSection, settings }) {
           <p className="admin-eyebrow">Business overview</p>
           <h2>Everything is looking polished.</h2>
           <p>
-            Manage your services, gallery, FAQs, and website details from one place.
+            Manage your services, gallery, FAQs, and website details from one
+            place.
           </p>
         </div>
         <button
@@ -784,7 +796,8 @@ function FaqManager({ faqs, onSaved, onDeleted, notify, confirmAction }) {
   function remove(faq) {
     confirmAction({
       title: "Delete FAQ?",
-      message: "Are you sure you want to delete this frequently asked question?",
+      message:
+        "Are you sure you want to delete this frequently asked question?",
       confirmLabel: "Delete",
       destructive: true,
       action: async () => {
@@ -816,19 +829,35 @@ function FaqManager({ faqs, onSaved, onDeleted, notify, confirmAction }) {
           </label>
           <label>
             <span className="sr-only">Filter by category</span>
-            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+            <select
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+            >
               <option value="All">All categories</option>
-              {faqCategories.map((item) => <option key={item}>{item}</option>)}
+              {faqCategories.map((item) => (
+                <option key={item}>{item}</option>
+              ))}
             </select>
           </label>
         </div>
       )}
-      <section className="faq-manager-list" aria-label="Frequently asked questions">
+      <section
+        className="faq-manager-list"
+        aria-label="Frequently asked questions"
+      >
         {faqs.length === 0 ? (
           <div className="admin-panel empty-state faq-empty-state">
             <h2>No FAQs yet.</h2>
-            <p>Add your first frequently asked question to help customers find answers quickly.</p>
-            <button className="button button--primary" onClick={() => setEditor({ displayOrder: 0 })}>+ Add FAQ</button>
+            <p>
+              Add your first frequently asked question to help customers find
+              answers quickly.
+            </p>
+            <button
+              className="button button--primary"
+              onClick={() => setEditor({ displayOrder: 0 })}
+            >
+              + Add FAQ
+            </button>
           </div>
         ) : visibleFaqs.length ? (
           visibleFaqs.map((faq) => (
@@ -846,12 +875,19 @@ function FaqManager({ faqs, onSaved, onDeleted, notify, confirmAction }) {
               </div>
               <div className="card-actions">
                 <button onClick={() => setEditor(faq)}>Edit</button>
-                <button className="button--danger-text" onClick={() => remove(faq)}>Delete</button>
+                <button
+                  className="button--danger-text"
+                  onClick={() => remove(faq)}
+                >
+                  Delete
+                </button>
               </div>
             </article>
           ))
         ) : (
-          <div className="admin-panel empty-state">No FAQs match your search.</div>
+          <div className="admin-panel empty-state">
+            No FAQs match your search.
+          </div>
         )}
       </section>
       {editor && (
@@ -886,7 +922,10 @@ function FaqModal({ faq, onClose, onSaved }) {
       setError("Question and answer are required.");
       return;
     }
-    if (!Number.isInteger(Number(form.displayOrder)) || Number(form.displayOrder) < 0) {
+    if (
+      !Number.isInteger(Number(form.displayOrder)) ||
+      Number(form.displayOrder) < 0
+    ) {
       setError("Display order must be a non-negative whole number.");
       return;
     }
@@ -911,26 +950,63 @@ function FaqModal({ faq, onClose, onSaved }) {
         <ModalHeading title={faq._id ? "Edit FAQ" : "Add FAQ"} />
         <label>
           Question
-          <input required maxLength="240" value={form.question} onChange={(event) => setForm({ ...form, question: event.target.value })} />
+          <input
+            required
+            maxLength="240"
+            value={form.question}
+            onChange={(event) =>
+              setForm({ ...form, question: event.target.value })
+            }
+          />
         </label>
         <label>
           Answer
-          <textarea required rows={6} maxLength="3000" value={form.answer} onChange={(event) => setForm({ ...form, answer: event.target.value })} />
+          <textarea
+            required
+            rows={6}
+            maxLength="3000"
+            value={form.answer}
+            onChange={(event) =>
+              setForm({ ...form, answer: event.target.value })
+            }
+          />
         </label>
         <div className="faq-form__details">
           <label>
             Category
-            <select value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>
-              {faqCategories.map((category) => <option key={category}>{category}</option>)}
+            <select
+              value={form.category}
+              onChange={(event) =>
+                setForm({ ...form, category: event.target.value })
+              }
+            >
+              {faqCategories.map((category) => (
+                <option key={category}>{category}</option>
+              ))}
             </select>
           </label>
           <label>
             Display order
-            <input required min="0" step="1" type="number" value={form.displayOrder} onChange={(event) => setForm({ ...form, displayOrder: event.target.value })} />
+            <input
+              required
+              min="0"
+              step="1"
+              type="number"
+              value={form.displayOrder}
+              onChange={(event) =>
+                setForm({ ...form, displayOrder: event.target.value })
+              }
+            />
           </label>
         </div>
         <label className="faq-form__active">
-          <input type="checkbox" checked={form.isActive} onChange={(event) => setForm({ ...form, isActive: event.target.checked })} />
+          <input
+            type="checkbox"
+            checked={form.isActive}
+            onChange={(event) =>
+              setForm({ ...form, isActive: event.target.checked })
+            }
+          />
           <span>Active — show this FAQ on the public website</span>
         </label>
         <InlineFormError message={error} />
@@ -957,7 +1033,6 @@ function SettingsManager({ settings, onSaved, notify }) {
 
   async function submit(event) {
     event.preventDefault();
-    // Client-side validation for homepageOfferLink
     if (form.homepageOfferLink !== undefined) {
       const raw = (form.homepageOfferLink || "").trim();
       if (raw) {
@@ -1209,7 +1284,6 @@ function SectionHeading({ title, description, action, onAction }) {
   return (
     <header className="section-heading">
       <div>
-        {/* <h2>{title}</h2> */}
         <p>{description}</p>
       </div>
       {action && (

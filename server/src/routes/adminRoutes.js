@@ -15,7 +15,7 @@ const { createRateLimiter } = require("../middleware/rateLimitMiddleware");
 const router = express.Router();
 const loginRateLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000,
-  maxRequests: 100,
+  maxRequests: 10,
 });
 
 router.post("/login", loginRateLimiter, loginAdmin);

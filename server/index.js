@@ -24,12 +24,12 @@ async function startServer() {
       process.exit(1);
     }
 
-    console.error("Server error:", err);
+    console.error("Server Error: Unable to start the server.");
     process.exit(1);
   });
 }
 
-startServer().catch((error) => {
-  console.error("Failed to start server:", error);
+startServer().catch(() => {
+  console.error("Server Error: Unable to start the application.");
   process.exit(1);
 });

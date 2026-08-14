@@ -59,10 +59,6 @@ function ContactUs({
 
   return (
     <div id={sectionId} className={`${sectionClass || ""} contact-container`}>
-      {/* =====================================================
-          VINTAGE DECORATIONS
-          ===================================================== */}
-
       <div
         className="contact-decoration contact-decoration--top"
         aria-hidden="true"
@@ -87,10 +83,6 @@ function ContactUs({
         ❧
       </div>
 
-      {/* =====================================================
-          TITLE
-          ===================================================== */}
-
       <h1
         ref={title.ref}
         className={`contact-title Header__text ${title.className}`}
@@ -104,17 +96,8 @@ function ContactUs({
         <span />
       </div>
 
-      {/* =====================================================
-          MAIN CONTENT
-          ===================================================== */}
-
       <div ref={content.ref} className={`contact-content ${content.className}`}>
-        {/* ===================================================
-            CONTACT INFORMATION
-            =================================================== */}
-
         <div className="contact-us__infos">
-          {/* Phone */}
           <div className="contact-us__item">
             <button
               type="button"
@@ -127,7 +110,6 @@ function ContactUs({
             </button>
           </div>
 
-          {/* Email */}
           {businessEmail && (
             <div className="contact-us__item">
               <button
@@ -142,7 +124,6 @@ function ContactUs({
             </div>
           )}
 
-          {/* Address */}
           {addressLines.length > 0 && (
             <div
               className="contact-item clickable"
@@ -169,10 +150,6 @@ function ContactUs({
             </div>
           )}
         </div>
-
-        {/* ===================================================
-            OPENING HOURS
-            =================================================== */}
 
         <div className="contact-us__hours-section">
           <div className="contact-us__opening-hours-container">

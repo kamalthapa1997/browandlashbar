@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Treatmentnavlists.css";
 import { getServices } from "../api/serviceService";
 import {

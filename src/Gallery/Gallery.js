@@ -1,32 +1,32 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./Gallery.css";
 import { getGallery } from "../api/galleryService";
 
-const Gallery = () => {
+function Gallery() {
   const [images, setImages] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const galleryRef = useRef(null);
 
   useEffect(() => {
     async function loadGallery() {
       setError("");
+      setLoading(true);
 
       try {
         const data = await getGallery();
         setImages(Array.isArray(data) ? data : []);
       } catch (loadError) {
         setError(loadError.message || "Unable to load gallery.");
+      } finally {
+        setLoading(false);
       }
     }
 
     loadGallery();
   }, []);
 
-  /*
-    Animate gallery items as they enter
-    the viewport while scrolling.
-  */
   useEffect(() => {
     if (!galleryRef.current) return;
 
@@ -38,10 +38,6 @@ const Gallery = () => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
 
-            /*
-              Once the animation has happened,
-              stop observing that item.
-            */
             observer.unobserve(entry.target);
           }
         });
@@ -66,7 +62,13 @@ const Gallery = () => {
 
       {error && <p className="gallery-error">{error}</p>}
 
-      {!error && images.length > 0 && (
+      {!error && loading && (
+        <p className="gallery-empty" role="status">
+          Loading gallery…
+        </p>
+      )}
+
+      {!error && !loading && images.length > 0 && (
         <section className="gallery-list" ref={galleryRef}>
           {images.map((item, i) => (
             <article className="gallery-item" key={item._id || i}>
@@ -88,11 +90,11 @@ const Gallery = () => {
         </section>
       )}
 
-      {!error && images.length === 0 && (
+      {!error && !loading && images.length === 0 && (
         <p className="gallery-empty">Our latest work will be here soon.</p>
       )}
     </main>
   );
-};
+}
 
 export default Gallery;

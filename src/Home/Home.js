@@ -1,4 +1,3 @@
-import React from "react";
 import "./Home.css";
 import useRevealOnScroll from "../components/Reveal/useRevealOnScroll";
 
@@ -10,7 +9,6 @@ function Home({ businessName = "Mero Brow & Lash Bar" }) {
 
   return (
     <div className="home">
-      {/* Vintage decorative elements */}
       <div
         className="home-decoration home-decoration--top"
         aria-hidden="true"
@@ -29,7 +27,6 @@ function Home({ businessName = "Mero Brow & Lash Bar" }) {
         ❧
       </div>
 
-      {/* Main content */}
       <div className="home-content">
         <p ref={welcome.ref} className={`aboutus__text ${welcome.className}`}>
           Welcome To

@@ -1,4 +1,3 @@
-import React from "react";
 import "./Services.css";
 import Treatmentnavlists from "../Treatmentnavlists/Treatmentnavlists";
 import useRevealOnScroll from "../components/Reveal/useRevealOnScroll";
@@ -10,7 +9,6 @@ function Services({ sectionId, sectionClass }) {
 
   return (
     <div id={sectionId} className={`${sectionClass} services-container`}>
-      {/* Vintage decorative elements */}
       <div
         className="services-decoration services-decoration--top"
         aria-hidden="true"
@@ -35,7 +33,6 @@ function Services({ sectionId, sectionClass }) {
         ❧
       </div>
 
-      {/* Section Content */}
       <h1 ref={heading.ref} className={`services__header ${heading.className}`}>
         Our Services
       </h1>

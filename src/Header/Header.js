@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import "./Header.css";
@@ -53,7 +53,6 @@ function Header({
     };
   }, [menuOpen]);
 
-  // Offer handling
   const offerText =
     typeof homepageOffer === "string" ? homepageOffer.trim() : "";
   const hasOffer = offerText.length > 0;
@@ -61,7 +60,6 @@ function Header({
     ? DISMISS_PREFIX + encodeURIComponent(offerText)
     : null;
 
-  // Compute the URL for the Book Now action; fall back to default if invalid/empty
   const rawLink =
     typeof homepageOfferLink === "string" ? homepageOfferLink.trim() : "";
   let offerUrl = DEFAULT_BOOKING_URL;
@@ -71,9 +69,8 @@ function Header({
       if (["http:", "https:"].includes(parsed.protocol)) {
         offerUrl = rawLink;
       }
-    } catch (e) {
-      // invalid URL -> fall back to default
-      offerUrl = DEFAULT_BOOKING_URL;
+    } catch {
+      // The default booking URL remains in use.
     }
   }
 
@@ -85,7 +82,7 @@ function Header({
     try {
       const stored = sessionStorage.getItem(storageKey);
       setDismissed(Boolean(stored));
-    } catch (e) {
+    } catch {
       setDismissed(false);
     }
   }, [storageKey, hasOffer]);
@@ -94,41 +91,24 @@ function Header({
     if (!storageKey) return;
     try {
       sessionStorage.setItem(storageKey, "1");
-    } catch (e) {
-      // ignore
+    } catch {
+      // Dismissal is still applied for this rendered session.
     }
     setDismissed(true);
   }
 
-  // Keep CSS variable --header-height in sync with rendered header height
   function updateHeaderHeight() {
     const el = headerRef.current;
     if (!el) return;
     const h = el.offsetHeight || 76;
-    try {
-      el.style.setProperty("--header-height", `${h}px`);
-    } catch (e) {
-      // ignore
-    }
-  }
-
-  function updateDocumentHeaderVar() {
-    const el = headerRef.current;
-    if (!el) return;
-    const h = el.offsetHeight || 76;
-    try {
-      document.documentElement.style.setProperty("--header-height", `${h}px`);
-    } catch (e) {
-      // ignore
-    }
+    el.style.setProperty("--header-height", `${h}px`);
+    document.documentElement.style.setProperty("--header-height", `${h}px`);
   }
 
   useEffect(() => {
     updateHeaderHeight();
-    updateDocumentHeaderVar();
     const onResize = () => {
       updateHeaderHeight();
-      updateDocumentHeaderVar();
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);

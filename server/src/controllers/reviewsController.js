@@ -1,5 +1,6 @@
 const https = require("https");
 const createHttpError = require("../utils/httpError");
+const asyncHandler = require("../utils/asyncHandler");
 
 const CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours
 
@@ -163,76 +164,57 @@ async function fetchFromGoogle(apiKey, placeId) {
   });
 }
 
-const getReviews = async (req, res) => {
+const getReviews = asyncHandler(async (_request, response) => {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY;
   const placeId = process.env.GOOGLE_PLACE_ID;
 
-  // Debug: log presence of required env vars (do not print actual values)
-  console.log(
-    "[reviewsController] env presence - hasApiKey:",
-    !!apiKey,
-    "hasPlaceId:",
-    !!placeId,
-  );
-
   if (!apiKey) {
-    console.error("[reviewsController] missing GOOGLE_PLACES_API_KEY");
-    return res
-      .status(500)
-      .json({ message: "Google Places API key is not configured" });
+    throw createHttpError(
+      500,
+      "Google Places API key is not configured.",
+      undefined,
+      "INTERNAL_SERVER_ERROR",
+    );
   }
 
   if (!placeId) {
-    console.error("[reviewsController] missing GOOGLE_PLACE_ID");
-    return res
-      .status(500)
-      .json({ message: "Google Place ID is not configured" });
+    throw createHttpError(
+      500,
+      "Google Place ID is not configured.",
+      undefined,
+      "INTERNAL_SERVER_ERROR",
+    );
   }
 
   const now = Date.now();
   if (cache.data && now - cache.ts < CACHE_TTL) {
-    return res.json({ source: "cache", ...cache.data });
+    return response.json({ source: "cache", ...cache.data });
   }
 
   let googleData;
   try {
     googleData = await fetchFromGoogle(apiKey, placeId);
   } catch (error) {
-    // Build safe diagnostic info
-    const diag = {
-      httpStatus: error && error.httpStatus ? error.httpStatus : null,
-      googleStatus: error && error.googleStatus ? error.googleStatus : null,
-      googleMessage: error && error.googleMessage ? error.googleMessage : null,
-      message: error && error.message ? error.message : null,
-    };
-
-    // Log safe diagnostics server-side
-    console.error(
-      "[reviewsController] Google fetch failed:",
-      JSON.stringify(diag),
-    );
-
-    // If cache exists, return stale cache instead of error
     if (cache.data) {
-      return res.json({ source: "stale-cache", ...cache.data });
+      console.warn(
+        "Google Reviews Warning: Serving cached review data after an upstream failure.",
+      );
+      return response.json({ source: "stale-cache", ...cache.data });
     }
 
-    // Return safe 502 response with diagnostic hints (no secrets)
-    return res.status(502).json({
-      message: "Unable to retrieve reviews at this time",
-      details: {
-        googleHttpStatus: diag.httpStatus,
-        googleStatus: diag.googleStatus,
-        googleMessage: diag.googleMessage,
-      },
-    });
+    throw createHttpError(
+      502,
+      "Unable to retrieve Google review data.",
+      undefined,
+      "UPSTREAM_SERVICE_ERROR",
+    );
   }
 
   const cleaned = cleanGoogleResponse(googleData);
 
   cache = { ts: Date.now(), data: cleaned };
 
-  return res.json({ source: "google", ...cleaned });
-};
+  return response.json({ source: "google", ...cleaned });
+});
 
 module.exports = { getReviews };
