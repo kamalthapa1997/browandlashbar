@@ -67,7 +67,7 @@ button {
    MAIN SHELL
 ========================================================= */
 
-.admin-shell {
+.admin-dashboard {
   background: var(--admin-page);
   color: var(--admin-ink);
   min-height: 100vh;
@@ -81,7 +81,7 @@ button {
    SIDEBAR
 ========================================================= */
 
-.admin-sidebar {
+.admin-dashboard__sidebar {
   background: #191518;
   bottom: 0;
   color: var(--admin-white);
@@ -102,7 +102,7 @@ button {
   overscroll-behavior: contain;
 }
 
-.admin-sidebar--open {
+.admin-dashboard__sidebar--open {
   box-shadow: 18px 0 45px rgba(0, 0, 0, 0.3);
   transform: translateX(0);
 }
@@ -111,7 +111,7 @@ button {
    MOBILE SCRIM
 ========================================================= */
 
-.admin-scrim {
+.admin-dashboard__scrim {
   background: rgba(20, 15, 18, 0.55);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
@@ -127,7 +127,7 @@ button {
    MOBILE MENU BUTTON
 ========================================================= */
 
-.admin-menu-button {
+.admin-dashboard__menu-button {
   align-items: center;
   background: #191518;
   border: 0;
@@ -148,7 +148,7 @@ button {
   z-index: 50;
 }
 
-.admin-menu-button:hover {
+.admin-dashboard__menu-button:hover {
   background: var(--admin-pink);
   transform: translateY(-1px);
 }
@@ -157,7 +157,7 @@ button {
    MOBILE HOME BUTTON
 ========================================================= */
 
-.admin-mobile-home {
+.admin-dashboard__mobile-home {
   align-items: center;
   background: #fff;
   border: 1px solid var(--admin-border);
@@ -178,12 +178,12 @@ button {
   z-index: 50;
 }
 
-.admin-mobile-home:hover {
+.admin-dashboard__mobile-home:hover {
   box-shadow: var(--admin-shadow-md);
   transform: translateY(-1px);
 }
 
-.admin-mobile-home img {
+.admin-dashboard__mobile-home img {
   height: 100%;
   max-width: 100%;
   object-fit: contain;
@@ -193,7 +193,7 @@ button {
    SIDEBAR BRAND
 ========================================================= */
 
-.admin-brand {
+.admin-dashboard__brand {
   align-items: center;
   display: flex;
   gap: 0.75rem;
@@ -201,7 +201,7 @@ button {
   justify-content: center;
 }
 
-.admin-brand > span {
+.admin-dashboard__brand > span {
   align-items: center;
   background: var(--admin-pink);
   border-radius: 13px;
@@ -215,12 +215,12 @@ button {
   flex-shrink: 0;
 }
 
-.admin-brand strong {
+.admin-dashboard__brand strong {
   display: block;
   font-size: 0.95rem;
 }
 
-.admin-brand small {
+.admin-dashboard__brand small {
   color: #a99da3;
   display: block;
   font-size: 0.72rem;
@@ -231,13 +231,13 @@ button {
    SIDEBAR NAV
 ========================================================= */
 
-.admin-sidebar nav {
+.admin-dashboard__sidebar nav {
   display: grid;
   gap: 0.4rem;
 }
 
-.admin-sidebar nav button,
-.admin-logout {
+.admin-dashboard__sidebar nav button,
+.admin-dashboard__logout {
   align-items: center;
   background: transparent;
   border: 0;
@@ -258,13 +258,13 @@ button {
   width: 100%;
 }
 
-.admin-sidebar nav button:hover,
-.admin-sidebar nav button.is-active {
+.admin-dashboard__sidebar nav button:hover,
+.admin-dashboard__sidebar nav button.is-active {
   background: rgba(249, 98, 159, 0.13);
   color: #fff;
 }
 
-.admin-sidebar nav button.is-active::before {
+.admin-dashboard__sidebar nav button.is-active::before {
   background: var(--admin-pink);
   border-radius: 0 4px 4px 0;
   content: "";
@@ -274,8 +274,8 @@ button {
   width: 3px;
 }
 
-.admin-sidebar nav button span,
-.admin-logout span {
+.admin-dashboard__sidebar nav button span,
+.admin-dashboard__logout span {
   align-items: center;
   display: flex;
   font-size: 1.1rem;
@@ -288,7 +288,7 @@ button {
    LOGOUT
 ========================================================= */
 
-.admin-logout {
+.admin-dashboard__logout {
   border-top: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 0;
   margin-top: auto;
@@ -299,7 +299,7 @@ button {
    MAIN
 ========================================================= */
 
-.admin-main {
+.admin-dashboard__main {
   margin: 0;
   width: 100%;
   max-width: 1500px;
@@ -311,7 +311,7 @@ button {
    TOP BAR
 ========================================================= */
 
-.admin-topbar {
+.admin-dashboard__topbar {
   align-items: center;
   display: flex;
   justify-content: flex-end;
@@ -321,23 +321,23 @@ button {
   width: 100%;
 }
 
-.admin-topbar div {
+.admin-dashboard__topbar div {
   display: none;
 }
 
-.admin-topbar p {
+.admin-dashboard__topbar p {
   color: var(--admin-muted);
   font-size: 0.8rem;
   margin: 0;
 }
 
-.admin-topbar h1 {
+.admin-dashboard__topbar h1 {
   font-size: 1.55rem;
   letter-spacing: -0.025em;
   margin: 0.15rem 0 0;
 }
 
-.admin-profile {
+.admin-dashboard__profile {
   align-items: center;
   background: var(--admin-pink);
   border: 0;
@@ -355,7 +355,7 @@ button {
   width: 42px;
 }
 
-.admin-profile:hover {
+.admin-dashboard__profile:hover {
   box-shadow: 0 7px 20px rgba(249, 98, 159, 0.28);
   transform: translateY(-2px);
 }
@@ -364,7 +364,7 @@ button {
    CONTENT ANIMATION
 ========================================================= */
 
-.admin-content {
+.admin-dashboard__content {
   animation: admin-fade 220ms ease;
   min-width: 0;
   width: 100%;
@@ -393,12 +393,12 @@ button {
 }
 
 .admin-error,
-.form-error {
+.admin-form__error {
   background: #fff0f3;
   color: var(--admin-danger);
 }
 
-.form-error--inline {
+.admin-form__error--inline {
   font-size: 0.8rem;
   margin: -0.45rem 0 1rem;
   padding: 0.55rem 0.7rem;
@@ -451,7 +451,7 @@ button {
    HERO
 ========================================================= */
 
-.admin-hero {
+.admin-overview__hero {
   background: linear-gradient(135deg, #fff 0%, #fff8fb 65%, #fff0f6 100%);
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-lg);
@@ -460,19 +460,19 @@ button {
   padding: 1.25rem;
 }
 
-.admin-hero h2 {
+.admin-overview__hero h2 {
   font-size: 1.55rem;
   letter-spacing: -0.03em;
   margin: 0.2rem 0 0.55rem;
 }
 
-.admin-hero p {
+.admin-overview__hero p {
   color: var(--admin-muted);
   line-height: 1.6;
   margin: 0;
 }
 
-.admin-hero .button {
+.admin-overview__hero .button {
   margin-top: 1.25rem;
 }
 
@@ -480,7 +480,7 @@ button {
    EYEBROW
 ========================================================= */
 
-.admin-eyebrow {
+.admin-overview__eyebrow {
   color: var(--admin-pink) !important;
   font-size: 0.72rem !important;
   font-weight: 800;
@@ -489,65 +489,7 @@ button {
   text-transform: uppercase;
 }
 
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-.button {
-  align-items: center;
-  border: 0;
-  border-radius: 11px;
-  cursor: pointer;
-  display: inline-flex;
-  font: inherit;
-  font-weight: 700;
-  justify-content: center;
-  min-height: 46px;
-  padding: 0.7rem 1rem;
-  transition:
-    transform var(--admin-transition),
-    background var(--admin-transition),
-    box-shadow var(--admin-transition);
-  max-width: 100%;
-}
-
-.button:hover {
-  transform: translateY(-2px);
-}
-
-.button:disabled {
-  cursor: wait;
-  opacity: 0.6;
-  transform: none;
-}
-
-.button--primary {
-  background: var(--admin-pink);
-  color: #fff;
-}
-
-.button--primary:hover {
-  background: var(--admin-pink-dark);
-  box-shadow: 0 8px 22px rgba(249, 98, 159, 0.25);
-}
-
-.button--secondary {
-  background: #fff;
-  border: 1px solid var(--admin-border);
-  color: var(--admin-ink);
-}
-
-.button--danger {
-  background: var(--admin-danger);
-  color: #fff;
-}
-
-.button--danger:hover {
-  background: #963044;
-  box-shadow: 0 8px 20px rgba(184, 59, 80, 0.22);
-}
-
-.button--danger-text {
+.admin-button--danger-text {
   background: transparent !important;
   color: var(--admin-danger) !important;
   padding: 0.45rem !important;
@@ -557,14 +499,14 @@ button {
    STATS
 ========================================================= */
 
-.stat-grid {
+.admin-overview__stats {
   display: grid;
   gap: 0.75rem;
   margin: 1rem 0;
   min-width: 0;
 }
 
-.stat-card {
+.admin-overview__stat {
   align-items: center;
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
@@ -583,13 +525,13 @@ button {
   width: 100%;
 }
 
-.stat-card:hover {
+.admin-overview__stat:hover {
   border-color: rgba(249, 98, 159, 0.3);
   box-shadow: var(--admin-shadow-md);
   transform: translateY(-3px);
 }
 
-.stat-card__icon {
+.admin-overview__stat-icon {
   align-items: center;
   background: var(--admin-pink-soft);
   border-radius: 12px;
@@ -602,22 +544,22 @@ button {
   width: 44px;
 }
 
-.stat-card small,
-.stat-card strong {
+.admin-overview__stat small,
+.admin-overview__stat strong {
   display: block;
 }
 
-.stat-card small {
+.admin-overview__stat small {
   color: var(--admin-muted);
   font-size: 0.78rem;
 }
 
-.stat-card strong {
+.admin-overview__stat strong {
   font-size: 1.35rem;
   margin-top: 0.15rem;
 }
 
-.stat-card > b {
+.admin-overview__stat > b {
   color: var(--admin-muted);
   font-size: 1.4rem;
   margin-left: auto;
@@ -627,7 +569,7 @@ button {
    BUSINESS CARD
 ========================================================= */
 
-.admin-business-card {
+.admin-overview__business-card {
   align-items: center;
   background: var(--admin-surface);
   border: 1px solid var(--admin-border);
@@ -640,19 +582,19 @@ button {
   padding: 1.1rem;
 }
 
-.admin-business-card h2 {
+.admin-overview__business-card h2 {
   font-size: 1.05rem;
   margin: 0.2rem 0;
 }
 
-.admin-business-card p {
+.admin-overview__business-card p {
   color: var(--admin-muted);
   margin: 0;
   overflow-wrap: anywhere;
 }
 
-.admin-business-card img,
-.logo-placeholder {
+.admin-overview__business-card img,
+.admin-overview__logo-placeholder {
   border-radius: 14px;
   height: 70px;
   max-width: 120px;
@@ -661,7 +603,7 @@ button {
   flex-shrink: 0;
 }
 
-.logo-placeholder {
+.admin-overview__logo-placeholder {
   align-items: center;
   background: var(--admin-pink-soft);
   color: var(--admin-pink);
@@ -674,7 +616,7 @@ button {
    SECTION HEADING
 ========================================================= */
 
-.section-heading {
+.admin-section-heading {
   align-items: center;
   display: flex;
   gap: 1rem;
@@ -683,19 +625,19 @@ button {
   min-width: 0;
 }
 
-.section-heading h2 {
+.admin-section-heading h2 {
   font-size: 1.45rem;
   letter-spacing: -0.025em;
   margin: 0.1rem 0 0.35rem;
 }
 
-.section-heading p {
+.admin-section-heading p {
   color: var(--admin-muted);
   line-height: 1.5;
   margin: 0;
 }
 
-.section-heading .button {
+.admin-section-heading .button {
   flex-shrink: 0;
 }
 
@@ -703,13 +645,13 @@ button {
    SERVICE GROUPS
 ========================================================= */
 
-.manager-groups {
+.admin-services__groups {
   display: grid;
   gap: 0.75rem;
   min-width: 0;
 }
 
-.service-group {
+.admin-services__group {
   background: #fff;
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-md);
@@ -718,7 +660,7 @@ button {
   overflow: hidden;
 }
 
-.group-header {
+.admin-services__group-header {
   align-items: center;
   background: #fff;
   border: 0;
@@ -732,20 +674,20 @@ button {
   width: 100%;
 }
 
-.group-header:hover {
+.admin-services__group-header:hover {
   background: #fff9fb;
 }
 
-.group-header b,
-.group-header small {
+.admin-services__group-header b,
+.admin-services__group-header small {
   display: block;
 }
 
-.group-header b {
+.admin-services__group-header b {
   font-size: 0.95rem;
 }
 
-.group-header small {
+.admin-services__group-header small {
   color: var(--admin-muted);
   font-size: 0.76rem;
   margin-top: 0.2rem;
@@ -755,12 +697,12 @@ button {
    SERVICE LIST
 ========================================================= */
 
-.service-list {
+.admin-services__list {
   border-top: 1px solid var(--admin-border);
   padding: 0.4rem 0.9rem;
 }
 
-.service-card {
+.admin-services__card {
   align-items: center;
   border-bottom: 1px solid var(--admin-border);
   display: flex;
@@ -770,40 +712,40 @@ button {
   padding: 0.85rem 0.15rem;
 }
 
-.service-card:last-child {
+.admin-services__card:last-child {
   border-bottom: 0;
 }
 
-.service-card h3,
-.service-card p {
+.admin-services__card h3,
+.admin-services__card p {
   margin: 0;
 }
 
-.service-card h3 {
+.admin-services__card h3 {
   font-size: 0.94rem;
 }
 
-.service-card p {
+.admin-services__card p {
   color: var(--admin-pink);
   font-size: 0.88rem;
   font-weight: 800;
   margin-top: 0.25rem;
 }
 
-.service-cardtitle {
+.admin-services__card-title {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   min-width: 0;
 }
 
-.card-actions {
+.admin-card-actions {
   display: flex;
   gap: 0.35rem;
   flex-shrink: 0;
 }
 
-.card-actions button {
+.admin-card-actions button {
   background: #f8f3f5;
   border: 0;
   border-radius: 9px;
@@ -818,7 +760,7 @@ button {
     transform var(--admin-transition);
 }
 
-.card-actions button:hover {
+.admin-card-actions button:hover {
   background: var(--admin-pink-soft);
   transform: translateY(-1px);
 }
@@ -827,13 +769,13 @@ button {
    GALLERY
 ========================================================= */
 
-.gallery-manager-grid {
+.admin-gallery__grid {
   display: grid;
   gap: 0.75rem;
   min-width: 0;
 }
 
-.gallery-admin-card {
+.admin-gallery__card {
   background: #fff;
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-md);
@@ -845,12 +787,12 @@ button {
     box-shadow 180ms ease;
 }
 
-.gallery-admin-card:hover {
+.admin-gallery__card:hover {
   box-shadow: var(--admin-shadow-md);
   transform: translateY(-3px);
 }
 
-.gallery-admin-card > img {
+.admin-gallery__card > img {
   background: #f8f3f5;
   display: block;
   height: 240px;
@@ -861,15 +803,15 @@ button {
   width: 100%;
 }
 
-.gallery-admin-card:hover > img {
+.admin-gallery__card:hover > img {
   transform: scale(1.015);
 }
 
-.gallery-admin-card > div {
+.admin-gallery__card > div {
   padding: 0.9rem;
 }
 
-.gallery-admin-card p {
+.admin-gallery__card p {
   font-size: 0.88rem;
   margin: 0 0 0.75rem;
   overflow: hidden;
@@ -881,7 +823,7 @@ button {
    EMPTY STATES
 ========================================================= */
 
-.empty-state {
+.admin-empty-state {
   background: #fff;
   border: 1px dashed var(--admin-border);
   border-radius: var(--admin-radius-md);
@@ -890,7 +832,7 @@ button {
   text-align: center;
 }
 
-.empty-copy {
+.admin-empty-state__copy {
   color: var(--admin-muted);
   font-size: 0.9rem;
 }
@@ -899,15 +841,15 @@ button {
    FAQ MANAGEMENT
 ========================================================= */
 
-.faq-manager-controls {
+.admin-faq__controls {
   display: grid;
   gap: 0.65rem;
   grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
   margin-bottom: 0.85rem;
 }
 
-.faq-manager-controls input,
-.faq-manager-controls select {
+.admin-faq__controls input,
+.admin-faq__controls select {
   background: #fff;
   border: 1px solid var(--admin-border);
   border-radius: 11px;
@@ -918,12 +860,12 @@ button {
   width: 100%;
 }
 
-.faq-manager-list {
+.admin-faq__list {
   display: grid;
   gap: 0.7rem;
 }
 
-.faq-admin-card {
+.admin-faq__card {
   align-items: flex-start;
   background: #fff;
   border: 1px solid var(--admin-border);
@@ -936,16 +878,16 @@ button {
   padding: 1rem;
 }
 
-.faq-admin-card__copy {
+.admin-faq__copy {
   min-width: 0;
 }
-.faq-admin-card h2 {
+.admin-faq__card h2 {
   font-size: 1rem;
   line-height: 1.35;
   margin: 0 0 0.45rem;
   overflow-wrap: anywhere;
 }
-.faq-admin-card__copy > p {
+.admin-faq__copy > p {
   color: var(--admin-muted);
   font-size: 0.88rem;
   line-height: 1.55;
@@ -953,12 +895,12 @@ button {
   overflow-wrap: anywhere;
   white-space: pre-line;
 }
-.faq-admin-card__meta {
+.admin-faq__meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
 }
-.faq-admin-card__meta span {
+.admin-faq__meta span {
   background: #f8f3f5;
   border-radius: 999px;
   color: var(--admin-muted);
@@ -966,25 +908,25 @@ button {
   font-weight: 700;
   padding: 0.3rem 0.55rem;
 }
-.faq-admin-card__meta .is-active {
+.admin-faq__meta .is-active {
   background: #edf8f1;
   color: var(--admin-success);
 }
-.faq-admin-card__meta .is-inactive {
+.admin-faq__meta .is-inactive {
   background: #fff0f3;
   color: var(--admin-danger);
 }
-.faq-empty-state h2 {
+.admin-faq__empty-state h2 {
   color: var(--admin-ink);
   font-size: 1.1rem;
   margin: 0 0 0.45rem;
 }
-.faq-empty-state p {
+.admin-faq__empty-state p {
   line-height: 1.55;
   margin: 0 auto 1rem;
   max-width: 460px;
 }
-.faq-form textarea {
+.admin-faq__form textarea {
   background: #fff;
   border: 1px solid #e5d9de;
   border-radius: 12px;
@@ -997,23 +939,23 @@ button {
   resize: vertical;
   width: 100%;
 }
-.faq-form textarea:focus {
+.admin-faq__form textarea:focus {
   border-color: var(--admin-pink);
   box-shadow: 0 0 0 3px rgba(249, 98, 159, 0.12);
 }
-.faq-form__details {
+.admin-faq__form-details {
   display: grid;
   gap: 0.75rem;
   grid-template-columns: 1fr 1fr;
 }
-.faq-form__active {
+.admin-faq__form-active {
   align-items: center;
   display: flex !important;
   font-weight: 600 !important;
   grid-template-columns: auto 1fr !important;
   margin-top: 0.25rem;
 }
-.faq-form__active input {
+.admin-faq__form-active input {
   accent-color: var(--admin-pink);
   min-height: auto !important;
   padding: 0 !important;
@@ -1034,13 +976,13 @@ button {
    SETTINGS
 ========================================================= */
 
-.settings-grid {
+.admin-settings__grid {
   display: grid;
   gap: 0.75rem;
   min-width: 0;
 }
 
-.settings-card {
+.admin-settings__card {
   background: #fff;
   border: 1px solid var(--admin-border);
   border-radius: var(--admin-radius-md);
@@ -1049,12 +991,12 @@ button {
   padding: 1.1rem;
 }
 
-.settings-card h2 {
+.admin-settings__card h2 {
   font-size: 1.05rem;
   margin: 0 0 1.25rem;
 }
 
-.settings-actions {
+.admin-settings__actions {
   align-items: stretch;
   display: flex;
   flex-direction: column;
@@ -1067,7 +1009,7 @@ button {
 ========================================================= */
 
 .admin-form label,
-.settings-card label {
+.admin-settings__card label {
   color: var(--admin-ink);
   display: grid;
   font-size: 0.85rem;
@@ -1079,8 +1021,8 @@ button {
 .admin-form input,
 .admin-form select,
 .admin-form textarea,
-.settings-card input,
-.adminDashboard__offer-textarea {
+.admin-settings__card input,
+.admin-settings__offer-textarea {
   background: #fff;
   border: 1px solid #e5d9de;
   border-radius: 12px;
@@ -1096,7 +1038,7 @@ button {
   width: 100%;
 }
 
-.adminDashboard__offer-textarea {
+.admin-settings__offer-textarea {
   resize: vertical;
   min-height: 120px;
 }
@@ -1104,62 +1046,17 @@ button {
 .admin-form input:focus,
 .admin-form select:focus,
 .admin-form textarea:focus,
-.settings-card input:focus,
-.adminDashboard__offer-textarea:focus {
+.admin-settings__card input:focus,
+.admin-settings__offer-textarea:focus {
   border-color: var(--admin-pink);
   box-shadow: 0 0 0 3px rgba(249, 98, 159, 0.12);
-}
-
-/* =========================================================
-   MODALS
-========================================================= */
-
-.modal {
-  align-items: center;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  padding: 1rem;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  height: 100dvh;
-  z-index: 10000;
-}
-
-.modal__backdrop {
-  background: rgba(20, 15, 18, 0.58);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 0;
-  inset: 0;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.modal__content {
-  background: #fff7fa;
-  border: 1px solid rgba(249, 98, 159, 0.14);
-  border-radius: 22px;
-  box-shadow: var(--admin-shadow-lg);
-  max-height: calc(100dvh - 2rem);
-  max-width: min(680px, calc(100vw - 2rem));
-  min-width: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 1.25rem;
-  position: relative;
-  width: 100%;
-  z-index: 1;
-  overscroll-behavior: contain;
 }
 
 /* =========================================================
    MODAL HEADER
 ========================================================= */
 
-.modal-heading {
+.admin-modal__heading {
   align-items: center;
   display: flex;
   gap: 0.75rem;
@@ -1167,13 +1064,13 @@ button {
   margin-bottom: 1.5rem;
 }
 
-.modal-heading h2 {
+.admin-modal__heading h2 {
   font-size: 1.3rem;
   letter-spacing: -0.02em;
   margin: 0;
 }
 
-.modal-heading button {
+.admin-modal__heading button {
   align-items: center;
   background: #f5e9ee;
   border: 0;
@@ -1191,38 +1088,7 @@ button {
   width: 36px;
 }
 
-.modal-heading button:hover {
-  background: #f1dce5;
-  transform: rotate(90deg);
-}
-
-/* =========================================================
-   MODAL CLOSE BUTTON
-========================================================= */
-
-.modal__close {
-  align-items: center;
-  background: #f5e9ee;
-  border: 0;
-  border-radius: 50%;
-  color: var(--admin-ink);
-  cursor: pointer;
-  display: flex;
-  font-size: 1.3rem;
-  height: 38px;
-  justify-content: center;
-  line-height: 1;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-  transition:
-    background var(--admin-transition),
-    transform var(--admin-transition);
-  width: 38px;
-  z-index: 2;
-}
-
-.modal__close:hover {
+.admin-modal__heading button:hover {
   background: #f1dce5;
   transform: rotate(90deg);
 }
@@ -1231,7 +1097,7 @@ button {
    FORM ERRORS
 ========================================================= */
 
-.form-error {
+.admin-form__error {
   border-radius: 10px;
   font-size: 0.88rem;
   margin-bottom: 1rem;
@@ -1242,14 +1108,14 @@ button {
    FORM ACTIONS
 ========================================================= */
 
-.form-actions {
+.admin-form__actions {
   display: flex;
   flex-direction: column-reverse;
   gap: 0.65rem;
   margin-top: 1.5rem;
 }
 
-.form-actions .button {
+.admin-form__actions .button {
   width: 100%;
 }
 
@@ -1258,118 +1124,101 @@ button {
 ========================================================= */
 
 @media (max-width: 480px) {
-  .admin-main {
+  .admin-dashboard__main {
     padding: 5.25rem 0.75rem 1.25rem;
   }
 
-  .admin-menu-button {
+  .admin-dashboard__menu-button {
     height: 42px;
     left: 0.75rem;
     top: 0.75rem;
     width: 42px;
   }
 
-  .admin-mobile-home {
+  .admin-dashboard__mobile-home {
     height: 42px;
     right: 0.75rem;
     top: 0.75rem;
     width: 74px;
   }
 
-  .admin-topbar {
+  .admin-dashboard__topbar {
     display: none;
   }
 
-  .admin-hero {
+  .admin-overview__hero {
     border-radius: 17px;
     padding: 1rem;
   }
 
-  .admin-hero h2 {
+  .admin-overview__hero h2 {
     font-size: 1.35rem;
   }
 
-  .section-heading {
+  .admin-section-heading {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.75rem;
   }
 
-  .section-heading .button {
+  .admin-section-heading .button {
     width: 100%;
   }
 
-  .stat-grid {
+  .admin-overview__stats {
     gap: 0.65rem;
   }
 
-  .stat-card {
+  .admin-overview__stat {
     padding: 0.85rem;
   }
 
-  .stat-card__icon {
+  .admin-overview__stat-icon {
     height: 40px;
     width: 40px;
   }
 
-  .service-card {
+  .admin-services__card {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.65rem;
   }
 
-  .card-actions {
+  .admin-card-actions {
     width: 100%;
   }
 
-  .card-actions button {
+  .admin-card-actions button {
     flex: 1;
   }
 
-  .faq-manager-controls,
-  .faq-form__details {
+  .admin-faq__controls,
+  .admin-faq__form-details {
     grid-template-columns: 1fr;
   }
 
-  .faq-admin-card {
+  .admin-faq__card {
     flex-direction: column;
   }
 
-  .faq-admin-card .card-actions {
+  .admin-faq__card .admin-card-actions {
     width: 100%;
   }
 
-  .admin-business-card {
+  .admin-overview__business-card {
     align-items: flex-start;
   }
 
-  .admin-business-card img,
-  .logo-placeholder {
+  .admin-overview__business-card img,
+  .admin-overview__logo-placeholder {
     height: 58px;
     width: 68px;
   }
 
-  .gallery-admin-card > img {
+  .admin-gallery__card > img {
     height: 210px;
   }
 
-  .modal {
-    align-items: flex-end;
-    padding: 0;
-  }
-
-  .modal__content {
-    border-radius: 22px 22px 0 0;
-    max-height: 92dvh;
-    max-width: 100%;
-    padding: 1.1rem;
-    width: 100%;
-  }
-
-  .modal__close {
-    right: 0.85rem;
-    top: 0.85rem;
-  }
 }
 
 /* =========================================================
@@ -1377,26 +1226,17 @@ button {
 ========================================================= */
 
 @media (min-width: 481px) and (max-width: 599px) {
-  .admin-main {
+  .admin-dashboard__main {
     padding: 5.5rem 1rem 1.5rem;
   }
 
-  .stat-grid {
+  .admin-overview__stats {
     grid-template-columns: 1fr;
   }
 
-  .gallery-manager-grid,
-  .settings-grid {
+  .admin-gallery__grid,
+  .admin-settings__grid {
     grid-template-columns: 1fr;
-  }
-
-  .modal {
-    padding: 0.75rem;
-  }
-
-  .modal__content {
-    max-width: calc(100vw - 1.5rem);
-    padding: 1.25rem;
   }
 
 }
@@ -1407,57 +1247,47 @@ button {
 ========================================================= */
 
 @media (min-width: 600px) and (max-width: 959px) {
-  .admin-main {
+  .admin-dashboard__main {
     padding: 5.5rem 1.5rem 2rem;
   }
 
-  .admin-sidebar {
+  .admin-dashboard__sidebar {
     width: min(62vw, 300px);
   }
 
-  .admin-hero {
+  .admin-overview__hero {
     padding: 1.5rem;
   }
 
-  .stat-grid {
+  .admin-overview__stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.9rem;
   }
 
-  .gallery-manager-grid {
+  .admin-gallery__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
   }
 
-  .settings-grid {
+  .admin-settings__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
   }
 
-  .gallery-admin-card > img {
+  .admin-gallery__card > img {
     height: 230px;
   }
 
-  .settings-card {
+  .admin-settings__card {
     padding: 1.3rem;
   }
 
-  .modal {
-    padding: 1.25rem;
-  }
-
-  .modal__content {
-    max-width: min(680px, calc(100vw - 2.5rem));
-    max-height: calc(100dvh - 2.5rem);
-    padding: 1.5rem;
-  }
-
-  .form-actions {
+  .admin-form__actions {
     flex-direction: row;
     justify-content: flex-end;
   }
 
-  .form-actions .button {
+  .admin-form__actions .button {
     width: auto;
   }
 }
@@ -1468,72 +1298,69 @@ button {
 ========================================================= */
 
 @media (min-width: 960px) {
-  .admin-menu-button,
-  .admin-scrim,
-  .admin-mobile-home {
+  .admin-dashboard__menu-button,
+  .admin-dashboard__scrim,
+  .admin-dashboard__mobile-home {
     display: none;
   }
 
-  .admin-sidebar {
+  .admin-dashboard__sidebar {
     transform: none;
     width: var(--admin-sidebar-width);
   }
 
-  .admin-profile {
+  .admin-dashboard__profile {
     display: inline-flex;
   }
 
-  .admin-main {
+  .admin-dashboard__main {
     margin-left: var(--admin-sidebar-width);
     max-width: calc(1500px + var(--admin-sidebar-width));
     padding: 2rem 3rem;
     width: calc(100% - var(--admin-sidebar-width));
   }
 
-  .admin-topbar {
+  .admin-dashboard__topbar {
     justify-content: space-between;
   }
 
-  .admin-topbar div {
+  .admin-dashboard__topbar div {
     display: block;
   }
 
-  .admin-hero {
+  .admin-overview__hero {
     align-items: center;
     display: flex;
     justify-content: space-between;
     padding: 1.75rem;
   }
 
-  .admin-hero .button {
+  .admin-overview__hero .button {
     margin: 0 0 0 1.5rem;
     white-space: nowrap;
   }
 
-  .form-actions {
+  .admin-form__actions {
     flex-direction: row;
     justify-content: flex-end;
   }
 
-  .form-actions .button {
+  .admin-form__actions .button {
     width: auto;
   }
 
-  .stat-grid {
+  .admin-overview__stats {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .gallery-manager-grid {
+  .admin-gallery__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .settings-grid {
+  .admin-settings__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .modal__content {
-    padding: 30px;
-  }
 }
 
 /* =========================================================
@@ -1541,12 +1368,12 @@ button {
 ========================================================= */
 
 @media (min-width: 1250px) {
-  .admin-main {
+  .admin-dashboard__main {
     padding-left: 3.5rem;
     padding-right: 3.5rem;
   }
 
-  .gallery-manager-grid {
+  .admin-gallery__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
@@ -1556,11 +1383,10 @@ button {
 ========================================================= */
 
 @media (hover: none) {
-  .stat-card:hover,
-  .gallery-admin-card:hover,
-  .button:hover,
-  .admin-menu-button:hover,
-  .admin-mobile-home:hover {
+  .admin-overview__stat:hover,
+  .admin-gallery__card:hover,
+  .admin-dashboard__menu-button:hover,
+  .admin-dashboard__mobile-home:hover {
     transform: none;
     box-shadow: initial;
   }

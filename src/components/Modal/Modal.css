@@ -70,3 +70,121 @@
     padding: 24px;
   }
 }
+
+/* Shared modal presentation retained from the AdminDashboard cascade. */
+.modal {
+  align-items: center;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 1rem;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  z-index: 10000;
+}
+
+.modal__backdrop {
+  background: rgba(20, 15, 18, 0.58);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 0;
+  inset: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.modal__content {
+  background: #fff7fa;
+  border: 1px solid rgba(249, 98, 159, 0.14);
+  border-radius: 22px;
+  box-shadow: var(--admin-shadow-lg);
+  max-height: calc(100dvh - 2rem);
+  max-width: min(680px, calc(100vw - 2rem));
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.25rem;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  overscroll-behavior: contain;
+}
+
+.modal__close {
+  align-items: center;
+  background: #f5e9ee;
+  border: 0;
+  border-radius: 50%;
+  color: var(--admin-ink);
+  cursor: pointer;
+  display: flex;
+  font-size: 1.3rem;
+  height: 38px;
+  justify-content: center;
+  line-height: 1;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  transition:
+    background var(--admin-transition),
+    transform var(--admin-transition);
+  width: 38px;
+  z-index: 2;
+}
+
+.modal__close:hover {
+  background: #f1dce5;
+  transform: rotate(90deg);
+}
+
+@media (max-width: 480px) {
+  .modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal__content {
+    border-radius: 22px 22px 0 0;
+    max-height: 92dvh;
+    max-width: 100%;
+    padding: 1.1rem;
+    width: 100%;
+  }
+
+  .modal__close {
+    right: 0.85rem;
+    top: 0.85rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 599px) {
+  .modal {
+    padding: 0.75rem;
+  }
+
+  .modal__content {
+    max-width: calc(100vw - 1.5rem);
+    padding: 1.25rem;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 959px) {
+  .modal {
+    padding: 1.25rem;
+  }
+
+  .modal__content {
+    max-width: min(680px, calc(100vw - 2.5rem));
+    max-height: calc(100dvh - 2.5rem);
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 960px) {
+  .modal__content {
+    padding: 30px;
+  }
+}

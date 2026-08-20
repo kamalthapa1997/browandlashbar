@@ -6,7 +6,7 @@ import {
   useNavigate,
   Navigate,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import "./App.css";
 import Header from "./Header/Header.js";
@@ -20,32 +20,12 @@ import Footer from "./Footer/Footer";
 import Faq from "./components/FAQ/Faq";
 import AdminDashboard from "./AdminDashboard/AdminDashboard";
 import PageTransition from "./components/PageTransition/PageTransition";
-import { getSettings } from "./api/settingsService";
-import { getCurrentAdmin } from "./api/authService";
+import { SettingsProvider, useSettings } from "./contexts/SettingsContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 function RequireAuth({ children }) {
   const location = useLocation();
-  const [isChecking, setIsChecking] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    getCurrentAdmin()
-      .then((session) => {
-        if (isMounted) setIsAuthenticated(Boolean(session?.authenticated));
-      })
-      .catch(() => {
-        if (isMounted) setIsAuthenticated(false);
-      })
-      .finally(() => {
-        if (isMounted) setIsChecking(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [location.pathname]);
+  const { isChecking, isAuthenticated } = useAuth();
 
   if (isChecking) {
     return null;
@@ -58,22 +38,15 @@ function RequireAuth({ children }) {
   return children;
 }
 
-function HomePage({ settings }) {
+function HomePage() {
   return (
     <>
-      <Home businessName={settings?.businessName} />
+      <Home />
       <Reviews />
       <Services sectionId="services" sectionClass="section services-section" />
       <ContactUs
         sectionId="contact"
         sectionClass="section contact-section"
-        phoneNumber={settings?.contactPhone}
-        businessEmail={settings?.businessEmail}
-        streetAddress={settings?.streetAddress}
-        suiteNumber={settings?.suiteNumber}
-        city={settings?.city}
-        state={settings?.state}
-        zipCode={settings?.zipCode}
       />
       <Faq />
       <Footer />
@@ -97,7 +70,7 @@ function NotFound() {
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [settings, setSettings] = useState(null);
+  const { setSettings } = useSettings();
 
   useEffect(() => {
     function handleAuthenticationFailure() {
@@ -113,27 +86,6 @@ function AppContent() {
         handleAuthenticationFailure,
       );
   }, [location, navigate]);
-
-  useEffect(() => {
-    if (location.pathname.startsWith("/admin")) return undefined;
-
-    let isCurrent = true;
-
-    async function loadSettings() {
-      try {
-        const data = await getSettings();
-        if (isCurrent) setSettings(data);
-      } catch {
-        if (isCurrent) setSettings(null);
-      }
-    }
-
-    loadSettings();
-
-    return () => {
-      isCurrent = false;
-    };
-  }, [location.pathname]);
 
   const showHeader = !location.pathname.startsWith("/admin");
   const pageTransitionKey = location.pathname.startsWith("/admin")
@@ -167,24 +119,30 @@ function AppContent() {
         <Header
           sectionId="home"
           sectionClass="headermain header-section"
-          logoUrl={settings?.logoUrl}
-          homepageOffer={settings?.homepageOffer}
-          homepageOfferLink={settings?.homepageOfferLink}
         />
       )}
 
       <AnimatePresence mode="sync" initial={false}>
         <PageTransition key={pageTransitionKey}>
           <Routes location={location}>
-            <Route path="/" element={<HomePage settings={settings} />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<HomePage />} />
+            <Route
+              path="/login"
+              element={
+                <AuthProvider checkSession={false}>
+                  <Login />
+                </AuthProvider>
+              }
+            />
             <Route path="/gallery" element={<Gallery />} />
             <Route
               path="/admin/*"
               element={
-                <RequireAuth>
-                  <AdminDashboard onSettingsUpdated={setSettings} />
-                </RequireAuth>
+                <AuthProvider>
+                  <RequireAuth>
+                    <AdminDashboard onSettingsUpdated={setSettings} />
+                  </RequireAuth>
+                </AuthProvider>
               }
             />
             <Route path="*" element={<NotFound />} />
@@ -196,7 +154,11 @@ function AppContent() {
 }
 
 function App() {
-  return <AppContent />;
+  return (
+    <SettingsProvider>
+      <AppContent />
+    </SettingsProvider>
+  );
 }
 
 export default App;

@@ -3,7 +3,7 @@
 
    ========================================================= */
 
-.contact-container {
+.contact-section {
   --contact-ivory: #f8f1e8;
   --contact-cream: #f1e4d7;
   --contact-rose: #b9797d;
@@ -54,7 +54,7 @@
    PAPER GRAIN
    ========================================================= */
 
-.contact-container::before {
+.contact-section::before {
   content: "";
 
   position: absolute;
@@ -78,7 +78,7 @@
    LARGE DECORATIVE CIRCLE
    ========================================================= */
 
-.contact-container::after {
+.contact-section::after {
   content: "";
 
   position: absolute;
@@ -107,7 +107,7 @@
    DECORATIVE CIRCLES
    ========================================================= */
 
-.contact-decoration {
+.contact-section__decoration {
   position: absolute;
 
   pointer-events: none;
@@ -117,7 +117,7 @@
 
 /* Top-left */
 
-.contact-decoration--top {
+.contact-section__decoration--top {
   width: 420px;
   height: 420px;
 
@@ -135,7 +135,7 @@
 
 /* Bottom-right */
 
-.contact-decoration--bottom {
+.contact-section__decoration--bottom {
   width: 320px;
   height: 320px;
 
@@ -151,7 +151,7 @@
    BOTANICAL SYMBOLS
    ========================================================= */
 
-.contact-botanical {
+.contact-section__botanical {
   position: absolute;
 
   pointer-events: none;
@@ -168,7 +168,7 @@
 
 /* Left */
 
-.contact-botanical--left {
+.contact-section__botanical--left {
   left: 5%;
   top: 22%;
 
@@ -179,7 +179,7 @@
 
 /* Right */
 
-.contact-botanical--right {
+.contact-section__botanical--right {
   right: 6%;
   bottom: 15%;
 
@@ -196,7 +196,7 @@
    TITLE
    ========================================================= */
 
-.contact-title {
+.contact-section__title {
   position: relative;
 
   margin: 0;
@@ -222,7 +222,7 @@
    TITLE DECORATIVE DIVIDER
    ========================================================= */
 
-.contact-title-line {
+.contact-section__title-divider {
   width: min(260px, 70vw);
 
   display: flex;
@@ -236,7 +236,7 @@
   margin: 1rem auto clamp(2rem, 5vw, 3rem);
 }
 
-.contact-title-line span {
+.contact-section__title-divider span {
   flex: 1;
 
   height: 1px;
@@ -244,11 +244,11 @@
   background: linear-gradient(to right, transparent, var(--contact-gold));
 }
 
-.contact-title-line span:last-child {
+.contact-section__title-divider span:last-child {
   background: linear-gradient(to left, transparent, var(--contact-gold));
 }
 
-.contact-title-line b {
+.contact-section__title-divider b {
   color: var(--contact-gold);
 
   font-size: 0.7rem;
@@ -260,7 +260,7 @@
    MAIN CONTENT
    ========================================================= */
 
-.contact-content {
+.contact-section__content {
   width: 100%;
 
   max-width: 1050px;
@@ -282,7 +282,7 @@
    CONTACT INFORMATION
    ========================================================= */
 
-.contact-us__infos {
+.contact-section__details {
   display: flex;
 
   flex-direction: column;
@@ -296,12 +296,12 @@
    CONTACT ITEM
    ========================================================= */
 
-.contact-us__item {
+.contact-section__item {
   width: 100%;
 }
 
-.contact-us__link,
-.contact-item {
+.contact-section__link,
+.contact-section__address {
   width: 100%;
 
   min-height: 60px;
@@ -338,7 +338,7 @@
    BUTTON RESET
    ========================================================= */
 
-.contact-us__link {
+.contact-section__link {
   appearance: none;
 
   border: 1px solid rgba(185, 121, 125, 0.18);
@@ -354,8 +354,8 @@
    HOVER
    ========================================================= */
 
-.contact-us__link:hover,
-.contact-item.clickable:hover {
+.contact-section__link:hover,
+.contact-section__address.contact-section__address--interactive:hover {
   transform: translateX(4px);
 
   background: rgba(255, 250, 245, 0.9);
@@ -369,8 +369,7 @@
    ICONS
    ========================================================= */
 
-.contact-us__icon,
-.contact-icon {
+.contact-section__icon {
   width: 32px;
 
   flex: 0 0 32px;
@@ -390,7 +389,7 @@
    CONTACT TEXT
    ========================================================= */
 
-.contact-infos {
+.contact-section__info {
   margin: 0;
 
   color: var(--contact-brown);
@@ -402,11 +401,11 @@
   overflow-wrap: anywhere;
 }
 
-.contact-icon {
+.contact-section__icon {
   color: var(--contact-rose);
 }
 
-.contact-text {
+.contact-section__address-text {
   color: var(--contact-brown);
 
   font-size: 1rem;
@@ -416,7 +415,7 @@
   overflow-wrap: anywhere;
 }
 
-.contact-address-line {
+.contact-section__address-line {
   display: block;
 }
 
@@ -424,14 +423,14 @@
    CLICKABLE ADDRESS
    ========================================================= */
 
-.contact-item.clickable {
+.contact-section__address.contact-section__address--interactive {
   cursor: pointer;
 }
 
 /* Keyboard accessibility */
 
-.contact-item.clickable:focus-visible,
-.contact-us__link:focus-visible {
+.contact-section__address.contact-section__address--interactive:focus-visible,
+.contact-section__link:focus-visible {
   outline: 2px solid var(--contact-rose);
 
   outline-offset: 3px;
@@ -441,7 +440,7 @@
    OPENING HOURS SECTION
    ========================================================= */
 
-.contact-us__hours-section {
+.contact-section__hours {
   width: 100%;
 }
 
@@ -449,7 +448,7 @@
    HOURS CONTAINER
    ========================================================= */
 
-.contact-us__opening-hours-container {
+.contact-section__hours-card {
   width: 100%;
 
   box-sizing: border-box;
@@ -472,7 +471,7 @@
    HOURS TITLE
    ========================================================= */
 
-.contact-us__hours-title {
+.contact-section__hours-title {
   display: flex;
 
   align-items: center;
@@ -498,7 +497,7 @@
    HOURS DECORATIVE LINE
    ========================================================= */
 
-.contact-hours-divider {
+.contact-section__hours-divider {
   width: min(200px, 70%);
 
   display: flex;
@@ -510,8 +509,8 @@
   margin: 0.8rem auto 1.4rem;
 }
 
-.contact-hours-divider span:first-child,
-.contact-hours-divider span:last-child {
+.contact-section__hours-divider span:first-child,
+.contact-section__hours-divider span:last-child {
   flex: 1;
 
   height: 1px;
@@ -519,11 +518,11 @@
   background: linear-gradient(to right, transparent, rgba(181, 154, 114, 0.7));
 }
 
-.contact-hours-divider span:last-child {
+.contact-section__hours-divider span:last-child {
   background: linear-gradient(to left, transparent, rgba(181, 154, 114, 0.7));
 }
 
-.contact-hours-divider span:nth-child(2) {
+.contact-section__hours-divider span:nth-child(2) {
   color: var(--contact-gold);
 
   font-size: 0.6rem;
@@ -533,7 +532,7 @@
    HOURS GRID
    ========================================================= */
 
-.contact-us__hours-grid {
+.contact-section__hours-grid {
   display: grid;
 
   grid-template-columns:
@@ -551,8 +550,8 @@
    DAY / HOURS
    ========================================================= */
 
-.contact-us__day,
-.contact-us__hours {
+.contact-section__hours-day,
+.contact-section__hours-value {
   padding: 0.35rem 0;
 
   color: var(--contact-brown-light);
@@ -562,11 +561,11 @@
   line-height: 1.5;
 }
 
-.contact-us__day {
+.contact-section__hours-day {
   font-weight: 600;
 }
 
-.contact-us__hours {
+.contact-section__hours-value {
   text-align: right;
 }
 
@@ -574,7 +573,7 @@
    TODAY
    ========================================================= */
 
-.contact-us__today {
+.contact-section__hours-current {
   color: var(--contact-rose);
 
   font-weight: 800;
@@ -584,8 +583,8 @@
    CLOSED
    ========================================================= */
 
-.contact-us__day:first-child,
-.contact-us__hours:first-child {
+.contact-section__hours-day:first-child,
+.contact-section__hours-value:first-child {
   /* Keeps Monday aligned naturally */
 }
 
@@ -594,13 +593,13 @@
    ========================================================= */
 
 @media (max-width: 959px) {
-  .contact-container {
+  .contact-section {
     min-height: 100vh;
 
     padding: 4rem clamp(1.5rem, 5vw, 3rem);
   }
 
-  .contact-content {
+  .contact-section__content {
     max-width: 800px;
 
     grid-template-columns:
@@ -610,23 +609,23 @@
     gap: 2rem;
   }
 
-  .contact-botanical--left {
+  .contact-section__botanical--left {
     left: -20px;
 
     font-size: 6rem;
   }
 
-  .contact-botanical--right {
+  .contact-section__botanical--right {
     right: -15px;
 
     font-size: 5rem;
   }
 
-  .contact-us__opening-hours-container {
+  .contact-section__hours-card {
     padding: 1.35rem 1.25rem 1.5rem;
   }
 
-  .contact-us__hours-grid {
+  .contact-section__hours-grid {
     column-gap: 0.75rem;
   }
 }
@@ -636,21 +635,21 @@
    ========================================================= */
 
 @media (max-width: 640px) {
-  .contact-container {
+  .contact-section {
     min-height: 100vh;
 
     padding: 3rem 1rem 3.5rem;
   }
 
-  .contact-title {
+  .contact-section__title {
     font-size: 2.45rem;
   }
 
-  .contact-title-line {
+  .contact-section__title-divider {
     margin-bottom: 2rem;
   }
 
-  .contact-content {
+  .contact-section__content {
     display: flex;
 
     flex-direction: column;
@@ -660,38 +659,38 @@
     max-width: 100%;
   }
 
-  .contact-us__infos {
+  .contact-section__details {
     width: 100%;
 
     gap: 0.8rem;
   }
 
-  .contact-us__link,
-  .contact-item {
+  .contact-section__link,
+  .contact-section__address {
     min-height: 56px;
 
     padding: 0.75rem 0.85rem;
   }
 
-  .contact-infos {
+  .contact-section__info {
     font-size: 0.95rem;
   }
 
-  .contact-text {
+  .contact-section__address-text {
     font-size: 0.95rem;
   }
 
-  .contact-us__opening-hours-container {
+  .contact-section__hours-card {
     padding: 1.25rem 1rem 1.35rem;
 
     border-radius: 13px;
   }
 
-  .contact-us__hours-title {
+  .contact-section__hours-title {
     font-size: 1.4rem;
   }
 
-  .contact-us__hours-grid {
+  .contact-section__hours-grid {
     grid-template-columns:
       minmax(85px, 0.8fr)
       minmax(135px, 1.2fr);
@@ -701,12 +700,12 @@
     row-gap: 0.05rem;
   }
 
-  .contact-us__day,
-  .contact-us__hours {
+  .contact-section__hours-day,
+  .contact-section__hours-value {
     font-size: 0.88rem;
   }
 
-  .contact-botanical--left {
+  .contact-section__botanical--left {
     top: 18%;
     left: -25px;
 
@@ -715,7 +714,7 @@
     opacity: 0.07;
   }
 
-  .contact-botanical--right {
+  .contact-section__botanical--right {
     right: -15px;
     bottom: 8%;
 
@@ -724,7 +723,7 @@
     opacity: 0.07;
   }
 
-  .contact-decoration--top {
+  .contact-section__decoration--top {
     width: 280px;
     height: 280px;
 
@@ -732,7 +731,7 @@
     left: -170px;
   }
 
-  .contact-decoration--bottom {
+  .contact-section__decoration--bottom {
     width: 230px;
     height: 230px;
 
@@ -740,7 +739,7 @@
     bottom: -140px;
   }
 
-  .contact-container::after {
+  .contact-section::after {
     width: 320px;
     height: 320px;
 
@@ -754,25 +753,24 @@
    ========================================================= */
 
 @media (max-width: 380px) {
-  .contact-container {
+  .contact-section {
     padding: 2.5rem 0.75rem 3rem;
   }
 
-  .contact-title {
+  .contact-section__title {
     font-size: 2.15rem;
   }
 
-  .contact-title-line {
+  .contact-section__title-divider {
     margin-bottom: 1.75rem;
   }
 
-  .contact-us__link,
-  .contact-item {
+  .contact-section__link,
+  .contact-section__address {
     padding: 0.7rem 0.65rem;
   }
 
-  .contact-us__icon,
-  .contact-icon {
+  .contact-section__icon {
     width: 28px;
 
     flex-basis: 28px;
@@ -780,16 +778,16 @@
     font-size: 1.1rem;
   }
 
-  .contact-infos,
-  .contact-text {
+  .contact-section__info,
+  .contact-section__address-text {
     font-size: 0.88rem;
   }
 
-  .contact-us__opening-hours-container {
+  .contact-section__hours-card {
     padding: 1.1rem 0.7rem 1.2rem;
   }
 
-  .contact-us__hours-grid {
+  .contact-section__hours-grid {
     grid-template-columns:
       minmax(75px, 0.8fr)
       minmax(125px, 1.2fr);
@@ -797,8 +795,8 @@
     column-gap: 0.4rem;
   }
 
-  .contact-us__day,
-  .contact-us__hours {
+  .contact-section__hours-day,
+  .contact-section__hours-value {
     font-size: 0.82rem;
   }
 }
@@ -808,8 +806,8 @@
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .contact-us__link,
-  .contact-item {
+  .contact-section__link,
+  .contact-section__address {
     transition: none;
   }
 }

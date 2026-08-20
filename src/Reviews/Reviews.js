@@ -5,7 +5,9 @@ import "./Reviews.css";
 function Star({ filled = true }) {
   return (
     <span
-      className={`review-star ${filled ? "review-star--filled" : ""}`}
+      className={`reviews-section__star ${
+        filled ? "reviews-section__star--filled" : ""
+      }`}
       aria-hidden="true"
     >
       ★
@@ -27,7 +29,10 @@ function getInitials(name) {
 
 function ReviewStars({ rating = 5 }) {
   return (
-    <div className="review-card__stars" aria-label={`${rating} out of 5 stars`}>
+    <div
+      className="reviews-section__card-stars"
+      aria-label={`${rating} out of 5 stars`}
+    >
       {[1, 2, 3, 4, 5].map((star) => (
         <Star key={star} filled={star <= Math.round(rating)} />
       ))}
@@ -40,31 +45,31 @@ function ReviewCard({ review, isDuplicate = false }) {
   const rating = Number(review.rating) || 5;
 
   return (
-    <article className="review-card" aria-hidden={isDuplicate || undefined}>
-      <div className="review-card__meta">
-        <div className="review-card__reviewer">
-          <div className="review-card__avatar" aria-hidden="true">
+    <article className="reviews-section__card" aria-hidden={isDuplicate || undefined}>
+      <div className="reviews-section__card-meta">
+        <div className="reviews-section__card-reviewer">
+          <div className="reviews-section__card-avatar" aria-hidden="true">
             {getInitials(author)}
           </div>
 
-          <div className="review-card__author">
+          <div className="reviews-section__card-author">
             <strong>{author}</strong>
             <span>{review.relativeTimeDescription || "Google review"}</span>
           </div>
         </div>
 
-        <span className="review-card__google" aria-label="Posted on Google">
-          <span className="review-card__google-icon" aria-hidden="true">G</span>
-          <span className="review-card__google-label">Google</span>
+        <span className="reviews-section__card-google" aria-label="Posted on Google">
+          <span className="reviews-section__card-google-icon" aria-hidden="true">G</span>
+          <span className="reviews-section__card-google-label">Google</span>
         </span>
       </div>
 
       <ReviewStars rating={rating} />
 
-      <blockquote className="review-card__text">{review.text}</blockquote>
+      <blockquote className="reviews-section__card-text">{review.text}</blockquote>
 
-      <div className="review-card__source">
-        <span className="review-card__verified" aria-hidden="true">✓</span>
+      <div className="reviews-section__card-source">
+        <span className="reviews-section__card-verified" aria-hidden="true">✓</span>
         Posted on Google
       </div>
     </article>
@@ -134,7 +139,7 @@ export default function Reviews() {
     const animate = (timestamp) => {
       if (!reducedMotion.matches && !isPausedRef.current && carousel) {
         const duplicateStart = carousel.querySelector(
-          '.review-card[aria-hidden="true"]',
+          '.reviews-section__card[aria-hidden="true"]',
         );
         const loopPoint = duplicateStart?.offsetLeft || 0;
 
@@ -163,8 +168,8 @@ export default function Reviews() {
   if (loading) {
     return (
       <section className="reviews-section reviews-section--loading">
-        <div className="reviews-loading">
-          <div className="reviews-loading__stars">★ ★ ★ ★ ★</div>
+        <div className="reviews-section__loading">
+          <div className="reviews-section__loading-stars">★ ★ ★ ★ ★</div>
 
           <span>Loading client reviews...</span>
         </div>
@@ -183,10 +188,10 @@ export default function Reviews() {
 
   return (
     <section className="reviews-section" aria-labelledby="reviews-heading">
-      <div className="reviews-inner">
-        <header className="reviews-header">
-          <div className="reviews-heading">
-            <span className="reviews-eyebrow">Client experiences</span>
+      <div className="reviews-section__inner">
+        <header className="reviews-section__header">
+          <div className="reviews-section__heading">
+            <span className="reviews-section__eyebrow">Client experiences</span>
 
             <h2 id="reviews-heading">What Our Clients Say</h2>
 
@@ -195,11 +200,11 @@ export default function Reviews() {
             </p>
           </div>
 
-          <div className="reviews-rating">
-            <div className="reviews-rating__score">{rating}</div>
+          <div className="reviews-section__rating">
+            <div className="reviews-section__rating-score">{rating}</div>
 
-            <div className="reviews-rating__details">
-              <div className="reviews-rating__stars">
+            <div className="reviews-section__rating-details">
+              <div className="reviews-section__rating-stars">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star key={star} />
                 ))}
@@ -210,9 +215,9 @@ export default function Reviews() {
           </div>
         </header>
 
-        <div className="reviews-carousel">
+        <div className="reviews-section__carousel">
           <div
-            className="reviews-carousel__viewport"
+            className="reviews-section__carousel-viewport"
             ref={carouselRef}
             aria-label="Client reviews"
             tabIndex="0"
@@ -239,18 +244,18 @@ export default function Reviews() {
         </div>
 
         {data.googleMapsUrl && (
-          <div className="reviews-footer">
+          <div className="reviews-section__footer">
             <a
               href={data.googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="reviews-google-link"
+              className="reviews-section__google-link"
             >
-              <span className="reviews-google-link__icon">G</span>
+              <span className="reviews-section__google-link-icon">G</span>
 
               <span>Read all reviews on Google</span>
 
-              <span className="reviews-google-link__arrow">↗</span>
+              <span className="reviews-section__google-link-arrow">↗</span>
             </a>
           </div>
         )}

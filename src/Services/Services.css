@@ -3,7 +3,7 @@
    Vintage Luxury Salon
    ========================================================= */
 
-.services-container {
+.services-section {
   /* Vintage palette */
   --services-ivory: #f8f1e8;
   --services-cream: #f1e4d7;
@@ -54,7 +54,7 @@
    SUBTLE PAPER GRAIN
    ========================================================= */
 
-.services-container::before {
+.services-section::before {
   content: "";
 
   position: absolute;
@@ -78,7 +78,7 @@
    LARGE VINTAGE CIRCLE
    ========================================================= */
 
-.services-container::after {
+.services-section::after {
   content: "";
 
   position: absolute;
@@ -107,7 +107,7 @@
    EXTRA DECORATIVE CIRCLES
    ========================================================= */
 
-.services-decoration {
+.services-section__decoration {
   position: absolute;
 
   pointer-events: none;
@@ -117,7 +117,7 @@
 
 /* Top-left circle */
 
-.services-decoration--top {
+.services-section__decoration--top {
   width: 420px;
   height: 420px;
 
@@ -135,7 +135,7 @@
 
 /* Bottom-right circle */
 
-.services-decoration--bottom {
+.services-section__decoration--bottom {
   width: 300px;
   height: 300px;
 
@@ -151,7 +151,7 @@
    BOTANICAL DECORATION
    ========================================================= */
 
-.services-botanical {
+.services-section__botanical {
   position: absolute;
 
   font-family: Georgia, serif;
@@ -169,7 +169,7 @@
 
 /* Top botanical */
 
-.services-botanical--top {
+.services-section__botanical--top {
   top: 12%;
   left: 7%;
 
@@ -180,7 +180,7 @@
 
 /* Bottom botanical */
 
-.services-botanical--bottom {
+.services-section__botanical--bottom {
   right: 8%;
   bottom: 8%;
 
@@ -197,7 +197,7 @@
    HEADER
    ========================================================= */
 
-.services__header {
+.services-section__title {
   position: relative;
 
   color: var(--services-rose);
@@ -221,7 +221,7 @@
    HEADER DECORATIVE LINE
    ========================================================= */
 
-.services__header::after {
+.services-section__title::after {
   content: "";
 
   display: block;
@@ -238,7 +238,7 @@
 
 /* Decorative dot */
 
-.services__header::before {
+.services-section__title::before {
   content: "•";
 
   position: absolute;
@@ -259,7 +259,7 @@
    PARAGRAPH
    ========================================================= */
 
-.services__paragraph {
+.services-section__description {
   position: relative;
 
   color: var(--services-brown);
@@ -283,7 +283,7 @@
    SERVICE CARDS
    ========================================================= */
 
-.services__cards {
+.services-section__cards {
   position: relative;
 
   width: 100%;
@@ -299,7 +299,7 @@
    TREATMENT CARDS
    ========================================================= */
 
-.services__cards .treatment-card {
+.services-section__cards .treatment-card {
   background: rgba(255, 250, 245, 0.78);
 
   backdrop-filter: blur(4px);
@@ -325,7 +325,7 @@
    CARD HOVER
    ========================================================= */
 
-.services__cards .treatment-card:hover {
+.services-section__cards .treatment-card:hover {
   transform: translateY(-2px);
 
   border-color: rgba(185, 121, 125, 0.4);
@@ -337,15 +337,15 @@
    CARD REVEAL ANIMATION
    ========================================================= */
 
-.services__cards.is-visible .treatment-card {
+.services-section__cards.is-visible .treatment-card {
   animation: service-card-reveal 0.36s ease-out both;
 }
 
-.services__cards.is-visible .treatment-card:nth-child(2) {
+.services-section__cards.is-visible .treatment-card:nth-child(2) {
   animation-delay: 0.06s;
 }
 
-.services__cards.is-visible .treatment-card:nth-child(3) {
+.services-section__cards.is-visible .treatment-card:nth-child(3) {
   animation-delay: 0.12s;
 }
 
@@ -368,17 +368,17 @@
    ========================================================= */
 
 @media (max-width: 768px) {
-  .services-container {
+  .services-section {
     min-height: 100vh;
 
     padding: clamp(3rem, 8vw, 5rem) 1.25rem;
   }
 
-  .services__header {
+  .services-section__title {
     font-size: clamp(2.3rem, 8vw, 3.2rem);
   }
 
-  .services__paragraph {
+  .services-section__description {
     max-width: 600px;
 
     font-size: 1.05rem;
@@ -388,7 +388,7 @@
     margin-bottom: 1.75rem;
   }
 
-  .services-container::after {
+  .services-section::after {
     width: 400px;
     height: 400px;
 
@@ -396,13 +396,13 @@
     top: -180px;
   }
 
-  .services-botanical--top {
+  .services-section__botanical--top {
     left: -15px;
 
     font-size: 6rem;
   }
 
-  .services-botanical--bottom {
+  .services-section__botanical--bottom {
     right: -10px;
 
     font-size: 5rem;
@@ -414,19 +414,19 @@
    ========================================================= */
 
 @media (max-width: 500px) {
-  .services-container {
+  .services-section {
     min-height: 100vh;
 
     padding: 2.75rem 1rem 3rem;
   }
 
-  .services__header {
+  .services-section__title {
     font-size: 2.35rem;
 
     margin-bottom: 1rem;
   }
 
-  .services__paragraph {
+  .services-section__description {
     font-size: 1rem;
 
     line-height: 1.65;
@@ -436,11 +436,11 @@
     margin-bottom: 1.5rem;
   }
 
-  .services__cards {
+  .services-section__cards {
     max-width: 100%;
   }
 
-  .services-container::after {
+  .services-section::after {
     width: 300px;
     height: 300px;
 
@@ -450,7 +450,7 @@
     opacity: 0.7;
   }
 
-  .services-decoration--top {
+  .services-section__decoration--top {
     width: 280px;
     height: 280px;
 
@@ -458,7 +458,7 @@
     left: -160px;
   }
 
-  .services-decoration--bottom {
+  .services-section__decoration--bottom {
     width: 220px;
     height: 220px;
 
@@ -466,7 +466,7 @@
     bottom: -130px;
   }
 
-  .services-botanical--top {
+  .services-section__botanical--top {
     top: 8%;
     left: -20px;
 
@@ -475,7 +475,7 @@
     opacity: 0.09;
   }
 
-  .services-botanical--bottom {
+  .services-section__botanical--bottom {
     right: -15px;
     bottom: 5%;
 
@@ -490,16 +490,16 @@
    ========================================================= */
 
 @media (max-width: 380px) {
-  .services-container {
+  .services-section {
     padding-left: 0.8rem;
     padding-right: 0.8rem;
   }
 
-  .services__header {
+  .services-section__title {
     font-size: 2.1rem;
   }
 
-  .services__paragraph {
+  .services-section__description {
     font-size: 0.95rem;
   }
 }
@@ -509,11 +509,11 @@
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .services__cards.is-visible .treatment-card {
+  .services-section__cards.is-visible .treatment-card {
     animation: none;
   }
 
-  .services__cards .treatment-card {
+  .services-section__cards .treatment-card {
     transition: none;
   }
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginAdmin } from "../api/authService";
 import Modal from "../components/Modal/Modal";
+import { useAuth } from "../contexts/AuthContext";
 import "./Login.css";
 
 function Login() {
@@ -12,6 +12,7 @@ function Login() {
   const [isOpen, setIsOpen] = useState(true);
   const [destination, setDestination] = useState(null);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const closeTo = (path) => {
     setDestination(path);
@@ -34,7 +35,7 @@ function Login() {
     try {
       setLoading(true);
 
-      await loginAdmin({
+      await login({
         username: username.trim(),
         password,
       });

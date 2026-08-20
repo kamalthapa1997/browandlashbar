@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useSettings } from "../contexts/SettingsContext";
 import "./Header.css";
 
 const DISMISS_PREFIX = "homepage-offer-dismissed:";
 const DEFAULT_BOOKING_URL = "https://merobrowandlashbar.square.site";
 
-function Header({
-  sectionId,
-  sectionClass,
-  logoUrl,
-  homepageOffer,
-  homepageOfferLink,
-}) {
+function Header({ sectionId, sectionClass }) {
+  const { settings } = useSettings();
+  const { logoUrl, homepageOffer, homepageOfferLink } = settings || {};
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const toggleRef = useRef(null);
@@ -149,25 +146,25 @@ function Header({
   };
 
   const sectionLinkClass = (sectionId) =>
-    `nav-link${
+    `site-header__link${
       location.pathname === "/" && location.hash === `#${sectionId}`
-        ? " is-active"
+        ? " site-header__link--active"
         : ""
     }`;
 
   const routeLinkClass = ({ isActive }) =>
-    `nav-link${isActive ? " is-active" : ""}`;
+    `site-header__link${isActive ? " site-header__link--active" : ""}`;
 
   return (
     <header
       ref={headerRef}
       id={sectionId}
-      className={`${sectionClass || ""} header`}
+      className={`${sectionClass || ""} site-header`}
     >
       <AnimatePresence>
         {hasOffer && !dismissed && (
           <motion.div
-            className="header__offer"
+            className="site-header__offer"
             initial={shouldReduceMotion ? false : { opacity: 0, height: 0 }}
             animate={
               shouldReduceMotion
@@ -179,9 +176,9 @@ function Header({
             }
             transition={{ duration: shouldReduceMotion ? 0 : 0.18 }}
           >
-            <div className="header__offer-inner">
+            <div className="site-header__offer-content">
               <a
-                className="header__offer-book"
+                className="site-header__offer-book"
                 href={offerUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -190,13 +187,13 @@ function Header({
                 Book Now
               </a>
 
-              <div className="header__offer-text" aria-live="polite">
+              <div className="site-header__offer-text" aria-live="polite">
                 {offerText}
               </div>
 
               <button
                 type="button"
-                className="header__offer-close"
+                className="site-header__offer-close"
                 onClick={closeOffer}
                 aria-label="Close offer"
               >
@@ -207,11 +204,11 @@ function Header({
         )}
       </AnimatePresence>
 
-      <div className="nav_lists">
+      <div className="site-header__bar">
         <Link
           to="/"
           state={{ scrollToTop: true }}
-          className="logo-container"
+          className="site-header__logo-link"
           aria-label="Mero Brow & Lash Bar home"
           onClick={(event) => {
             setMenuOpen(false);
@@ -228,12 +225,12 @@ function Header({
           <img
             src={logoUrl || "/mainlogo.png"}
             alt="Mero Brow & Lash Bar"
-            className="header__mainlogo"
+            className="site-header__logo"
           />
         </Link>
 
-        <div className="nav-container desktop">
-          <nav className="nav-links" aria-label="Desktop navigation">
+        <div className="site-header__desktop-nav">
+          <nav className="site-header__nav" aria-label="Desktop navigation">
             <button
               type="button"
               className={sectionLinkClass("services")}
@@ -270,14 +267,20 @@ function Header({
 
         <button
           type="button"
-          className="menu-icon mobile"
+          className="site-header__menu-toggle"
           onClick={toggleMenu}
           ref={toggleRef}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           aria-controls="mobile-navigation"
         >
-          <span className={menuOpen ? "menu-icon__close" : "menu-icon__open"}>
+          <span
+            className={
+              menuOpen
+                ? "site-header__menu-icon--close"
+                : "site-header__menu-icon--open"
+            }
+          >
             {menuOpen ? "×" : "≡"}
           </span>
         </button>
@@ -286,7 +289,7 @@ function Header({
           {menuOpen && (
             <>
               <motion.div
-                className="mobile-menu-backdrop"
+                className="site-header__backdrop"
                 initial={shouldReduceMotion ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={shouldReduceMotion ? undefined : { opacity: 0 }}
@@ -301,7 +304,7 @@ function Header({
               <motion.nav
                 id="mobile-navigation"
                 ref={menuRef}
-                className="mobile-menu"
+                className="site-header__mobile-nav"
                 aria-label="Mobile navigation"
                 initial={
                   shouldReduceMotion
@@ -330,7 +333,7 @@ function Header({
               >
                 <button
                   type="button"
-                  className={`${sectionLinkClass("services")} mobile-menu__link`}
+                  className={`${sectionLinkClass("services")} site-header__mobile-link`}
                   onClick={() => {
                     setMenuOpen(false);
                     handleSectionClick("services");
@@ -342,7 +345,7 @@ function Header({
                 <NavLink
                   to="/gallery"
                   className={({ isActive }) =>
-                    `${routeLinkClass({ isActive })} mobile-menu__link`
+                    `${routeLinkClass({ isActive })} site-header__mobile-link`
                   }
                   onClick={() => setMenuOpen(false)}
                 >
@@ -351,7 +354,7 @@ function Header({
 
                 <button
                   type="button"
-                  className={`${sectionLinkClass("contact")} mobile-menu__link`}
+                  className={`${sectionLinkClass("contact")} site-header__mobile-link`}
                   onClick={() => {
                     setMenuOpen(false);
                     handleSectionClick("contact");
@@ -362,7 +365,7 @@ function Header({
 
                 <button
                   type="button"
-                  className={`${sectionLinkClass("faq")} mobile-menu__link`}
+                  className={`${sectionLinkClass("faq")} site-header__mobile-link`}
                   onClick={() => {
                     setMenuOpen(false);
                     handleSectionClick("faq");
@@ -374,7 +377,7 @@ function Header({
                 <NavLink
                   to="/login"
                   className={({ isActive }) =>
-                    `${routeLinkClass({ isActive })} mobile-menu__link`
+                    `${routeLinkClass({ isActive })} site-header__mobile-link`
                   }
                   onClick={() => setMenuOpen(false)}
                 >

@@ -3,7 +3,7 @@
    Vintage Luxury Salon
    ========================================================= */
 
-.header {
+.site-header {
   --header-height: 76px;
 
   position: fixed;
@@ -23,7 +23,7 @@
    OFFER BAR
    ========================================================= */
 
-.header__offer {
+.site-header__offer {
   width: 100%;
 
   box-sizing: border-box;
@@ -43,7 +43,7 @@
   box-shadow: 0 2px 12px rgba(70, 40, 40, 0.12);
 }
 
-.header__offer-inner {
+.site-header__offer-content {
   width: 100%;
 
   max-width: 1200px;
@@ -70,7 +70,7 @@
    OFFER BOOK BUTTON
    ========================================================= */
 
-.header__offer-book {
+.site-header__offer-book {
   position: relative;
 
   display: inline-flex;
@@ -107,7 +107,7 @@
     border-color 0.2s ease;
 }
 
-.header__offer-book:hover {
+.site-header__offer-book:hover {
   background: rgba(255, 255, 255, 0.17);
 
   border-color: rgba(255, 255, 255, 0.65);
@@ -119,7 +119,7 @@
    OFFER TEXT
    ========================================================= */
 
-.header__offer-text {
+.site-header__offer-text {
   min-width: 0;
 
   padding: 0 0.5rem;
@@ -145,7 +145,7 @@
    OFFER CLOSE
    ========================================================= */
 
-.header__offer-close {
+.site-header__offer-close {
   display: inline-flex;
 
   align-items: center;
@@ -180,7 +180,7 @@
     transform 0.2s ease;
 }
 
-.header__offer-close:hover {
+.site-header__offer-close:hover {
   background: rgba(255, 255, 255, 0.12);
 
   transform: rotate(90deg);
@@ -190,7 +190,7 @@
    MAIN NAVIGATION
    ========================================================= */
 
-.nav_lists {
+.site-header__bar {
   position: relative;
 
   width: 100%;
@@ -225,7 +225,7 @@
    SUBTLE PAPER GRAIN
    ========================================================= */
 
-.nav_lists::before {
+.site-header__bar::before {
   content: "";
 
   position: absolute;
@@ -248,7 +248,7 @@
    LOGO
    ========================================================= */
 
-.logo-container {
+.site-header__logo-link {
   position: relative;
 
   z-index: 2;
@@ -270,7 +270,7 @@
   text-decoration: none;
 }
 
-.header__mainlogo {
+.site-header__logo {
   display: block;
 
   width: auto;
@@ -288,7 +288,7 @@
     opacity 0.25s ease;
 }
 
-.logo-container:hover .header__mainlogo {
+.site-header__logo-link:hover .site-header__logo {
   transform: scale(1.015);
 
   opacity: 0.92;
@@ -298,7 +298,7 @@
    DESKTOP NAVIGATION
    ========================================================= */
 
-.nav-container {
+.site-header__desktop-nav {
   position: relative;
 
   z-index: 2;
@@ -308,7 +308,7 @@
   align-items: center;
 }
 
-.nav-links {
+.site-header__nav {
   display: flex;
 
   align-items: center;
@@ -320,7 +320,7 @@
    NAV LINKS
    ========================================================= */
 
-.nav-link {
+.site-header__link {
   position: relative;
 
   display: inline-flex;
@@ -356,7 +356,7 @@
 
 /* Vintage underline */
 
-.nav-link::after {
+.site-header__link::after {
   content: "";
 
   position: absolute;
@@ -378,20 +378,20 @@
   transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.nav-link:hover {
+.site-header__link:hover {
   color: #b9797d;
 }
 
-.nav-link:hover::after {
+.site-header__link:hover::after {
   transform: translateX(-50%) scaleX(1);
 }
 
-.nav-link.is-active {
+.site-header__link.site-header__link--active {
   color: #9f6268;
 }
 
-.nav-link.is-active::after,
-.nav-link:focus-visible::after {
+.site-header__link.site-header__link--active::after,
+.site-header__link:focus-visible::after {
   transform: translateX(-50%) scaleX(1);
 }
 
@@ -399,7 +399,7 @@
    MOBILE MENU BUTTON
    ========================================================= */
 
-.menu-icon {
+.site-header__menu-toggle {
   position: relative;
 
   z-index: 1002;
@@ -435,7 +435,7 @@
     box-shadow 0.2s ease;
 }
 
-.menu-icon:hover {
+.site-header__menu-toggle:hover {
   background: rgba(255, 250, 245, 0.95);
 
   transform: scale(1.04);
@@ -443,7 +443,7 @@
   box-shadow: 0 5px 16px rgba(80, 55, 48, 0.1);
 }
 
-.menu-icon:active {
+.site-header__menu-toggle:active {
   transform: scale(0.95);
 }
 
@@ -451,7 +451,7 @@
    HAMBURGER
    ========================================================= */
 
-.menu-icon__open {
+.site-header__menu-icon--open {
   color: #66504a;
 
   font-family: Arial, sans-serif;
@@ -469,7 +469,7 @@
    CLOSE
    ========================================================= */
 
-.menu-icon__close {
+.site-header__menu-icon--close {
   color: #b9797d;
 
   font-family: Arial, sans-serif;
@@ -487,7 +487,7 @@
    MOBILE BACKDROP
    ========================================================= */
 
-.mobile-menu-backdrop {
+.site-header__backdrop {
   position: fixed;
 
   inset: 0;
@@ -504,7 +504,7 @@
    MOBILE MENU
    ========================================================= */
 
-.mobile-menu {
+.site-header__mobile-nav {
   position: fixed;
 
   top: var(--header-height, 76px);
@@ -558,7 +558,7 @@
    MOBILE MENU DECORATIVE GRAIN
    ========================================================= */
 
-.mobile-menu::before {
+.site-header__mobile-nav::before {
   content: "";
 
   position: absolute;
@@ -581,7 +581,7 @@
    MOBILE MENU DECORATIVE CIRCLE
    ========================================================= */
 
-.mobile-menu::after {
+.site-header__mobile-nav::after {
   content: "";
 
   position: absolute;
@@ -603,7 +603,7 @@
    MOBILE LINKS
    ========================================================= */
 
-.mobile-menu .nav-link {
+.site-header__mobile-nav .site-header__link {
   position: relative;
 
   z-index: 2;
@@ -625,17 +625,17 @@
   text-align: left;
 }
 
-.mobile-menu .nav-link::after {
+.site-header__mobile-nav .site-header__link::after {
   display: none;
 }
 
-.mobile-menu .nav-link:hover {
+.site-header__mobile-nav .site-header__link:hover {
   color: #b9797d;
 
   background: rgba(255, 255, 255, 0.28);
 }
 
-.mobile-menu .nav-link.is-active {
+.site-header__mobile-nav .site-header__link.site-header__link--active {
   background: rgba(255, 255, 255, 0.38);
   color: #9f6268;
 }
@@ -644,7 +644,7 @@
    MOBILE MENU LAST LINK
    ========================================================= */
 
-.mobile-menu .nav-link:last-child {
+.site-header__mobile-nav .site-header__link:last-child {
   border-bottom: 0;
 }
 
@@ -653,15 +653,15 @@
    ========================================================= */
 
 @media (max-width: 959px) {
-  .desktop {
+  .site-header__desktop-nav {
     display: none;
   }
 
-  .mobile {
+  .site-header__menu-toggle {
     display: flex;
   }
 
-  .nav_lists {
+  .site-header__bar {
     height: 64px;
 
     padding: 0 1rem;
@@ -669,17 +669,17 @@
     max-width: none;
   }
 
-  .logo-container {
+  .site-header__logo-link {
     width: 165px;
 
     height: 64px;
   }
 
-  .header__mainlogo {
+  .site-header__logo {
     max-height: 55px;
   }
 
-  .mobile-menu {
+  .site-header__mobile-nav {
     top: var(--header-height, 64px);
   }
 }
@@ -689,7 +689,7 @@
    ========================================================= */
 
 @media (max-width: 640px) {
-  .header__offer-inner {
+  .site-header__offer-content {
     grid-template-columns:
       auto
       1fr
@@ -700,7 +700,7 @@
     padding: 0.45rem 0.65rem;
   }
 
-  .header__offer-book {
+  .site-header__offer-book {
     min-width: auto;
 
     padding: 0.35rem 0.65rem;
@@ -708,7 +708,7 @@
     font-size: 0.72rem;
   }
 
-  .header__offer-text {
+  .site-header__offer-text {
     padding: 0;
 
     font-size: 0.74rem;
@@ -718,7 +718,7 @@
     line-height: 1.25;
   }
 
-  .header__offer-close {
+  .site-header__offer-close {
     width: 28px;
     height: 28px;
 
@@ -731,24 +731,24 @@
    ========================================================= */
 
 @media (max-width: 480px) {
-  .nav_lists {
+  .site-header__bar {
     padding: 0 0.75rem;
   }
 
-  .logo-container {
+  .site-header__logo-link {
     width: 150px;
   }
 
-  .header__mainlogo {
+  .site-header__logo {
     max-height: 52px;
   }
 
-  .menu-icon {
+  .site-header__menu-toggle {
     width: 40px;
     height: 40px;
   }
 
-  .mobile-menu {
+  .site-header__mobile-nav {
     width: min(84vw, 320px);
 
     min-height: 340px;
@@ -756,7 +756,7 @@
     padding: 1.25rem 1.15rem 1.75rem;
   }
 
-  .mobile-menu .nav-link {
+  .site-header__mobile-nav .site-header__link {
     padding: 0.9rem 0.5rem;
 
     font-size: 1.08rem;
@@ -768,21 +768,21 @@
    ========================================================= */
 
 @media (max-width: 380px) {
-  .header__offer-text {
+  .site-header__offer-text {
     font-size: 0.68rem;
   }
 
-  .header__offer-book {
+  .site-header__offer-book {
     font-size: 0.68rem;
 
     padding: 0.3rem 0.55rem;
   }
 
-  .logo-container {
+  .site-header__logo-link {
     width: 140px;
   }
 
-  .header__mainlogo {
+  .site-header__logo {
     max-height: 49px;
   }
 }
@@ -792,9 +792,9 @@
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .header *,
-  .header *::before,
-  .header *::after {
+  .site-header *,
+  .site-header *::before,
+  .site-header *::after {
     animation: none !important;
 
     transition: none !important;

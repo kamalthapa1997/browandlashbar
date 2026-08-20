@@ -30,13 +30,13 @@ function Gallery() {
   useEffect(() => {
     if (!galleryRef.current) return;
 
-    const items = galleryRef.current.querySelectorAll(".gallery-item");
+    const items = galleryRef.current.querySelectorAll(".gallery-page__item");
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
+            entry.target.classList.add("gallery-page__item--visible");
 
             observer.unobserve(entry.target);
           }
@@ -60,19 +60,19 @@ function Gallery() {
         <h1>Beauty in every detail</h1>
       </header>
 
-      {error && <p className="gallery-error">{error}</p>}
+      {error && <p className="gallery-page__error">{error}</p>}
 
       {!error && loading && (
-        <p className="gallery-empty" role="status">
+        <p className="gallery-page__empty" role="status">
           Loading gallery…
         </p>
       )}
 
       {!error && !loading && images.length > 0 && (
-        <section className="gallery-list" ref={galleryRef}>
+        <section className="gallery-page__list" ref={galleryRef}>
           {images.map((item, i) => (
-            <article className="gallery-item" key={item._id || i}>
-              <div className="gallery-item__image">
+            <article className="gallery-page__item" key={item._id || i}>
+              <div className="gallery-page__image">
                 <img
                   src={item.imageUrl}
                   alt={item.caption || `Our work ${i + 1}`}
@@ -81,7 +81,7 @@ function Gallery() {
               </div>
 
               {item.caption && (
-                <div className="gallery-item__caption">
+                <div className="gallery-page__caption">
                   <p>{item.caption}</p>
                 </div>
               )}
@@ -91,7 +91,7 @@ function Gallery() {
       )}
 
       {!error && !loading && images.length === 0 && (
-        <p className="gallery-empty">Our latest work will be here soon.</p>
+        <p className="gallery-page__empty">Our latest work will be here soon.</p>
       )}
     </main>
   );

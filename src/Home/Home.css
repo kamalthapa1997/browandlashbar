@@ -3,7 +3,7 @@
    Vintage Luxury Salon
    ========================================================= */
 
-.home {
+.home-hero {
   --home-ivory: #f8f1e8;
   --home-cream: #f1e4d7;
   --home-rose: #b9797d;
@@ -48,7 +48,7 @@
    SECONDARY WARM OVERLAY
    ========================================================= */
 
-.home::before {
+.home-hero::before {
   content: "";
 
   position: absolute;
@@ -73,7 +73,7 @@
    vintage background.
    ========================================================= */
 
-.home::after {
+.home-hero::after {
   content: "";
 
   position: absolute;
@@ -101,7 +101,7 @@
    CONTENT
    ========================================================= */
 
-.home-content {
+.home-hero__content {
   position: relative;
 
   width: 100%;
@@ -118,7 +118,7 @@
    WELCOME TEXT
    ========================================================= */
 
-.aboutus__text {
+.home-hero__eyebrow {
   color: var(--home-rose);
 
   font-family: Georgia, "Times New Roman", serif;
@@ -142,7 +142,7 @@
    BUSINESS NAME
    ========================================================= */
 
-.aboutus__text-title {
+.home-hero__title {
   color: #b9797d;
 
   font-family: CormorantGaramond, Georgia, "Times New Roman", serif;
@@ -168,7 +168,7 @@
    TITLE DIVIDER
    ========================================================= */
 
-.home-title-divider {
+.home-hero__title-divider {
   width: min(260px, 65vw);
 
   display: flex;
@@ -182,7 +182,7 @@
   margin: 1.35rem auto 1.7rem;
 }
 
-.home-title-divider span {
+.home-hero__title-divider span {
   flex: 1;
 
   height: 1px;
@@ -190,11 +190,11 @@
   background: linear-gradient(to right, transparent, rgba(181, 154, 114, 0.75));
 }
 
-.home-title-divider span:last-child {
+.home-hero__title-divider span:last-child {
   background: linear-gradient(to left, transparent, rgba(181, 154, 114, 0.75));
 }
 
-.home-title-divider b {
+.home-hero__title-divider b {
   color: var(--home-gold);
 
   font-size: 0.65rem;
@@ -206,7 +206,7 @@
    DESCRIPTION
    ========================================================= */
 
-.aboutus__texts {
+.home-hero__description {
   color: var(--home-brown);
 
   font-family: CormorantGaramond, Georgia, "Times New Roman", serif;
@@ -232,7 +232,7 @@
    HIGHLIGHTED SERVICES
    ========================================================= */
 
-.highlight {
+.home-hero__highlight {
   color: var(--home-rose);
 
   font-weight: 700;
@@ -244,7 +244,7 @@
    BOOKING BUTTON
    ========================================================= */
 
-.aboutus__booknow {
+.home-hero__booking-button {
   position: relative;
 
   margin-top: 2.2rem;
@@ -281,7 +281,7 @@
     background 0.25s ease;
 }
 
-.aboutus__booknow:hover {
+.home-hero__booking-button:hover {
   background: linear-gradient(135deg, #a96c71, #955d63);
 
   box-shadow:
@@ -291,11 +291,11 @@
   transform: translateY(-3px);
 }
 
-.aboutus__booknow:active {
+.home-hero__booking-button:active {
   transform: translateY(-1px);
 }
 
-.aboutus__booknow:focus-visible {
+.home-hero__booking-button:focus-visible {
   outline: 3px solid var(--home-gold);
 
   outline-offset: 4px;
@@ -305,7 +305,7 @@
    VINTAGE DECORATIVE CIRCLES
    ========================================================= */
 
-.home-decoration {
+.home-hero__decoration {
   position: absolute;
 
   pointer-events: none;
@@ -317,7 +317,7 @@
 
 /* Top-left */
 
-.home-decoration--top {
+.home-hero__decoration--top {
   width: clamp(280px, 35vw, 500px);
   height: clamp(280px, 35vw, 500px);
 
@@ -333,7 +333,7 @@
 
 /* Bottom-right */
 
-.home-decoration--bottom {
+.home-hero__decoration--bottom {
   width: 300px;
   height: 300px;
 
@@ -349,7 +349,7 @@
    BOTANICAL DETAILS
    ========================================================= */
 
-.home-botanical {
+.home-hero__botanical {
   position: absolute;
 
   pointer-events: none;
@@ -367,7 +367,7 @@
 
 /* Left botanical */
 
-.home-botanical--left {
+.home-hero__botanical--left {
   left: 6%;
   top: 23%;
 
@@ -378,7 +378,7 @@
 
 /* Right botanical */
 
-.home-botanical--right {
+.home-hero__botanical--right {
   right: 7%;
   bottom: 18%;
 
@@ -396,7 +396,7 @@
    ========================================================= */
 
 @media (max-width: 959px) {
-  .home {
+  .home-hero {
     min-height: 100vh;
 
     padding: 7.5rem clamp(1.5rem, 7vw, 4rem) 4rem;
@@ -404,11 +404,11 @@
     background-position: center top;
   }
 
-  .aboutus__text-title {
+  .home-hero__title {
     font-size: clamp(2.8rem, 7vw, 4.2rem);
   }
 
-  .aboutus__texts {
+  .home-hero__description {
     max-width: 650px;
 
     font-size: 1.1rem;
@@ -416,7 +416,7 @@
     line-height: 1.7;
   }
 
-  .home-botanical--left {
+  .home-hero__botanical--left {
     left: -25px;
 
     font-size: 6rem;
@@ -424,7 +424,7 @@
     opacity: 0.07;
   }
 
-  .home-botanical--right {
+  .home-hero__botanical--right {
     right: -15px;
 
     font-size: 5rem;
@@ -432,7 +432,7 @@
     opacity: 0.07;
   }
 
-  .home-decoration--top {
+  .home-hero__decoration--top {
     width: 350px;
     height: 350px;
 
@@ -440,7 +440,7 @@
     left: -220px;
   }
 
-  .home-decoration--bottom {
+  .home-hero__decoration--bottom {
     width: 250px;
     height: 250px;
 
@@ -454,7 +454,7 @@
    ========================================================= */
 
 @media (max-width: 600px) {
-  .home {
+  .home-hero {
     min-height: 100vh;
 
     padding: 7rem 1.15rem 3.5rem;
@@ -474,7 +474,7 @@
 
   /* Stronger fade on mobile */
 
-  .home::after {
+  .home-hero::after {
     height: 62%;
 
     background: linear-gradient(
@@ -487,11 +487,11 @@
     );
   }
 
-  .home-content {
+  .home-hero__content {
     max-width: 100%;
   }
 
-  .aboutus__text {
+  .home-hero__eyebrow {
     font-size: 0.72rem;
 
     letter-spacing: 0.24em;
@@ -499,7 +499,7 @@
     margin-bottom: 0.7rem;
   }
 
-  .aboutus__text-title {
+  .home-hero__title {
     font-size: clamp(2.45rem, 11vw, 3.5rem);
 
     line-height: 1;
@@ -507,13 +507,13 @@
     max-width: 100%;
   }
 
-  .home-title-divider {
+  .home-hero__title-divider {
     width: min(220px, 70vw);
 
     margin: 1.2rem auto 1.45rem;
   }
 
-  .aboutus__texts {
+  .home-hero__description {
     font-size: 1rem;
 
     line-height: 1.68;
@@ -521,7 +521,7 @@
     max-width: 100%;
   }
 
-  .aboutus__booknow {
+  .home-hero__booking-button {
     width: auto;
 
     min-height: 50px;
@@ -533,7 +533,7 @@
     font-size: 0.9rem;
   }
 
-  .home-botanical--left {
+  .home-hero__botanical--left {
     left: -30px;
     top: 18%;
 
@@ -542,7 +542,7 @@
     opacity: 0.055;
   }
 
-  .home-botanical--right {
+  .home-hero__botanical--right {
     right: -20px;
     bottom: 8%;
 
@@ -551,7 +551,7 @@
     opacity: 0.055;
   }
 
-  .home-decoration--top {
+  .home-hero__decoration--top {
     width: 280px;
     height: 280px;
 
@@ -559,7 +559,7 @@
     left: -170px;
   }
 
-  .home-decoration--bottom {
+  .home-hero__decoration--bottom {
     width: 220px;
     height: 220px;
 
@@ -573,21 +573,21 @@
    ========================================================= */
 
 @media (max-width: 380px) {
-  .home {
+  .home-hero {
     padding: 6.5rem 0.9rem 3rem;
   }
 
-  .aboutus__text-title {
+  .home-hero__title {
     font-size: 2.25rem;
   }
 
-  .aboutus__texts {
+  .home-hero__description {
     font-size: 0.94rem;
 
     line-height: 1.62;
   }
 
-  .aboutus__booknow {
+  .home-hero__booking-button {
     font-size: 0.86rem;
 
     padding: 0.8rem 1.3rem;
@@ -599,7 +599,7 @@
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .aboutus__booknow {
+  .home-hero__booking-button {
     transition: none;
   }
 }

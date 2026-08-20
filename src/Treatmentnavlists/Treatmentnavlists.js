@@ -35,34 +35,45 @@ const Treatmentnavlists = () => {
   }, []);
 
   return (
-    <div className="treatment-container">
-      {error && <div className="treatment-error">{error}</div>}
-      <div className="treatmentnavlists__service-lists">
+    <div className="service-accordion">
+      {error && <div className="service-accordion__error">{error}</div>}
+      <div className="service-accordion__list">
         {categoryServices.map((service, index) => (
-          <div className="treatment-card" key={service.rawName}>
+          <div
+            className="treatment-card service-accordion__item"
+            key={service.rawName}
+          >
             <button
-              className={`treatmentnavlists__btn ${openIndex === index ? "active" : ""}`}
+              className={`service-accordion__header ${
+                openIndex === index ? "service-accordion__header--open" : ""
+              }`}
               onClick={() => toggleService(index)}
               aria-expanded={openIndex === index}
               aria-controls={`treatment-details-${index}`}
             >
               {service.name}
-              <span className="toggle-icon">
+              <span className="service-accordion__toggle-icon">
                 {openIndex === index ? "−" : "+"}
               </span>
             </button>
 
             <div
               id={`treatment-details-${index}`}
-              className={`treatmentnavlists_details ${openIndex === index ? "active" : ""}`}
+              className={`service-accordion__content ${
+                openIndex === index ? "service-accordion__content--open" : ""
+              }`}
             >
-              <ul className="treatmentnavlists_lists">
+              <ul className="service-accordion__services">
                 {service.items.map((item, idx) => (
-                  <li key={idx} className="service-item" style={{ "--i": idx }}>
-                    <div className="service-line">
-                      <span className="service-name">{item.name}</span>
-                      <span className="dotted-line"></span>
-                      <span className="service-price">
+                  <li
+                    key={idx}
+                    className="service-accordion__service"
+                    style={{ "--i": idx }}
+                  >
+                    <div className="service-accordion__line">
+                      <span className="service-accordion__name">{item.name}</span>
+                      <span className="service-accordion__dotted-line"></span>
+                      <span className="service-accordion__price">
                         ${item.price.toFixed(2)}
                       </span>
                     </div>

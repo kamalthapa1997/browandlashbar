@@ -1,16 +1,16 @@
-.treatment-container {
+.service-accordion {
   padding: 1rem;
   max-width: 1200px;
   margin: auto;
 }
 
-.treatmentnavlists__service-lists {
+.service-accordion__list {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-.treatment-card {
+.service-accordion__item {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   overflow: hidden;
@@ -18,7 +18,7 @@
   box-shadow: var(--shadow-soft);
 }
 
-.treatmentnavlists__btn {
+.service-accordion__header {
   width: 100%;
   padding: 1rem;
   font-size: 1.1rem;
@@ -34,20 +34,20 @@
   transition: all 0.2s ease;
 }
 
-.treatmentnavlists__btn:hover {
+.service-accordion__header:hover {
   transform: translateY(-2px);
 }
 
-.treatmentnavlists__btn.active {
+.service-accordion__header--open {
   color: var(--color-primary-hover);
 }
 
-.toggle-icon {
+.service-accordion__toggle-icon {
   font-size: 1.3rem;
   color: var(--color-primary);
 }
 
-.treatmentnavlists_details {
+.service-accordion__content {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
@@ -58,19 +58,19 @@
     transform 0.3s ease-out;
 }
 
-.treatmentnavlists_details.active {
+.service-accordion__content--open {
   max-height: 1500px;
   opacity: 1;
   transform: translateY(0);
 }
 
-.treatmentnavlists_lists {
+.service-accordion__services {
   list-style: none;
   margin: 0;
   padding: 1rem;
 }
 
-.service-item {
+.service-accordion__service {
   padding: 0.5rem 0;
   animation: fadeInUp 0.4s ease forwards;
   animation-delay: calc(var(--i) * 0.05s);
@@ -88,20 +88,20 @@
   }
 }
 
-.service-line {
+.service-accordion__line {
   display: flex;
   align-items: center;
   width: 100%;
   color: #ff6f91;
 }
 
-.service-name {
+.service-accordion__name {
   flex: 0 0 auto;
   font-size: 0.95rem;
   color: var(--color-text-secondary);
 }
 
-.dotted-line {
+.service-accordion__dotted-line {
   flex: 1;
   height: 4px;
   margin: 0 2rem;
@@ -110,7 +110,7 @@
   background-repeat: repeat-x;
 }
 
-.service-price {
+.service-accordion__price {
   flex: 0 0 auto;
   font-weight: 500;
   font-size: 0.95rem;
@@ -118,7 +118,7 @@
 }
 
 @media (max-width: 500px) {
-  .treatment-container {
+  .service-accordion {
     width: 100%;
   }
 }
