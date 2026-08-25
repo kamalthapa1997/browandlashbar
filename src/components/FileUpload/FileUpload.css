@@ -54,6 +54,15 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.file-upload__status,
+.file-upload__error {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  max-width: 100%;
+}
+.file-upload__error {
+  color: #a33b2e;
+}
 .file-upload__button {
   background: #176b92;
   border-radius: 8px;

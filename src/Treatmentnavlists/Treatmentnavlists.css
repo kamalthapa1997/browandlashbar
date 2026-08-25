@@ -1,124 +1,422 @@
+/* =========================================================
+   PREMIUM SALON — TREATMENT ACCORDION
+   ========================================================= */
+
 .service-accordion {
-  padding: 1rem;
-  max-width: 1200px;
-  margin: auto;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
 }
+
+/* ---------------------------------------------------------
+   LIST
+   --------------------------------------------------------- */
 
 .service-accordion__list {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
+
+/* ---------------------------------------------------------
+   CARD
+   --------------------------------------------------------- */
 
 .service-accordion__item {
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
+  position: relative;
+  border: 1px solid rgba(151, 116, 104, 0.18);
+  border-radius: 2px;
   overflow: hidden;
-  background-color: var(--color-card);
-  box-shadow: var(--shadow-soft);
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 253, 249, 0.98),
+    rgba(248, 242, 236, 0.96)
+  );
+
+  box-shadow:
+    0 8px 30px rgba(73, 52, 44, 0.06),
+    0 2px 8px rgba(73, 52, 44, 0.03);
+
+  transition:
+    box-shadow 0.35s ease,
+    border-color 0.35s ease,
+    transform 0.35s ease;
 }
 
+.service-accordion__item:hover {
+  border-color: rgba(151, 116, 104, 0.3);
+
+  box-shadow:
+    0 14px 38px rgba(73, 52, 44, 0.09),
+    0 3px 12px rgba(73, 52, 44, 0.04);
+
+  transform: translateY(-1px);
+}
+
+/* ---------------------------------------------------------
+   HEADER
+   --------------------------------------------------------- */
+
 .service-accordion__header {
+  position: relative;
+
   width: 100%;
-  padding: 1rem;
-  font-size: 1.1rem;
-  background: #faf6f1eb;
-  border: none;
-  text-align: left;
-  cursor: pointer;
+  min-height: 76px;
+
+  padding: 1.25rem 1.6rem;
+
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-weight: 600;
-  color: var(--color-text);
-  transition: all 0.2s ease;
+  justify-content: space-between;
+  gap: 1rem;
+
+  border: none;
+  background: rgba(255, 252, 247, 0.9);
+
+  cursor: pointer;
+  text-align: left;
+
+  /* Elegant serif */
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  line-height: 1.2;
+
+  color: #4b3a34;
+
+  transition:
+    color 0.3s ease,
+    background 0.3s ease;
+}
+
+/* Thin champagne accent line */
+
+.service-accordion__header::before {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 2px;
+
+  background: #b89a7a;
+
+  transform: scaleY(0);
+  transform-origin: bottom;
+
+  transition: transform 0.35s ease;
 }
 
 .service-accordion__header:hover {
-  transform: translateY(-2px);
+  background: rgba(250, 245, 239, 0.95);
+  color: #8a6258;
+}
+
+.service-accordion__header:hover::before,
+.service-accordion__header--open::before {
+  transform: scaleY(1);
 }
 
 .service-accordion__header--open {
-  color: var(--color-primary-hover);
+  background: #faf6f0;
+  color: #8b6258;
 }
 
+/* ---------------------------------------------------------
+   PLUS / MINUS ICON
+   --------------------------------------------------------- */
+
 .service-accordion__toggle-icon {
-  font-size: 1.3rem;
-  color: var(--color-primary);
+  flex: 0 0 auto;
+
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(184, 154, 122, 0.45);
+  border-radius: 50%;
+
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1;
+
+  color: #a17d63;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.35s ease;
 }
+
+.service-accordion__header:hover .service-accordion__toggle-icon {
+  border-color: #b89a7a;
+  background: #b89a7a;
+  color: #fffdf9;
+}
+
+.service-accordion__header--open .service-accordion__toggle-icon {
+  background: #a9856c;
+  border-color: #a9856c;
+  color: #fffdf9;
+  transform: rotate(180deg);
+}
+
+/* ---------------------------------------------------------
+   CONTENT ANIMATION
+   --------------------------------------------------------- */
 
 .service-accordion__content {
   max-height: 0;
   overflow: hidden;
+
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-8px);
+
+  border-top: 1px solid transparent;
+
   transition:
-    max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.4s ease-out 0.1s,
-    transform 0.3s ease-out;
+    max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease,
+    transform 0.4s ease,
+    border-color 0.3s ease;
 }
 
 .service-accordion__content--open {
   max-height: 1500px;
+
   opacity: 1;
   transform: translateY(0);
+
+  border-top-color: rgba(151, 116, 104, 0.12);
 }
+
+/* ---------------------------------------------------------
+   SERVICE LIST
+   --------------------------------------------------------- */
 
 .service-accordion__services {
   list-style: none;
+
   margin: 0;
-  padding: 1rem;
+  padding: 0.8rem 1.6rem 1.4rem;
 }
 
+/* ---------------------------------------------------------
+   INDIVIDUAL SERVICE
+   --------------------------------------------------------- */
+
 .service-accordion__service {
-  padding: 0.5rem 0;
-  animation: fadeInUp 0.4s ease forwards;
-  animation-delay: calc(var(--i) * 0.05s);
+  padding: 0.7rem 0;
+
   opacity: 0;
+
+  animation: fadeInUp 0.45s ease forwards;
+  animation-delay: calc(var(--i) * 0.055s);
 }
 
 @keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
 }
+
+/* ---------------------------------------------------------
+   SERVICE LINE
+   --------------------------------------------------------- */
 
 .service-accordion__line {
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  text-transform: uppercase;
   width: 100%;
-  color: #ff6f91;
 }
+
+/* ---------------------------------------------------------
+   SERVICE NAME
+   --------------------------------------------------------- */
 
 .service-accordion__name {
   flex: 0 0 auto;
-  font-size: 0.95rem;
-  color: var(--color-text-secondary);
+
+  font-family: "Inter", sans-serif;
+  font-size: 0.91rem;
+  font-weight: 400;
+
+  letter-spacing: 0.015em;
+  line-height: 1.5;
+
+  color: #67564f;
+
+  transition: color 0.25s ease;
 }
+
+.service-accordion__service:hover .service-accordion__name {
+  color: #8b6258;
+}
+
+/* ---------------------------------------------------------
+   DOTTED LINE
+   --------------------------------------------------------- */
 
 .service-accordion__dotted-line {
   flex: 1;
-  height: 4px;
-  margin: 0 2rem;
-  background-image: radial-gradient(circle, #999 1px, transparent 1.5px);
-  background-size: 6px 4px;
+
+  height: 1px;
+
+  margin: 0 1rem;
+
+  background-image: radial-gradient(
+    circle,
+    rgba(155, 127, 110, 0.48) 0.7px,
+    transparent 0.9px
+  );
+
+  background-size: 5px 1px;
   background-repeat: repeat-x;
+
+  transform: translateY(-2px);
 }
+
+/* ---------------------------------------------------------
+   PRICE
+   --------------------------------------------------------- */
 
 .service-accordion__price {
   flex: 0 0 auto;
+
+  font-family: "Inter", sans-serif;
+  font-size: 0.9rem;
   font-weight: 500;
-  font-size: 0.95rem;
-  color: var(--color-primary);
+
+  letter-spacing: 0.04em;
+
+  color: #8f6b56;
+
+  white-space: nowrap;
 }
 
-@media (max-width: 500px) {
+/* ---------------------------------------------------------
+   ERROR
+   --------------------------------------------------------- */
+
+.service-accordion__error {
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+
+  border: 1px solid rgba(160, 87, 87, 0.2);
+  background: rgba(255, 245, 243, 0.8);
+
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+
+  color: #955f5f;
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
   .service-accordion {
-    width: 100%;
+    padding: 1rem 0.75rem 2.5rem;
+  }
+
+  .service-accordion__list {
+    gap: 0.75rem;
+  }
+
+  .service-accordion__header {
+    min-height: 68px;
+
+    padding: 1rem 1.1rem;
+
+    font-size: 1.2rem;
+  }
+
+  .service-accordion__toggle-icon {
+    width: 27px;
+    height: 27px;
+
+    font-size: 0.9rem;
+  }
+
+  .service-accordion__services {
+    padding: 0.65rem 1.1rem 1rem;
+  }
+
+  .service-accordion__service {
+    padding: 0.65rem 0;
+  }
+
+  .service-accordion__name {
+    font-size: 0.84rem;
+  }
+
+  .service-accordion__price {
+    font-size: 0.84rem;
+  }
+
+  .service-accordion__dotted-line {
+    margin: 0 0.65rem;
+  }
+}
+
+/* ---------------------------------------------------------
+   VERY SMALL SCREENS
+   --------------------------------------------------------- */
+
+@media (max-width: 380px) {
+  .service-accordion__header {
+    padding: 0.9rem 0.9rem;
+  }
+
+  .service-accordion__services {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+
+  .service-accordion__name,
+  .service-accordion__price {
+    font-size: 0.8rem;
+  }
+
+  .service-accordion__dotted-line {
+    margin: 0 0.45rem;
+  }
+}
+
+/* ---------------------------------------------------------
+   REDUCED MOTION
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .service-accordion__item,
+  .service-accordion__header,
+  .service-accordion__toggle-icon,
+  .service-accordion__content,
+  .service-accordion__service {
+    transition: none;
+    animation: none;
+  }
+
+  .service-accordion__service {
+    opacity: 1;
+    transform: none;
   }
 }

@@ -1,2 +1,100 @@
-.site-footer { align-items: center; background: var(--color-text); color: var(--color-border); display: flex; font-family: Georgia, "Times New Roman", serif; font-size: .9rem; justify-content: space-between; padding: 1.4rem clamp(1rem, 5vw, 4rem); }.site-footer p { color: inherit; font-size: inherit; margin: 0; text-align: left; }.site-footer p + p { color: var(--color-accent); }
-@media (max-width: 560px) { .site-footer { align-items: flex-start; flex-direction: column; gap: .45rem; } }
+/* =========================================================
+   SITE FOOTER
+   Premium / elegant salon typography
+   Existing layout intentionally preserved
+   ========================================================= */
+
+.site-footer {
+  align-items: center;
+
+  background: var(--color-text);
+
+  color: #d8cbc5;
+
+  display: flex;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.78rem;
+
+  justify-content: space-between;
+
+  padding: 1.4rem clamp(1rem, 5vw, 4rem);
+}
+
+/* =========================================================
+   COPYRIGHT
+   ========================================================= */
+
+.site-footer__copyright {
+  color: #d8cbc5;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 0.72rem;
+  font-weight: 500;
+
+  letter-spacing: 0.055em;
+  line-height: 1.5;
+
+  margin: 0;
+
+  text-align: left;
+}
+
+/* =========================================================
+   TAGLINE
+   Elegant editorial serif treatment
+   ========================================================= */
+
+.site-footer__tagline {
+  color: #c9a45c;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.82rem;
+  font-style: italic;
+  font-weight: 400;
+
+  letter-spacing: 0.025em;
+  line-height: 1.5;
+
+  margin: 0;
+
+  text-align: right;
+}
+
+/* =========================================================
+   MOBILE
+   Existing responsive layout preserved
+   ========================================================= */
+
+@media (max-width: 560px) {
+  .site-footer {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 0.45rem;
+  }
+
+  .site-footer__copyright {
+    font-size: 0.7rem;
+    letter-spacing: 0.045em;
+  }
+
+  .site-footer__tagline {
+    font-size: 0.78rem;
+    text-align: left;
+  }
+}

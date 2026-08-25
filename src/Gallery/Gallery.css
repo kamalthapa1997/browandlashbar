@@ -1,156 +1,61 @@
-/* =========================================================
+/* =====================================================
    GALLERY PAGE
-   Premium editorial / luxury salon portfolio
-   ========================================================= */
+   ===================================================== */
 
 .gallery-page {
-  --gallery-bg-top: #faf6f1;
-  --gallery-bg-middle: #f7e9e6;
-  --gallery-bg-bottom: #f8f2ed;
-
-  --gallery-text: var(--color-text);
-  --gallery-muted: var(--color-text-secondary);
-  --gallery-primary: var(--color-primary);
-
-  position: relative;
-
   min-height: 100vh;
-
   overflow: hidden;
+  position: relative;
+  width: 100%;
 
-  padding: 8rem 2rem 5rem;
+  padding: calc(var(--header-height, 5rem) + 2.5rem) clamp(1.25rem, 4vw, 4.5rem)
+    4rem;
 
   background:
     radial-gradient(
-      circle at 50% 12%,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(255, 255, 255, 0.45) 24%,
-      rgba(255, 255, 255, 0) 52%
+      circle at 100% 0%,
+      rgba(201, 164, 92, 0.08),
+      transparent 28rem
     ),
     linear-gradient(
       180deg,
-      var(--gallery-bg-top) 0%,
-      var(--gallery-bg-middle) 45%,
-      var(--gallery-bg-bottom) 100%
+      #fffdf9 0%,
+      var(--color-background) 38%,
+      #f8efe9 100%
     );
-
-  color: var(--gallery-text);
 }
-
-/* =========================================================
-   SOFT BACKGROUND FADE
-   ========================================================= */
 
 .gallery-page::before {
-  content: "";
-
   position: absolute;
-
   top: 0;
-  left: 0;
-  right: 0;
+  right: clamp(1.25rem, 4vw, 4.5rem);
+  left: clamp(1.25rem, 4vw, 4.5rem);
 
-  height: 42rem;
+  height: 1px;
 
-  pointer-events: none;
-
-  background: radial-gradient(
-    ellipse at center top,
-    rgba(255, 255, 255, 0.8) 0%,
-    rgba(255, 255, 255, 0.35) 35%,
-    rgba(255, 255, 255, 0) 72%
-  );
-
-  z-index: 0;
-}
-
-/* Fade the background toward the bottom */
-
-.gallery-page::after {
   content: "";
-
-  position: absolute;
-
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  height: 28rem;
-
-  pointer-events: none;
 
   background: linear-gradient(
-    to bottom,
-    rgba(248, 242, 237, 0),
-    rgba(248, 242, 237, 0.75),
-    rgba(248, 242, 237, 1)
+    90deg,
+    transparent,
+    var(--color-border),
+    transparent
   );
-
-  z-index: 0;
 }
 
-/* =========================================================
+/* =====================================================
    HEADER
-   ========================================================= */
+   ===================================================== */
 
 .gallery-page__header {
-  position: relative;
+  max-width: 42rem;
 
-  z-index: 1;
-
-  width: min(100%, 1100px);
-
-  margin: 0 auto 4rem;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin: 0 auto clamp(2.5rem, 6vw, 5rem);
 
   text-align: center;
 }
 
-/* Small eyebrow */
-
-.gallery-page__header p {
-  position: relative;
-
-  margin: 0 0 0.9rem;
-
-  color: var(--gallery-primary);
-
-  font-family: Georgia, "Times New Roman", serif;
-
-  font-size: 0.76rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.22em;
-
-  text-transform: uppercase;
-}
-
-/* Decorative line */
-
-.gallery-page__header p::before,
-.gallery-page__header p::after {
-  content: "";
-
-  display: inline-block;
-
-  width: 28px;
-
-  height: 1px;
-
-  margin: 0 0.8rem;
-
-  vertical-align: middle;
-
-  background: rgba(183, 110, 121, 0.38);
-}
-
-/* Main title */
-
-.gallery-page__header h1 {
+.gallery-page__title {
   max-width: 800px;
 
   margin: 0;
@@ -168,46 +73,75 @@
   line-height: 1.08;
 }
 
-/* =========================================================
-   GALLERY LIST
-   ========================================================= */
-
-.gallery-page__list {
+.gallery-page__subtitle {
   position: relative;
 
-  z-index: 1;
+  margin: 0 0 0.9rem;
 
-  width: min(100%, 1180px);
+  color: var(--gallery-primary);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.76rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.22em;
+
+  text-transform: uppercase;
+}
+
+.gallery-page__subtitle::before,
+.gallery-page__subtitle::after {
+  display: inline-block;
+
+  width: 28px;
+  height: 1px;
+
+  margin: 0 0.8rem;
+
+  content: "";
+
+  vertical-align: middle;
+
+  background: rgba(183, 110, 121, 0.38);
+}
+
+/* =====================================================
+   GALLERY LIST
+   Default = masonry
+   ===================================================== */
+
+.gallery-page__list {
+  width: 100%;
+  max-width: 82.5rem;
 
   margin: 0 auto;
 
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 5rem;
+  column-count: 1;
+  column-gap: 1.1rem;
 }
 
-/* =========================================================
+/* =====================================================
    GALLERY ITEM
-   ========================================================= */
+   ===================================================== */
 
 .gallery-page__item {
-  position: relative;
+  display: inline-block;
 
   width: 100%;
 
-  display: flex;
+  margin: 0 0 1.5rem;
 
-  flex-direction: column;
+  break-inside: avoid;
 
   opacity: 0;
 
-  transform: translateY(32px);
+  transform: translateY(18px);
 
   transition:
-    opacity 0.8s ease,
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1) var(--gallery-delay, 0ms),
+    transform 1100ms cubic-bezier(0.22, 1, 0.36, 1) var(--gallery-delay, 0ms);
 }
 
 .gallery-page__item--visible {
@@ -216,14 +150,154 @@
   transform: translateY(0);
 }
 
-/* =========================================================
-   IMAGE FRAME
-   ========================================================= */
+/* =====================================================
+   IMAGE
+   ===================================================== */
 
 .gallery-page__image {
-  position: relative;
+  display: block;
 
   width: 100%;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  color: inherit;
+
+  font: inherit;
+
+  text-align: inherit;
+
+  cursor: zoom-in;
+
+  appearance: none;
+
+  background: #fffaf7;
+
+  border: 1px solid rgba(232, 214, 208, 0.9);
+
+  border-radius: 0.25rem;
+
+  box-shadow: 0 0.75rem 2rem rgba(84, 54, 47, 0.08);
+
+  transition:
+    box-shadow 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 700ms ease;
+}
+
+.gallery-page__image img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  transform: scale(1.001);
+
+  transform-origin: center center;
+
+  transition:
+    transform 1200ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 900ms ease;
+}
+
+/* =====================================================
+   CAPTION
+   ===================================================== */
+
+.gallery-page__caption {
+  margin-top: 0.55rem;
+
+  padding: 0 0.1rem;
+}
+
+.gallery-page__caption p {
+  max-width: none;
+
+  margin: 0;
+
+  color: var(--color-text-secondary);
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 0.78rem;
+
+  font-style: italic;
+
+  letter-spacing: 0.015em;
+
+  line-height: 1.45;
+
+  text-align: left;
+}
+
+/* =====================================================
+   FOCUS
+   ===================================================== */
+
+.gallery-page__image:focus-visible,
+.gallery-lightbox__close:focus-visible,
+.gallery-lightbox__control:focus-visible {
+  outline: 3px solid var(--color-accent);
+
+  outline-offset: 4px;
+}
+
+/* =====================================================
+   HOVER
+   ===================================================== */
+
+@media (hover: hover) and (pointer: fine) {
+  .gallery-page__image:hover {
+    border-color: rgba(183, 110, 121, 0.45);
+
+    box-shadow: 0 1.25rem 3rem rgba(84, 54, 47, 0.13);
+  }
+
+  .gallery-page__image:hover img {
+    transform: scale(1.018);
+
+    filter: saturate(1.025) brightness(1.015);
+  }
+}
+
+/* =====================================================
+   ERROR / EMPTY
+   ===================================================== */
+
+.gallery-page__error,
+.gallery-page__empty {
+  max-width: 38rem;
+
+  margin: 2rem auto;
+
+  padding: 1.25rem;
+
+  color: var(--color-text-secondary);
+
+  text-align: center;
+
+  background: rgba(255, 255, 255, 0.56);
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-card);
+}
+
+.gallery-page__error {
+  color: var(--color-primary-hover);
+}
+
+/* =====================================================
+   LIGHTBOX
+   ===================================================== */
+
+.gallery-lightbox {
+  position: fixed;
+
+  z-index: 1000;
+
+  inset: 0;
 
   display: flex;
 
@@ -231,435 +305,372 @@
 
   justify-content: center;
 
-  padding: 1rem;
+  padding: clamp(1rem, 3vw, 2.5rem);
 
-  overflow: hidden;
+  background: rgba(47, 31, 27, 0.94);
 
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.72),
-    rgba(248, 234, 230, 0.55)
-  );
+  animation: gallery-lightbox-fade 260ms ease;
 
-  border: 1px solid rgba(120, 87, 77, 0.12);
-
-  border-radius: 18px;
-
-  box-shadow:
-    0 12px 30px rgba(87, 57, 48, 0.06),
-    0 28px 65px rgba(87, 57, 48, 0.06);
-
-  isolation: isolate;
+  /*
+    Allow vertical gestures,
+    while horizontal gestures
+    are handled by React.
+  */
+  touch-action: pan-y;
 }
 
-/* Inner soft highlight */
+.gallery-lightbox__content {
+  display: grid;
 
-.gallery-page__image::before {
-  content: "";
+  grid-template-columns:
+    auto
+    minmax(0, 1fr)
+    auto;
 
-  position: absolute;
+  gap: clamp(0.75rem, 2vw, 1.75rem);
 
-  inset: 0;
-
-  pointer-events: none;
-
-  border-radius: inherit;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -1px 0 rgba(120, 87, 77, 0.05);
-
-  z-index: 2;
-}
-
-/* =========================================================
-   IMAGE
-   ========================================================= */
-
-.gallery-page__image img {
-  position: relative;
-
-  z-index: 1;
-
-  display: block;
+  align-items: center;
 
   width: 100%;
 
-  height: auto;
-
-  max-width: 100%;
-
-  object-fit: contain;
-
-  border-radius: 10px;
-
-  background: rgba(246, 228, 225, 0.28);
-
-  transition:
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.6s ease;
+  max-width: 82.5rem;
 }
 
-/* Desktop hover */
+.gallery-lightbox__figure {
+  display: flex;
 
-@media (min-width: 961px) {
-  .gallery-page__item:hover .gallery-page__image {
-    box-shadow:
-      0 16px 38px rgba(87, 57, 48, 0.08),
-      0 32px 75px rgba(87, 57, 48, 0.08);
-  }
+  flex-direction: column;
 
-  .gallery-page__item:hover .gallery-page__image img {
-    transform: scale(1.018);
-  }
-}
+  align-items: center;
 
-/* =========================================================
-   CAPTION
-   ========================================================= */
+  justify-content: center;
 
-.gallery-page__caption {
-  width: 100%;
+  min-width: 0;
 
-  padding: 1.2rem 0.35rem 0;
-
-  border-bottom: 1px solid rgba(92, 67, 59, 0.16);
-}
-
-.gallery-page__caption p {
-  width: min(100%, 850px);
-
-  margin: 0 0 1.15rem;
-
-  color: var(--gallery-muted);
-
-  font-family: Georgia, "Times New Roman", serif;
-
-  font-size: 1rem;
-
-  line-height: 1.7;
-
-  text-align: left;
-
-  overflow-wrap: anywhere;
-}
-
-/* =========================================================
-   ERROR / EMPTY STATES
-   ========================================================= */
-
-.gallery-page__error,
-.gallery-page__empty {
-  position: relative;
-
-  z-index: 1;
-
-  width: min(100%, 850px);
-
-  margin: 2rem auto;
-
-  padding: 1.15rem 1.35rem;
-
-  box-sizing: border-box;
-
-  border: 1px solid rgba(120, 87, 77, 0.12);
-
-  border-radius: 14px;
-
-  background: rgba(255, 255, 255, 0.5);
-
-  box-shadow: 0 10px 30px rgba(87, 57, 48, 0.04);
-
-  color: var(--gallery-muted);
-
-  font-family: Georgia, "Times New Roman", serif;
-
-  line-height: 1.6;
+  margin: 0;
 
   text-align: center;
 }
 
-.gallery-page__error {
-  color: var(--color-primary-hover);
+.gallery-lightbox__image {
+  display: block;
+
+  width: auto;
+
+  max-width: min(92vw, 72rem);
+
+  height: auto;
+
+  max-height: 86vh;
+
+  margin: 0;
+
+  object-fit: contain;
+
+  user-select: none;
+
+  -webkit-user-drag: none;
+
+  touch-action: pan-y;
+
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.36);
+
+  animation: gallery-lightbox-image-in 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* =========================================================
-   LARGE DESKTOP
-   ========================================================= */
+/* =====================================================
+   LIGHTBOX CAPTION
+   ===================================================== */
 
-@media (min-width: 1200px) {
-  .gallery-page {
-    padding-left: 3rem;
+.gallery-lightbox__caption {
+  margin-top: 0.9rem;
 
-    padding-right: 3rem;
-  }
+  color: rgba(255, 250, 247, 0.88);
 
-  .gallery-page__header {
-    margin-bottom: 4.5rem;
-  }
+  font-family: Georgia, "Times New Roman", serif;
 
-  .gallery-page__list {
-    gap: 6rem;
-  }
+  font-size: 0.9rem;
 
-  .gallery-page__image {
-    padding: 1.25rem;
+  font-style: italic;
 
-    border-radius: 20px;
-  }
+  line-height: 1.45;
+}
 
-  .gallery-page__caption {
-    padding-top: 1.35rem;
-  }
+/* =====================================================
+   LIGHTBOX BUTTONS
+   ===================================================== */
 
-  .gallery-page__caption p {
-    font-size: 1.05rem;
+.gallery-lightbox__close,
+.gallery-lightbox__control {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  z-index: 1001;
+
+  color: #fffaf7;
+
+  cursor: pointer;
+
+  background: rgba(246, 246, 246, 0.25);
+
+  border: 1px solid rgba(255, 250, 247, 0.45);
+
+  border-radius: 50%;
+
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.gallery-lightbox__close {
+  position: absolute;
+
+  top: clamp(1rem, 3vw, 2rem);
+
+  right: clamp(1rem, 3vw, 2rem);
+
+  width: 2.75rem;
+
+  height: 2.75rem;
+
+  padding: 0 0 0.2rem;
+
+  font-size: 2rem;
+
+  line-height: 1;
+}
+
+.gallery-lightbox__control {
+  width: 2.9rem;
+
+  height: 2.9rem;
+
+  padding: 0 0 0.1rem;
+
+  font-family: Georgia, "Times New Roman", serif;
+
+  font-size: 2.3rem;
+
+  line-height: 1;
+}
+
+/* =====================================================
+   LIGHTBOX HOVER
+   ===================================================== */
+
+@media (hover: hover) and (pointer: fine) {
+  .gallery-lightbox__close:hover,
+  .gallery-lightbox__control:hover {
+    background: rgba(255, 250, 247, 0.18);
+
+    border-color: #fffaf7;
+
+    transform: translateY(-1px);
   }
 }
 
-/* =========================================================
-   DESKTOP / LAPTOP
-   ========================================================= */
-
-@media (min-width: 961px) and (max-width: 1199px) {
-  .gallery-page {
-    padding: 7.5rem 2rem 4rem;
-  }
-
-  .gallery-page__header {
-    margin-bottom: 3.75rem;
-  }
-
-  .gallery-page__list {
-    width: min(100%, 1050px);
-
-    gap: 4.5rem;
-  }
-
-  .gallery-page__image {
-    padding: 1rem;
-
-    border-radius: 18px;
-  }
-}
-
-/* =========================================================
+/* =====================================================
    TABLET
-   ========================================================= */
+   ===================================================== */
 
-@media (min-width: 641px) and (max-width: 960px) {
+@media (min-width: 40.063rem) {
   .gallery-page {
-    min-height: 100vh;
-
-    padding: 6.75rem 1.5rem 3.5rem;
-  }
-
-  .gallery-page__header {
-    width: min(100%, 760px);
-
-    margin-bottom: 3.25rem;
-  }
-
-  .gallery-page__header p {
-    font-size: 0.72rem;
-
-    letter-spacing: 0.19em;
-  }
-
-  .gallery-page__header p::before,
-  .gallery-page__header p::after {
-    width: 22px;
-
-    margin-left: 0.6rem;
-    margin-right: 0.6rem;
-  }
-
-  .gallery-page__header h1 {
-    font-size: clamp(2.25rem, 6vw, 3.2rem);
+    padding-bottom: 5.5rem;
   }
 
   .gallery-page__list {
-    width: min(100%, 760px);
+    column-count: 2;
 
-    gap: 3.75rem;
+    column-gap: 1.25rem;
   }
 
-  .gallery-page__image {
-    padding: 0.85rem;
-
-    border-radius: 16px;
-
-    box-shadow:
-      0 10px 28px rgba(87, 57, 48, 0.055),
-      0 22px 50px rgba(87, 57, 48, 0.045);
-  }
-
-  .gallery-page__image img {
-    border-radius: 9px;
-  }
-
-  .gallery-page__caption {
-    padding: 1rem 0.25rem 0;
-  }
-
-  .gallery-page__caption p {
-    margin-bottom: 1rem;
-
-    font-size: 0.98rem;
-
-    line-height: 1.65;
+  .gallery-page__item {
+    margin-bottom: 1.75rem;
   }
 }
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
+/* =====================================================
+   DESKTOP
+   ===================================================== */
 
-@media (max-width: 640px) {
+@media (min-width: 60.063rem) {
   .gallery-page {
-    min-height: 100vh;
-
-    padding: 5.8rem 0.85rem 2.5rem;
+    padding-top: calc(var(--header-height, 5rem) + 3.75rem);
   }
 
-  .gallery-page::before {
-    height: 30rem;
+  /*
+    Large galleries remain masonry.
+  */
+  .gallery-page__list {
+    column-count: 3;
+
+    column-gap: 1.4rem;
   }
 
-  .gallery-page::after {
-    height: 18rem;
+  /*
+    Small galleries use a centered
+    flex layout instead of masonry.
+
+    This fixes the empty space problem.
+  */
+  .gallery-page__list--count-1,
+  .gallery-page__list--count-2,
+  .gallery-page__list--count-3,
+  .gallery-page__list--count-4,
+  .gallery-page__list--count-5 {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
+    gap: 1.4rem;
+
+    column-count: unset;
   }
 
-  .gallery-page__header {
+  .gallery-page__list--count-1 .gallery-page__item,
+  .gallery-page__list--count-2 .gallery-page__item,
+  .gallery-page__list--count-3 .gallery-page__item,
+  .gallery-page__list--count-4 .gallery-page__item,
+  .gallery-page__list--count-5 .gallery-page__item {
+    display: block;
+
+    flex: 0 1 calc((100% - 2.8rem) / 3);
+
+    width: auto;
+
+    margin: 0;
+
+    break-inside: auto;
+  }
+}
+
+/* =====================================================
+   MOBILE LIGHTBOX
+   ===================================================== */
+
+@media (max-width: 40rem) {
+  .gallery-lightbox {
+    padding: 0.75rem;
+  }
+
+  .gallery-lightbox__content {
+    display: block;
+
     width: 100%;
-
-    margin-bottom: 2.5rem;
-
-    padding: 0 0.35rem;
   }
 
-  .gallery-page__header p {
-    margin-bottom: 0.75rem;
-
-    font-size: 0.66rem;
-
-    letter-spacing: 0.17em;
-  }
-
-  .gallery-page__header p::before,
-  .gallery-page__header p::after {
-    width: 16px;
-
-    margin-left: 0.45rem;
-    margin-right: 0.45rem;
-  }
-
-  .gallery-page__header h1 {
-    max-width: 340px;
-
-    font-size: clamp(1.95rem, 9vw, 2.45rem);
-
-    line-height: 1.1;
-  }
-
-  .gallery-page__list {
+  .gallery-lightbox__figure {
     width: 100%;
-
-    gap: 3rem;
   }
 
-  .gallery-page__image {
-    padding: 0.5rem;
+  .gallery-lightbox__image {
+    width: auto;
 
-    border-radius: 14px;
+    max-width: calc(100vw - 1.5rem);
 
-    box-shadow:
-      0 8px 22px rgba(87, 57, 48, 0.055),
-      0 18px 38px rgba(87, 57, 48, 0.04);
+    max-height: 80vh;
   }
 
-  .gallery-page__image img {
-    border-radius: 8px;
+  .gallery-lightbox__control {
+    position: absolute;
+
+    top: 50%;
+
+    transform: translateY(-50%);
   }
 
-  .gallery-page__caption {
-    padding: 0.85rem 0.1rem 0;
+  .gallery-lightbox__control--previous {
+    left: 0.75rem;
   }
 
-  .gallery-page__caption p {
-    margin-bottom: 0.9rem;
-
-    font-size: 0.92rem;
-
-    line-height: 1.6;
-  }
-
-  /* Disable hover-style scaling on touch devices */
-  .gallery-page__item:hover .gallery-page__image img {
-    transform: none;
+  .gallery-lightbox__control--next {
+    right: 0.75rem;
   }
 }
 
-/* =========================================================
-   VERY SMALL PHONES
-   ========================================================= */
+/* =====================================================
+   LIGHTBOX ANIMATIONS
+   ===================================================== */
 
-@media (max-width: 380px) {
+@keyframes gallery-lightbox-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gallery-lightbox-image-in {
+  from {
+    opacity: 0;
+
+    transform: scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: scale(1);
+  }
+}
+
+/* =====================================================
+   VERY SMALL SCREENS
+   ===================================================== */
+
+@media (max-width: 30rem) {
   .gallery-page {
-    padding-left: 0.7rem;
-
-    padding-right: 0.7rem;
-  }
-
-  .gallery-page__header {
-    margin-bottom: 2.2rem;
-  }
-
-  .gallery-page__header h1 {
-    font-size: 1.8rem;
+    padding-inline: 0.9rem;
   }
 
   .gallery-page__list {
-    gap: 2.5rem;
+    column-gap: 0.75rem;
+    column-count: 2;
   }
 
-  .gallery-page__image {
-    padding: 0.4rem;
-
-    border-radius: 12px;
+  .gallery-page__item {
+    margin-bottom: 1.15rem;
   }
 
-  .gallery-page__caption {
-    padding-top: 0.75rem;
-  }
+  .gallery-lightbox__control {
+    width: 2.5rem;
 
-  .gallery-page__caption p {
-    font-size: 0.88rem;
+    height: 2.5rem;
 
-    line-height: 1.55;
+    font-size: 2rem;
   }
 }
 
-/* =========================================================
-   ACCESSIBILITY / REDUCED MOTION
-   ========================================================= */
+/* =====================================================
+   REDUCED MOTION
+   ===================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   .gallery-page__item,
   .gallery-page__image,
-  .gallery-page__image img {
-    transition: none !important;
+  .gallery-page__image img,
+  .gallery-lightbox,
+  .gallery-lightbox__image,
+  .gallery-lightbox__close,
+  .gallery-lightbox__control {
+    transition: none;
 
-    animation: none !important;
+    animation: none;
   }
 
   .gallery-page__item {
     opacity: 1;
 
-    transform: none;
-  }
-
-  .gallery-page__item:hover .gallery-page__image img {
     transform: none;
   }
 }

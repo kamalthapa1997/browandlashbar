@@ -241,7 +241,7 @@ function SettingsManager({ settings, onSaved, notify, findErrorField }) {
           <h2>Brand logo</h2>
           <FileUpload
             label="Upload logo"
-            helpText="JPG, PNG, or WEBP image files"
+            helpText="JPG, PNG, WEBP, HEIC, or HEIF image files"
             file={logo}
             existingPreview={settings?.logoUrl}
             onChange={setLogo}

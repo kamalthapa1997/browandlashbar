@@ -45,6 +45,7 @@
 
   width: 100%;
   max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
 }
 
@@ -249,6 +250,8 @@
   max-width: 100%;
   min-width: 0;
 
+  overflow: hidden;
+
   padding: 0.5rem;
 
   box-sizing: border-box;
@@ -259,18 +262,11 @@
    ========================================================= */
 
 .reviews-section__carousel-viewport {
-  display: flex;
-
   width: 100%;
   max-width: 100%;
   min-width: 0;
 
-  flex: none;
-
-  gap: 1rem;
-
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: hidden;
 
   padding: 0;
 
@@ -281,27 +277,43 @@
 
   overscroll-behavior-inline: contain;
 
-  scrollbar-color: rgba(154, 101, 112, 0.35) transparent;
-
-  scrollbar-width: thin;
-
-  -webkit-overflow-scrolling: touch;
-
   box-sizing: border-box;
 }
 
-.reviews-section__carousel-viewport::-webkit-scrollbar {
-  height: 4px;
+.reviews-section__marquee {
+  display: flex;
+  width: max-content;
+
+  will-change: transform;
+
+  animation: reviews-marquee 52s linear infinite;
 }
 
-.reviews-section__carousel-viewport::-webkit-scrollbar-track {
-  background: transparent;
+.reviews-section__group {
+  display: flex;
+  flex: 0 0 auto;
+
+  gap: 1rem;
+
+  /* This trailing gap is part of each equal-width group, so -50% lands
+     exactly at the start of the duplicate sequence. */
+  padding-right: 1rem;
 }
 
-.reviews-section__carousel-viewport::-webkit-scrollbar-thumb {
-  background: rgba(154, 101, 112, 0.35);
+@keyframes reviews-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
 
-  border-radius: 999px;
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.reviews-section__carousel-viewport:hover .reviews-section__marquee,
+.reviews-section__carousel-viewport:focus .reviews-section__marquee,
+.reviews-section__carousel-viewport:active .reviews-section__marquee {
+  animation-play-state: paused;
 }
 
 .reviews-section__carousel-viewport:focus-visible {
@@ -324,9 +336,9 @@
  */
 
 .reviews-section__card {
-  flex: 0 0 calc((100% - 1rem) / 2.25);
+  flex: 0 0 clamp(17rem, 39vw, 340px);
 
-  width: calc((100% - 1rem) / 2.25);
+  width: clamp(17rem, 39vw, 340px);
 
   max-width: 340px;
 
@@ -736,9 +748,9 @@
     /*
      * Tablet remains the reference size.
      */
-    flex: 0 0 calc((100% - 1rem) / 2.25);
+    flex: 0 0 clamp(17rem, 39vw, 340px);
 
-    width: calc((100% - 1rem) / 2.25);
+    width: clamp(17rem, 39vw, 340px);
 
     max-width: 340px;
 
@@ -902,5 +914,9 @@
 @media (prefers-reduced-motion: reduce) {
   .reviews-section__card {
     transition: none;
+  }
+
+  .reviews-section__marquee {
+    animation: none;
   }
 }

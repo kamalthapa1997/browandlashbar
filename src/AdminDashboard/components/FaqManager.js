@@ -1,10 +1,6 @@
 import { useState } from "react";
 import Modal from "../../components/Modal/Modal";
-import {
-  createFaq,
-  deleteFaq,
-  updateFaq,
-} from "../../api/faqService";
+import { createFaq, deleteFaq, updateFaq } from "../../api/faqService";
 import InlineFormError from "./InlineFormError";
 import SectionHeading from "./SectionHeading";
 import ModalHeading from "./ModalHeading";

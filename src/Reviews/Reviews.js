@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getReviews } from "../api/reviewsService";
 import "./Reviews.css";
 
@@ -45,7 +45,10 @@ function ReviewCard({ review, isDuplicate = false }) {
   const rating = Number(review.rating) || 5;
 
   return (
-    <article className="reviews-section__card" aria-hidden={isDuplicate || undefined}>
+    <article
+      className="reviews-section__card"
+      aria-hidden={isDuplicate || undefined}
+    >
       <div className="reviews-section__card-meta">
         <div className="reviews-section__card-reviewer">
           <div className="reviews-section__card-avatar" aria-hidden="true">
@@ -58,18 +61,30 @@ function ReviewCard({ review, isDuplicate = false }) {
           </div>
         </div>
 
-        <span className="reviews-section__card-google" aria-label="Posted on Google">
-          <span className="reviews-section__card-google-icon" aria-hidden="true">G</span>
+        <span
+          className="reviews-section__card-google"
+          aria-label="Posted on Google"
+        >
+          <span
+            className="reviews-section__card-google-icon"
+            aria-hidden="true"
+          >
+            G
+          </span>
           <span className="reviews-section__card-google-label">Google</span>
         </span>
       </div>
 
       <ReviewStars rating={rating} />
 
-      <blockquote className="reviews-section__card-text">{review.text}</blockquote>
+      <blockquote className="reviews-section__card-text">
+        {review.text}
+      </blockquote>
 
       <div className="reviews-section__card-source">
-        <span className="reviews-section__card-verified" aria-hidden="true">✓</span>
+        <span className="reviews-section__card-verified" aria-hidden="true">
+          ✓
+        </span>
         Posted on Google
       </div>
     </article>
@@ -80,10 +95,6 @@ export default function Reviews() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const carouselRef = useRef(null);
-  const animationFrameRef = useRef(null);
-  const resumeTimerRef = useRef(null);
-  const isPausedRef = useRef(false);
 
   useEffect(() => {
     let mounted = true;
@@ -119,52 +130,6 @@ export default function Reviews() {
     });
   }, [data]);
 
-  const pauseAutoplay = useCallback(() => {
-    isPausedRef.current = true;
-    window.clearTimeout(resumeTimerRef.current);
-  }, []);
-
-  const resumeAutoplay = useCallback((delay = 1200) => {
-    window.clearTimeout(resumeTimerRef.current);
-    resumeTimerRef.current = window.setTimeout(() => {
-      isPausedRef.current = false;
-    }, delay);
-  }, []);
-
-  useEffect(() => {
-    const carousel = carouselRef.current;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let lastTimestamp = null;
-
-    const animate = (timestamp) => {
-      if (!reducedMotion.matches && !isPausedRef.current && carousel) {
-        const duplicateStart = carousel.querySelector(
-          '.reviews-section__card[aria-hidden="true"]',
-        );
-        const loopPoint = duplicateStart?.offsetLeft || 0;
-
-        if (loopPoint > carousel.clientWidth) {
-          const elapsed = lastTimestamp ? timestamp - lastTimestamp : 0;
-          carousel.scrollLeft += elapsed * 0.018;
-
-          if (carousel.scrollLeft >= loopPoint) {
-            carousel.scrollLeft -= loopPoint;
-          }
-        }
-      }
-
-      lastTimestamp = timestamp;
-      animationFrameRef.current = window.requestAnimationFrame(animate);
-    };
-
-    animationFrameRef.current = window.requestAnimationFrame(animate);
-
-    return () => {
-      window.cancelAnimationFrame(animationFrameRef.current);
-      window.clearTimeout(resumeTimerRef.current);
-    };
-  }, [reviews]);
-
   if (loading) {
     return (
       <section className="reviews-section reviews-section--loading">
@@ -184,7 +149,13 @@ export default function Reviews() {
   const rating = data.rating ? Number(data.rating).toFixed(1) : "5.0";
   const reviewCount = data.userRatingCount || reviews.length;
 
-  const marqueeReviews = [...reviews, ...reviews];
+  const reviewsPerGroup = Math.max(4, reviews.length);
+  const marqueeReviews = Array.from(
+    { length: Math.ceil(reviewsPerGroup / reviews.length) },
+    () => reviews,
+  )
+    .flat()
+    .slice(0, reviewsPerGroup);
 
   return (
     <section className="reviews-section" aria-labelledby="reviews-heading">
@@ -218,28 +189,29 @@ export default function Reviews() {
         <div className="reviews-section__carousel">
           <div
             className="reviews-section__carousel-viewport"
-            ref={carouselRef}
             aria-label="Client reviews"
             tabIndex="0"
-            onMouseEnter={pauseAutoplay}
-            onMouseLeave={() => resumeAutoplay(300)}
-            onFocus={pauseAutoplay}
-            onBlur={() => resumeAutoplay()}
-            onPointerDown={pauseAutoplay}
-            onPointerUp={() => resumeAutoplay()}
-            onPointerCancel={() => resumeAutoplay()}
-            onWheel={() => {
-              pauseAutoplay();
-              resumeAutoplay(1800);
-            }}
           >
-            {marqueeReviews.map((review, index) => (
-              <ReviewCard
-                review={review}
-                isDuplicate={index >= reviews.length}
-                key={`${review.authorName || "review"}-${review.time || index}-${index}`}
-              />
-            ))}
+            <div className="reviews-section__marquee">
+              <div className="reviews-section__group">
+                {marqueeReviews.map((review, index) => (
+                  <ReviewCard
+                    review={review}
+                    isDuplicate={index >= reviews.length}
+                    key={`original-${review.authorName || "review"}-${review.time || index}-${index}`}
+                  />
+                ))}
+              </div>
+              <div className="reviews-section__group" aria-hidden="true">
+                {marqueeReviews.map((review, index) => (
+                  <ReviewCard
+                    review={review}
+                    isDuplicate
+                    key={`duplicate-${review.authorName || "review"}-${review.time || index}-${index}`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

@@ -21,7 +21,9 @@ function Faq() {
         if (current) setError(requestError.message || "Unable to load FAQs.");
       })
       .finally(() => current && setLoading(false));
-    return () => { current = false; };
+    return () => {
+      current = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -40,7 +42,10 @@ function Faq() {
     [faqs],
   );
   const filteredFaqs = useMemo(
-    () => faqs.filter((faq) => activeCategory === "All" || faq.category === activeCategory),
+    () =>
+      faqs.filter(
+        (faq) => activeCategory === "All" || faq.category === activeCategory,
+      ),
     [faqs, activeCategory],
   );
   const showFilters = faqs.length >= 5 && categories.length > 2;
@@ -52,23 +57,40 @@ function Faq() {
   return (
     <section id="faq" className="faq-section" aria-labelledby="faq-title">
       <div className="faq-section__inner">
-        <header ref={heading.ref} className={`faq-section__heading ${heading.className}`}>
+        <header
+          ref={heading.ref}
+          className={`faq-section__heading ${heading.className}`}
+        >
           <p>Helpful details</p>
           <h2 id="faq-title">Frequently Asked Questions</h2>
-          <span aria-hidden="true"><i />✦<i /></span>
+          <span aria-hidden="true">
+            <i />✦<i />
+          </span>
           <div>Answers to the questions we hear most before your visit.</div>
         </header>
 
         {error ? (
-          <p className="faq-section__error" role="alert">{error}</p>
+          <p className="faq-section__error" role="alert">
+            {error}
+          </p>
         ) : loading ? (
-          <p className="faq-section__empty">Loading frequently asked questions…</p>
+          <p className="faq-section__empty">
+            Loading frequently asked questions…
+          </p>
         ) : !faqs.length ? (
-          <p className="faq-section__empty">We’re preparing helpful answers for your next visit.</p>
+          <p className="faq-section__empty">
+            We’re preparing helpful answers for your next visit.
+          </p>
         ) : (
-          <div ref={list.ref} className={`faq-section__content ${list.className}`}>
+          <div
+            ref={list.ref}
+            className={`faq-section__content ${list.className}`}
+          >
             {showFilters && (
-              <div className="faq-section__filters" aria-label="Filter FAQs by category">
+              <div
+                className="faq-section__filters"
+                aria-label="Filter FAQs by category"
+              >
                 {categories.map((category) => (
                   <button
                     key={category}
@@ -86,7 +108,10 @@ function Faq() {
                 const isOpen = faq._id === openId;
                 const contentId = `${sectionId}-answer-${faq._id}`;
                 return (
-                  <article className={`faq-accordion__item ${isOpen ? "is-open" : ""}`} key={faq._id}>
+                  <article
+                    className={`faq-accordion__item ${isOpen ? "is-open" : ""}`}
+                    key={faq._id}
+                  >
                     <button
                       type="button"
                       className="faq-accordion__trigger"
@@ -97,8 +122,12 @@ function Faq() {
                       <span>{faq.question}</span>
                       <b aria-hidden="true">{isOpen ? "−" : "+"}</b>
                     </button>
-                    <div id={contentId} className="faq-accordion__answer" hidden={!isOpen}>
-                      <p>{faq.answer}</p>
+                    <div
+                      id={contentId}
+                      className="faq-accordion__answer"
+                      hidden={!isOpen}
+                    >
+                      <p> {faq.answer}</p>
                     </div>
                   </article>
                 );

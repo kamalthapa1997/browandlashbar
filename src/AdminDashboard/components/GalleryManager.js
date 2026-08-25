@@ -139,7 +139,7 @@ function GalleryModal({ item, onClose, onSaved, findErrorField }) {
         <InlineFormError message={errorField === "caption" ? error : ""} />
         <FileUpload
           label="Upload image"
-          helpText="JPG, PNG, or WEBP image files"
+          helpText="JPG, PNG, WEBP, HEIC, or HEIF image files"
           file={image}
           existingPreview={item.imageUrl}
           onChange={setImage}

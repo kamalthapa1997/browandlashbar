@@ -3,8 +3,13 @@ import "./Footer.css";
 function Footer() {
   return (
     <footer className="site-footer">
-      <p>© {new Date().getFullYear()} Mero Brow &amp; Lash Bar</p>
-      <p>Beautifully considered beauty care.</p>
+      <p className="site-footer__copyright">
+        © {new Date().getFullYear()} Mero Brow &amp; Lash Bar
+      </p>
+
+      <p className="site-footer__tagline">
+        Beautifully considered beauty care.
+      </p>
     </footer>
   );
 }
