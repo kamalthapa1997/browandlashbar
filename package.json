@@ -36,7 +36,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "npm run build && scp -r ./build/* handsomelotus1@merobrowandlashbar.com:/home/handsomelotus1/apps/merobrowandlashbar"
+    "deploy": "npm run build && scp -r ./build/* handsomelotus1@merobrowandlashbar.com:/home/handsomelotus1/apps/merobrowandlashbar/build/"
   },
   "eslintConfig": {
     "extends": [
