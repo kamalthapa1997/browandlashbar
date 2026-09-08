@@ -187,9 +187,9 @@ function Header({ sectionId, sectionClass }) {
                 Book Now
               </a>
 
-              <div className="site-header__offer-text" aria-live="polite">
+              <p className="site-header__offer-text" aria-live="polite">
                 {offerText}
-              </div>
+              </p>
 
               <button
                 type="button"

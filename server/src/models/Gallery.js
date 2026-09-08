@@ -12,6 +12,18 @@ const gallerySchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    width: {
+      type: Number,
+      min: 1,
+    },
+    height: {
+      type: Number,
+      min: 1,
+    },
+    aspectRatio: {
+      type: Number,
+      min: 0.01,
+    },
     caption: {
       type: String,
       trim: true,

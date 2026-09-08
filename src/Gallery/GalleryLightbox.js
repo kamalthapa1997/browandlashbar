@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import { createPortal } from "react-dom";
 
 function GalleryLightbox({ images, initialIndex, onClose }) {
@@ -39,10 +40,12 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
     function handleKeyDown(event) {
       if (event.key === "Escape") {
         onClose();
+        return;
       }
 
       if (event.key === "ArrowLeft") {
         showPrevious();
+        return;
       }
 
       if (event.key === "ArrowRight") {
@@ -94,17 +97,15 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
     touchStartY.current = null;
 
     /*
-      Ignore vertical scrolling gestures.
-    */
-
+     * Ignore vertical scrolling gestures.
+     */
     if (Math.abs(deltaY) > Math.abs(deltaX)) {
       return;
     }
 
     /*
-      Minimum swipe distance.
-    */
-
+     * Minimum swipe distance.
+     */
     const SWIPE_THRESHOLD = 50;
 
     if (Math.abs(deltaX) < SWIPE_THRESHOLD) {
@@ -124,18 +125,17 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
 
   const handleBackdropClick = (event) => {
     /*
-      Clicking the actual image does NOT close.
-
-      Clicking:
-      - dark background
-      - empty area
-      - outside the image
-
-      DOES close.
-
-      The caption and navigation buttons
-      remain interactive.
-    */
+     * Clicking the actual image does NOT close.
+     *
+     * Clicking:
+     * - dark background
+     * - empty area
+     * - outside the image
+     *
+     * DOES close.
+     *
+     * Caption and navigation controls remain interactive.
+     */
 
     const clickedInsideImage = event.target.closest(
       ".gallery-lightbox__figure",
@@ -150,7 +150,17 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
     }
   };
 
-  if (!selectedImage) return null;
+  /* =====================================================
+     SAFETY
+     ===================================================== */
+
+  if (!selectedImage) {
+    return null;
+  }
+
+  /* =====================================================
+     RENDER
+     ===================================================== */
 
   return createPortal(
     <section
@@ -162,7 +172,9 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* CLOSE */}
+      {/* =================================================
+          CLOSE
+          ================================================= */}
 
       <button
         ref={closeButtonRef}
@@ -174,10 +186,14 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
         ×
       </button>
 
-      {/* CONTENT */}
+      {/* =================================================
+          CONTENT
+          ================================================= */}
 
       <div className="gallery-lightbox__content">
-        {/* PREVIOUS */}
+        {/* =================================================
+            PREVIOUS
+            ================================================= */}
 
         {images.length > 1 && (
           <button
@@ -196,7 +212,9 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
           </button>
         )}
 
-        {/* IMAGE */}
+        {/* =================================================
+            IMAGE
+            ================================================= */}
 
         <figure className="gallery-lightbox__figure">
           <img
@@ -206,7 +224,9 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
             draggable="false"
           />
 
-          {/* CAPTION ONLY IN LIGHTBOX */}
+          {/* =================================================
+              CAPTION
+              ================================================= */}
 
           {selectedImage.caption && (
             <figcaption className="gallery-lightbox__caption">
@@ -215,7 +235,9 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
           )}
         </figure>
 
-        {/* NEXT */}
+        {/* =================================================
+            NEXT
+            ================================================= */}
 
         {images.length > 1 && (
           <button
