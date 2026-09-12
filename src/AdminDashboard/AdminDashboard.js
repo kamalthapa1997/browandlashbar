@@ -251,6 +251,7 @@ function AdminDashboard({ onSettingsUpdated }) {
             {activeSection === "gallery" && (
               <GalleryManager
                 gallery={gallery}
+                services={services}
                 onSaved={upsertGalleryItem}
                 onDeleted={removeGalleryItem}
                 notify={showToast}

@@ -1,0 +1,51 @@
+.booking__confirmation {
+  max-width: 660px;
+  padding: clamp(3rem, 9vw, 6rem) clamp(1.25rem, 6vw, 5rem);
+  text-align: center;
+  animation: booking-enter 600ms var(--ease) both;
+}
+.booking__confirmation-mark {
+  display: grid;
+  width: 4.4rem;
+  height: 4.4rem;
+  margin: 0 auto 1.5rem;
+  place-items: center;
+  border: 1px solid var(--rose-deep);
+  border-radius: 50%;
+  background: #f6e7e2;
+  color: var(--rose-deep);
+  font:
+    400 1.7rem/1 Georgia,
+    serif;
+}
+.booking__confirmation-mark--pending {
+  border-color: var(--gold);
+  background: #fbf2e4;
+  color: var(--gold);
+}
+.booking__confirmation-mark--declined {
+  border-color: #a45a54;
+  background: #fbefeb;
+  color: #a45a54;
+}
+.booking__confirmation-mark--unknown {
+  border-color: var(--line-strong);
+  background: var(--ivory);
+  color: var(--ink-soft);
+}
+.booking__confirmation > p:not(.booking__eyebrow) {
+  max-width: 510px;
+  margin: 1rem auto 0;
+  color: var(--ink-soft);
+  font:
+    400 0.95rem/1.7 Arial,
+    sans-serif;
+}
+.booking__confirmation .booking__button {
+  margin-top: 1.8rem;
+}
+.booking__reference {
+  color: var(--muted) !important;
+  font-size: 0.75rem !important;
+  overflow-wrap: anywhere;
+}

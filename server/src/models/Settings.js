@@ -63,6 +63,23 @@ const settingsSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    gallery: {
+      eyebrow: {
+        type: String,
+        trim: true,
+        default: "OUR PORTFOLIO",
+      },
+      title: {
+        type: String,
+        trim: true,
+        default: "Beauty in every detail",
+      },
+      description: {
+        type: String,
+        trim: true,
+        default: "Explore our latest lash and brow work.",
+      },
+    },
   },
   {
     timestamps: true,

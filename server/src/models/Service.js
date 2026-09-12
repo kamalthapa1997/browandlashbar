@@ -19,6 +19,13 @@ const serviceSchema = new mongoose.Schema(
       enum: serviceCategories,
       required: true,
     },
+    square: {
+      catalogItemId: { type: String, trim: true, default: "" },
+      variationId: { type: String, trim: true, default: "" },
+      variationVersion: { type: Number, min: 0 },
+      // An empty list means any currently bookable Square team member.
+      teamMemberIds: { type: [String], default: [] },
+    },
   },
   {
     timestamps: true,

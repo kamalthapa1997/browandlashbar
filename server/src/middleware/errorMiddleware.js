@@ -60,17 +60,25 @@ function errorHandler(error, _request, response, _next) {
   }
 
   const code = errorCode || STATUS_CODES[statusCode] || "INTERNAL_SERVER_ERROR";
-  const safeMessage = statusCode >= 500 ? "Something went wrong on the server." : message;
+  const safeMessage =
+    statusCode >= 500 && !error.exposeMessage
+      ? "Something went wrong on the server."
+      : message;
 
   if (statusCode >= 500) {
     console.error(`Server Error [${code}]: ${message}`);
   }
 
   response.status(statusCode).json({
+    ...(errorCode === "SQUARE_RATE_LIMITED" && { success: false }),
     error: {
       status: statusCode,
       code,
       message: safeMessage,
+      ...(error.retryable === true && { retryable: true }),
+      ...(Number.isInteger(error.retryAfterSeconds) && error.retryAfterSeconds >= 0 && {
+        retryAfterSeconds: error.retryAfterSeconds,
+      }),
       ...(details !== undefined && { details }),
     },
   });

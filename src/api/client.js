@@ -10,13 +10,15 @@ const STATUS_ERRORS = {
 };
 
 class ApiError extends Error {
-  constructor({ status, code, title, message, details }) {
+  constructor({ status, code, title, message, details, retryable, retryAfterSeconds }) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
     this.title = title;
     this.details = details;
+    this.retryable = retryable;
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 
@@ -44,6 +46,10 @@ function createApiError(status, data) {
         ? responseError.message
         : fallbackMessage,
     details: responseError.details,
+    retryable: responseError.retryable === true,
+    retryAfterSeconds: Number.isInteger(responseError.retryAfterSeconds)
+      ? responseError.retryAfterSeconds
+      : responseError.details?.retryAfterSeconds,
   });
 }
 

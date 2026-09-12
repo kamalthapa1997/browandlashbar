@@ -1,8 +1,10 @@
 import "./Home.css";
 import useRevealOnScroll from "../components/Reveal/useRevealOnScroll";
 import { useSettings } from "../contexts/SettingsContext";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
   const { settings } = useSettings();
   const businessName =
     settings?.businessName === undefined
@@ -81,9 +83,7 @@ function Home() {
         <button
           ref={booking.ref}
           className={`home-hero__booking-button ${booking.className}`}
-          onClick={() =>
-            window.open("https://merobrwoandlashbar.square.site/", "_blank")
-          }
+          onClick={() => navigate("/book")}
         >
           Book an Appointment
         </button>

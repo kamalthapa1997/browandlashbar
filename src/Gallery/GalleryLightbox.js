@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { createPortal } from "react-dom";
 
-function GalleryLightbox({ images, initialIndex, onClose }) {
+function GalleryLightbox({ images, initialIndex, getAltText, onClose }) {
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
 
   const closeButtonRef = useRef(null);
@@ -220,7 +220,11 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
           <img
             className="gallery-lightbox__image"
             src={selectedImage.imageUrl}
-            alt={selectedImage.caption || `Our work ${selectedIndex + 1}`}
+            alt={
+              getAltText?.(selectedImage, selectedIndex) ||
+              selectedImage.caption ||
+              `Our work ${selectedIndex + 1}`
+            }
             draggable="false"
           />
 

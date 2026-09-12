@@ -69,13 +69,23 @@ function useAdminDashboardData(onSettingsUpdated) {
 
   function upsertGalleryItem(item) {
     setGallery((current) => {
-      const withoutItem = current.filter((entry) => entry._id !== item._id);
-      return item.createdAt
-        ? [item, ...withoutItem].sort(
-            (first, second) =>
-              new Date(second.createdAt) - new Date(first.createdAt),
-          )
-        : [...withoutItem, item];
+      const shouldClearFeatured = item.featured && item.active !== false;
+      const withoutItem = current
+        .filter((entry) => entry._id !== item._id)
+        .map((entry) =>
+          shouldClearFeatured ? { ...entry, featured: false } : entry,
+        );
+      return [item, ...withoutItem].sort((first, second) => {
+        const featuredDifference =
+          Number(Boolean(second.featured)) - Number(Boolean(first.featured));
+        if (featuredDifference) return featuredDifference;
+
+        const displayOrderDifference =
+          Number(first.displayOrder ?? 0) - Number(second.displayOrder ?? 0);
+        if (displayOrderDifference) return displayOrderDifference;
+
+        return new Date(second.createdAt || 0) - new Date(first.createdAt || 0);
+      });
     });
   }
 

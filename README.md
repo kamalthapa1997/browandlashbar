@@ -173,6 +173,7 @@ Unknown client routes display a not-found page. Homepage navigation uses hashes 
 | `/api/services`         | `POST`   | Admin  | Create a service                             |
 | `/api/services/:id`     | `PUT`    | Admin  | Update a service                             |
 | `/api/services/:id`     | `DELETE` | Admin  | Delete a service                             |
+| `/api/square/menu`      | `GET`    | Public | Retrieve Square appointment services for the public menu |
 | `/api/gallery`          | `GET`    | Public | Retrieve gallery items                       |
 | `/api/gallery`          | `POST`   | Admin  | Upload and create a gallery item             |
 | `/api/gallery/:id`      | `PUT`    | Admin  | Update a gallery item or image               |

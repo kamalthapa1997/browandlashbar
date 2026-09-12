@@ -16,6 +16,7 @@ import Gallery from "./Gallery/Gallery.js";
 import Home from "./Home/Home.js";
 import Reviews from "./Reviews/Reviews";
 import Login from "./Login/Login";
+import Booking from "./Booking/Booking";
 import Footer from "./Footer/Footer";
 import Faq from "./components/FAQ/Faq";
 import AdminDashboard from "./AdminDashboard/AdminDashboard";
@@ -135,6 +136,7 @@ function AppContent() {
               }
             />
             <Route path="/gallery" element={<Gallery />} />
+            <Route path="/book" element={<Booking />} />
             <Route
               path="/admin/*"
               element={

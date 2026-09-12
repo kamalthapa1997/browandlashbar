@@ -32,6 +32,8 @@
     "start": "node server/index.js",
     "client": "PORT=3000 react-scripts start",
     "server": "nodemon",
+    "square:seed-sandbox": "NODE_ENV=development node server/scripts/seedSquareSandboxConnection.js",
+    "square:create-sandbox-service": "NODE_ENV=development node server/scripts/createSquareSandboxTestService.js",
     "dev": "concurrently -k \"npm run server\" \"npm run client\"",
     "build": "react-scripts build",
     "test": "react-scripts test",

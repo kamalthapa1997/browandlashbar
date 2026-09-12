@@ -5,7 +5,7 @@ import { useSettings } from "../contexts/SettingsContext";
 import "./Header.css";
 
 const DISMISS_PREFIX = "homepage-offer-dismissed:";
-const DEFAULT_BOOKING_URL = "https://merobrowandlashbar.square.site";
+const DEFAULT_BOOKING_URL = "/book";
 
 function Header({ sectionId, sectionClass }) {
   const { settings } = useSettings();
@@ -180,8 +180,10 @@ function Header({ sectionId, sectionClass }) {
               <a
                 className="site-header__offer-book"
                 href={offerUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                {...(!offerUrl.startsWith("/") && {
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                })}
                 aria-label="Book now"
               >
                 Book Now

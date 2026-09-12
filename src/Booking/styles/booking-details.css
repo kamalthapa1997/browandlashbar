@@ -1,0 +1,23 @@
+.booking__customer-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.booking__customer-form label {
+  display: grid;
+  min-width: 0;
+  gap: 0.45rem;
+}
+.booking__customer-form small {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.booking__button--confirm {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 54px;
+  margin-top: 0.25rem;
+}

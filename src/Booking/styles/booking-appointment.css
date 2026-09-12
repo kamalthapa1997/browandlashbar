@@ -1,0 +1,178 @@
+.booking__selection-list button {
+  border: 0;
+  background: transparent;
+  color: var(--rose-deep);
+  cursor: pointer;
+  font:
+    700 0.69rem/1 Arial,
+    sans-serif;
+  letter-spacing: 0.06em;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  text-transform: uppercase;
+}
+
+.booking__appointment {
+  position: sticky;
+  top: calc(var(--header-height, 76px) + 1.25rem);
+  width: 100%;
+  padding-top: 2.7rem;
+}
+.booking__appointment-card {
+  width: 100%;
+  max-width: 330px;
+  min-width: 0;
+  min-block-size: 17rem;
+  padding: 1.35rem;
+  border: 1px solid rgba(112, 68, 69, 0.25);
+  background: #3c302d;
+  color: #fffaf5;
+  box-shadow: 0 18px 36px rgba(50, 33, 28, 0.16);
+}
+.booking__appointment-card::before {
+  display: block;
+  width: 2.8rem;
+  height: 1px;
+  margin-bottom: 1.25rem;
+  content: "";
+  background: #d8ba84;
+}
+.booking__selection-summary-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+.booking__summary-title {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.booking__summary-title h3 {
+  margin: 0.3rem 0 0;
+  color: #fffaf5;
+  font-size: 1.85rem;
+  font-weight: 500;
+  line-height: 0.9;
+}
+.booking__appointment-card .booking__selection-summary-eyebrow {
+  color: #d8ba84;
+}
+.booking__appointment-empty {
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  margin: 1.35rem 0 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid rgba(255, 250, 245, 0.18);
+}
+.booking__appointment-empty p {
+  margin: 0;
+  color: #d5c2bb;
+  font:
+    400 0.8rem/1.55 Arial,
+    sans-serif;
+}
+.booking__appointment-empty .booking__appointment-empty-message {
+  color: #fffaf5;
+  font:
+    500 0.9rem/1.4 Arial,
+    sans-serif;
+}
+.booking__selection-summary-estimate {
+  display: grid;
+  flex: 0 0 auto;
+  justify-items: end;
+  gap: 0.25rem;
+  text-align: right;
+}
+.booking__selection-summary-estimate strong {
+  color: #fffaf5;
+  font:
+    600 0.97rem/1 Arial,
+    sans-serif;
+}
+.booking__selection-summary-estimate span {
+  color: #d5c2bb;
+  font:
+    400 0.7rem/1.2 Arial,
+    sans-serif;
+}
+.booking__selection-list {
+  display: grid;
+  gap: 0.7rem;
+  margin: 1.35rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.booking__selection-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-width: 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(255, 250, 245, 0.18);
+  font:
+    400 0.78rem/1.45 Arial,
+    sans-serif;
+}
+.booking__selection-entry {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+.booking__selection-name {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.booking__selection-list li button {
+  flex: 0 0 auto;
+}
+.booking__appointment-card .booking__selection-list button {
+  color: #e4c7bd;
+  font-size: 0.59rem;
+}
+.booking__appointment-details {
+  display: grid;
+  gap: 0.55rem;
+  margin: 1.15rem 0 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid rgba(255, 250, 245, 0.18);
+}
+.booking__appointment-details div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+.booking__appointment-details dt {
+  color: #d5c2bb;
+  font:
+    700 0.58rem/1 Arial,
+    sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.booking__appointment-details dd {
+  margin: 0;
+  color: #fffaf5;
+  font:
+    400 0.78rem/1.3 Arial,
+    sans-serif;
+  text-align: right;
+}
+.booking__appointment-cta {
+  width: 100%;
+  margin-top: 1.25rem;
+  border-color: #d8ba84;
+  background: #d8ba84;
+  color: #3c302d;
+}
+.booking__appointment-cta:hover:not(:disabled) {
+  background: #e5c994;
+}

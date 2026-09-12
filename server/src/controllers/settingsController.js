@@ -24,7 +24,16 @@ const upsertSettings = asyncHandler(async (request, response) => {
   const previousLogoPublicId = settings.logoPublicId;
   const uploadedLogoPublicId = request.file ? request.file.filename : null;
 
+  const galleryUpdates = updates.gallery;
+  delete updates.gallery;
   Object.assign(settings, updates);
+
+  if (galleryUpdates) {
+    settings.gallery = {
+      ...(settings.gallery?.toObject?.() || settings.gallery || {}),
+      ...galleryUpdates,
+    };
+  }
 
   if (request.file) {
     settings.logoUrl = request.file.path;

@@ -124,6 +124,12 @@ function ServiceModal({ service, onClose, onSaved, findErrorField }) {
     name: service.name || "",
     price: service.price || "",
     category: service.category || serviceCategories[0],
+    square: {
+      catalogItemId: service.square?.catalogItemId || "",
+      variationId: service.square?.variationId || "",
+      variationVersion: service.square?.variationVersion ?? "",
+      teamMemberIds: (service.square?.teamMemberIds || []).join(", "),
+    },
   });
   const [error, setError] = useState("");
   const [errorField, setErrorField] = useState("");
@@ -134,9 +140,21 @@ function ServiceModal({ service, onClose, onSaved, findErrorField }) {
     setError("");
     setErrorField("");
     try {
+      const { square, ...serviceFields } = form;
+      const hasSquareMapping = Boolean(
+        square.catalogItemId ||
+          square.variationId ||
+          square.variationVersion ||
+          square.teamMemberIds ||
+          service.square?.catalogItemId ||
+          service.square?.variationId ||
+          service.square?.variationVersion ||
+          service.square?.teamMemberIds?.length,
+      );
+      const servicePayload = hasSquareMapping ? { ...serviceFields, square } : serviceFields;
       const savedService = service._id
-        ? await updateService(service._id, form)
-        : await createService(form);
+        ? await updateService(service._id, servicePayload)
+        : await createService(servicePayload);
       onSaved(savedService);
     } catch (requestError) {
       const message = requestError.message || "Unable to save service.";
@@ -192,6 +210,43 @@ function ServiceModal({ service, onClose, onSaved, findErrorField }) {
           </select>
         </label>
         <InlineFormError message={errorField === "category" ? error : ""} />
+        <fieldset className="admin-form__fieldset">
+          <legend>Square booking mapping</legend>
+          <p className="admin-form__help">
+            Add the Square catalog item and bookable variation IDs to make this service available online. Leave all fields blank to keep it off the booking page.
+          </p>
+          <label>
+            Square catalog item ID
+            <input
+              value={form.square.catalogItemId}
+              onChange={(e) => setForm({ ...form, square: { ...form.square, catalogItemId: e.target.value } })}
+            />
+          </label>
+          <label>
+            Square service variation ID
+            <input
+              value={form.square.variationId}
+              onChange={(e) => setForm({ ...form, square: { ...form.square, variationId: e.target.value } })}
+            />
+          </label>
+          <label>
+            Square variation version <small>(optional; refreshed from Square)</small>
+            <input
+              min="0"
+              step="1"
+              type="number"
+              value={form.square.variationVersion}
+              onChange={(e) => setForm({ ...form, square: { ...form.square, variationVersion: e.target.value } })}
+            />
+          </label>
+          <label>
+            Eligible Square team member IDs <small>(comma-separated; blank means any bookable team member)</small>
+            <input
+              value={form.square.teamMemberIds}
+              onChange={(e) => setForm({ ...form, square: { ...form.square, teamMemberIds: e.target.value } })}
+            />
+          </label>
+        </fieldset>
         <FormActions onClose={onClose} saving={saving} label="Save service" />
         <InlineFormError message={!errorField ? error : ""} />
       </form>

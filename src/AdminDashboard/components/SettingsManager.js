@@ -17,10 +17,25 @@ const settingsFields = [
   "homepageOffer",
 ];
 
+const gallerySettingsDefaults = {
+  galleryEyebrow: "OUR PORTFOLIO",
+  galleryTitle: "Beauty in every detail",
+  galleryDescription: "Explore our latest lash and brow work.",
+};
+
 function toSettingsForm(settings = {}) {
-  return Object.fromEntries(
+  const form = Object.fromEntries(
     settingsFields.map((field) => [field, settings[field] || ""]),
   );
+
+  return {
+    ...form,
+    galleryEyebrow:
+      settings.gallery?.eyebrow ?? gallerySettingsDefaults.galleryEyebrow,
+    galleryTitle: settings.gallery?.title ?? gallerySettingsDefaults.galleryTitle,
+    galleryDescription:
+      settings.gallery?.description ?? gallerySettingsDefaults.galleryDescription,
+  };
 }
 
 function SettingsManager({ settings, onSaved, notify, findErrorField }) {
@@ -92,6 +107,9 @@ function SettingsManager({ settings, onSaved, notify, findErrorField }) {
           zipCode: ["zip", "zipcode"],
           homepageOfferLink: ["homepage", "link", "offer", "book"],
           homepageOffer: ["homepage", "offer", "announcement"],
+          galleryEyebrow: ["gallery", "eyebrow"],
+          galleryTitle: ["gallery", "title"],
+          galleryDescription: ["gallery", "description"],
           logo: ["image", "jpg", "png", "webp", "upload"],
         }) || "",
       );
@@ -235,6 +253,56 @@ function SettingsManager({ settings, onSaved, notify, findErrorField }) {
           </label>
           <InlineFormError
             message={errorField === "homepageOffer" ? error : ""}
+          />
+        </section>
+        <section className="admin-panel admin-settings__card">
+          <h2>Gallery settings</h2>
+          <p className="admin-settings__intro">
+            These details appear at the top of your public portfolio.
+          </p>
+          <label>
+            Gallery eyebrow
+            <input
+              maxLength="80"
+              value={form.galleryEyebrow}
+              onChange={(e) =>
+                setForm({ ...form, galleryEyebrow: e.target.value })
+              }
+              placeholder="OUR PORTFOLIO"
+            />
+          </label>
+          <InlineFormError
+            message={errorField === "galleryEyebrow" ? error : ""}
+          />
+          <label>
+            Gallery title
+            <input
+              maxLength="160"
+              value={form.galleryTitle}
+              onChange={(e) =>
+                setForm({ ...form, galleryTitle: e.target.value })
+              }
+              placeholder="Beauty in every detail"
+            />
+          </label>
+          <InlineFormError
+            message={errorField === "galleryTitle" ? error : ""}
+          />
+          <label>
+            Gallery description
+            <textarea
+              maxLength="360"
+              rows={3}
+              value={form.galleryDescription}
+              className="admin-settings__offer-textarea"
+              onChange={(e) =>
+                setForm({ ...form, galleryDescription: e.target.value })
+              }
+              placeholder="Explore our latest lash and brow work."
+            />
+          </label>
+          <InlineFormError
+            message={errorField === "galleryDescription" ? error : ""}
           />
         </section>
         <section className="admin-panel admin-settings__card">

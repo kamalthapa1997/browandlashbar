@@ -3,8 +3,10 @@ const serviceCategories = require("../constants/serviceCategories");
 const asyncHandler = require("../utils/asyncHandler");
 const { validateObjectId, validateServicePayload } = require("../utils/validators");
 
-const getServices = asyncHandler(async (_request, response) => {
-  const services = await Service.find().sort({ category: 1, price: 1, name: 1 });
+const getServices = asyncHandler(async (request, response) => {
+  const query = Service.find().sort({ category: 1, price: 1, name: 1 });
+  if (!request.admin) query.select("-square");
+  const services = await query;
 
   const grouped = serviceCategories.reduce((accumulator, category) => {
     accumulator[category] = [];
@@ -19,12 +21,13 @@ const getServices = asyncHandler(async (_request, response) => {
 });
 
 const createService = asyncHandler(async (request, response) => {
-  const { name, price, category } = validateServicePayload(request.body);
+  const { name, price, category, square } = validateServicePayload(request.body);
 
   const service = await Service.create({
     name,
     price,
     category,
+    ...(square && { square }),
   });
 
   response.status(201).json(service);
@@ -50,6 +53,10 @@ const updateService = asyncHandler(async (request, response) => {
 
   if (updates.category !== undefined) {
     service.category = updates.category;
+  }
+
+  if (updates.square !== undefined) {
+    service.square = updates.square;
   }
 
   await service.save();
