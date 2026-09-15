@@ -7,6 +7,8 @@ RELEASE_ROOT="${RELEASE_ROOT:-/home/handsomelotus1/apps/merobrowandlashbar}"
 SHARED_ENV_FILE="${SHARED_ENV_FILE:-$RELEASE_ROOT/shared/.env}"
 SERVICE_NAME="${SERVICE_NAME:-merobrowandlashbar.service}"
 MIN_FREE_KB="${MIN_FREE_KB:-2097152}" # 2 GiB; no automatic deletion occurs.
+HEALTH_TIMEOUT_SECONDS="${HEALTH_TIMEOUT_SECONDS:-30}"
+HEALTH_POLL_SECONDS="${HEALTH_POLL_SECONDS:-1}"
 RELEASE_SHA="${1:-}"
 PUBLIC_ORIGIN="${PUBLIC_ORIGIN:-}"
 
@@ -73,7 +75,15 @@ activated=1
 
 note "activating backend from current release"
 sudo systemctl restart "$SERVICE_NAME"
-curl --fail --silent --show-error http://127.0.0.1:5001/api/health >/dev/null
+
+note "waiting for backend readiness"
+health_deadline=$((SECONDS + HEALTH_TIMEOUT_SECONDS))
+until curl --fail --silent --show-error http://127.0.0.1:5001/api/health >/dev/null; do
+  if (( SECONDS >= health_deadline )); then
+    printf "Deployment failed: backend health check did not become ready within %s seconds\n" "$HEALTH_TIMEOUT_SECONDS" >&2; false
+  fi
+  sleep "$HEALTH_POLL_SECONDS"
+done
 curl --fail --silent --show-error "$PUBLIC_ORIGIN/release.json" >/dev/null
 curl --fail --silent --show-error "$PUBLIC_ORIGIN/gallery" >/dev/null
 curl --fail --silent --show-error "$PUBLIC_ORIGIN/booking" >/dev/null
