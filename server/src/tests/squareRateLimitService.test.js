@@ -79,16 +79,6 @@ test("classifies Square 429 responses and preserves safe rate-limit metadata", a
       message: "Square is temporarily rate-limiting requests. Please wait a moment and try again.",
       retryable: true,
       retryAfterSeconds: 7,
-      details: {
-        squareStatus: 429,
-        squareErrors: [{
-          category: "RATE_LIMIT_ERROR",
-          code: "RATE_LIMITED",
-          detail: "Too many requests.",
-        }],
-        retryAfterSeconds: 7,
-        squareRequestId: "square-request-123",
-      },
     },
   });
 });
@@ -124,10 +114,6 @@ test("returns the public retryable 429 contract without a Retry-After value when
       code: "SQUARE_RATE_LIMITED",
       message: "Square is temporarily rate-limiting requests. Please wait a moment and try again.",
       retryable: true,
-      details: {
-        squareStatus: 429,
-        squareErrors: [{ category: "RATE_LIMIT_ERROR", code: "RATE_LIMITED" }],
-      },
     },
   });
 });

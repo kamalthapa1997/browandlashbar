@@ -642,104 +642,6 @@ button {
   flex-shrink: 0;
 }
 
-/* =========================================================
-   SERVICE GROUPS
-========================================================= */
-
-.admin-services__groups {
-  display: grid;
-  gap: 0.75rem;
-  min-width: 0;
-}
-
-.admin-services__group {
-  background: #fff;
-  border: 1px solid var(--admin-border);
-  border-radius: var(--admin-radius-md);
-  box-shadow: var(--admin-shadow-sm);
-  min-width: 0;
-  overflow: hidden;
-}
-
-.admin-services__group-header {
-  align-items: center;
-  background: #fff;
-  border: 0;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  min-width: 0;
-  padding: 1rem;
-  text-align: left;
-  transition: background var(--admin-transition);
-  width: 100%;
-}
-
-.admin-services__group-header:hover {
-  background: #fff9fb;
-}
-
-.admin-services__group-header b,
-.admin-services__group-header small {
-  display: block;
-}
-
-.admin-services__group-header b {
-  font-size: 0.95rem;
-}
-
-.admin-services__group-header small {
-  color: var(--admin-muted);
-  font-size: 0.76rem;
-  margin-top: 0.2rem;
-}
-
-/* =========================================================
-   SERVICE LIST
-========================================================= */
-
-.admin-services__list {
-  border-top: 1px solid var(--admin-border);
-  padding: 0.4rem 0.9rem;
-}
-
-.admin-services__card {
-  align-items: center;
-  border-bottom: 1px solid var(--admin-border);
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  min-width: 0;
-  padding: 0.85rem 0.15rem;
-}
-
-.admin-services__card:last-child {
-  border-bottom: 0;
-}
-
-.admin-services__card h3,
-.admin-services__card p {
-  margin: 0;
-}
-
-.admin-services__card h3 {
-  font-size: 0.94rem;
-}
-
-.admin-services__card p {
-  color: var(--admin-pink);
-  font-size: 0.88rem;
-  font-weight: 800;
-  margin-top: 0.25rem;
-}
-
-.admin-services__card-title {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-width: 0;
-}
-
 .admin-card-actions {
   display: flex;
   gap: 0.35rem;
@@ -889,6 +791,250 @@ button {
   display: grid;
   gap: 0.75rem;
   grid-template-columns: 1fr 1fr;
+}
+
+.admin-gallery__category-field {
+  background: #fcf8f5;
+  border: 1px solid #e6d9d0;
+  border-radius: 10px;
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+}
+
+.admin-gallery__category-field > label {
+  color: #4c3937;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.admin-gallery__category-select {
+  background-color: #fffdfb;
+  border-color: #d9c7bb;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  color: #3c2d2b;
+  margin-top: 0.38rem;
+}
+
+.admin-gallery__category-select:focus {
+  border-color: #a77d73;
+  box-shadow: 0 0 0 3px rgba(167, 125, 115, 0.16);
+}
+
+.admin-gallery__category-field > small {
+  color: #806d67;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.admin-gallery__category-management {
+  border-top: 1px solid #eadfd7;
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.2rem;
+  padding-top: 0.9rem;
+}
+
+.admin-gallery__category-management > p {
+  color: #80635b;
+  font-size: 0.69rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.admin-gallery__category-list {
+  border: 1px solid #e6d9d0;
+  border-radius: 8px;
+  list-style: none;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.admin-gallery__category-item {
+  align-items: center;
+  background: rgba(255, 253, 251, 0.78);
+  display: flex;
+  justify-content: space-between;
+  min-height: 45px;
+  padding-left: 0.78rem;
+}
+
+.admin-gallery__category-item + .admin-gallery__category-item {
+  border-top: 1px solid #eee4dd;
+}
+
+.admin-gallery__category-name {
+  color: #4d3a37;
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
+.admin-gallery__category-delete {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-left: 1px solid #eee4dd;
+  color: #a26367;
+  cursor: pointer;
+  display: inline-flex;
+  height: 45px;
+  justify-content: center;
+  padding: 0;
+  transition: background var(--admin-transition), color var(--admin-transition);
+  width: 45px;
+}
+
+.admin-gallery__category-delete svg {
+  fill: none;
+  height: 18px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.65;
+  width: 18px;
+}
+
+.admin-gallery__category-delete:hover:not(:disabled) {
+  background: #fbefef;
+  color: #843f45;
+}
+
+.admin-gallery__category-delete:focus-visible,
+.admin-gallery__category-add:focus-visible,
+.admin-gallery__category-add-form button:focus-visible {
+  outline: 2px solid #a77d73;
+  outline-offset: 2px;
+}
+
+.admin-gallery__category-delete:disabled {
+  cursor: wait;
+  opacity: 0.48;
+}
+
+.admin-gallery__category-status,
+.admin-gallery__category-error {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.admin-gallery__category-status {
+  color: #806d67;
+  padding: 0.35rem 0;
+}
+
+.admin-gallery__category-error {
+  color: var(--admin-danger);
+}
+
+.admin-gallery__category-add {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #89665d;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  gap: 0.35rem;
+  justify-self: start;
+  min-height: 38px;
+  padding: 0.2rem 0;
+}
+
+.admin-gallery__category-add span {
+  color: #b48a51;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.admin-gallery__category-add:hover {
+  color: #5d433e;
+}
+
+.admin-gallery__category-add-form {
+  background: #fffdfb;
+  border: 1px solid #e6d9d0;
+  border-radius: 8px;
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.75rem;
+}
+
+.admin-gallery__category-add-form label {
+  color: #5c4843;
+  font-size: 0.77rem;
+  font-weight: 700;
+}
+
+.admin-gallery__category-add-form input {
+  margin-top: 0.3rem;
+}
+
+.admin-gallery__category-add-form > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.admin-gallery__category-add-form button {
+  align-items: center;
+  background: #76544e;
+  border: 1px solid #76544e;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 800;
+  gap: 0.42rem;
+  justify-content: center;
+  min-height: 36px;
+  min-width: 134px;
+  padding: 0.42rem 0.65rem;
+}
+
+.admin-gallery__category-add-form button + button {
+  background: transparent;
+  border-color: #d9c7bb;
+  color: #705a53;
+}
+
+.admin-gallery__category-add-form button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.admin-gallery__category-create.is-loading {
+  background: #684943;
+}
+
+.admin-gallery__category-spinner {
+  animation: admin-gallery-category-spin 700ms linear infinite;
+  border: 1.5px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  height: 0.84rem;
+  width: 0.84rem;
+}
+
+.admin-gallery__category-delete .admin-gallery__category-spinner {
+  height: 0.78rem;
+  width: 0.78rem;
+}
+
+@keyframes admin-gallery-category-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .admin-gallery__toggles {
@@ -1317,12 +1463,6 @@ button {
   .admin-overview__stat-icon {
     height: 40px;
     width: 40px;
-  }
-
-  .admin-services__card {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.65rem;
   }
 
   .admin-card-actions {

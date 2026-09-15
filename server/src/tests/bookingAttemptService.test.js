@@ -128,27 +128,30 @@ test("BookingAttempt declares only its idempotency and expiration indexes", () =
 });
 
 test("booking requests require a valid browser booking attempt UUID", () => {
+  const futureStartAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+  const { today } = require("../utils/bookingWindow").getBookingWindow();
   assert.throws(
-    () => validateBookingPayload({ ...payload, bookingAttemptId: "not-a-uuid" }),
+    () => validateBookingPayload({ ...payload, startAt: futureStartAt, bookingAttemptId: "not-a-uuid" }),
     { statusCode: 400 },
   );
 
   const validated = validateBookingPayload({
     ...payload,
+    startAt: futureStartAt,
     bookingAttemptId: "c571d5ab-06dd-4f79-9127-4d6cb8e57d7e",
   });
   assert.equal(validated.bookingAttemptId, "c571d5ab-06dd-4f79-9127-4d6cb8e57d7e");
   assert.deepEqual(validated.variationIds, ["square-variation-1"]);
   assert.deepEqual(
-    validateAvailabilityPayload({ variationIds: ["variation-b", "variation-a"], date: "2026-09-14" }),
-    { variationIds: ["variation-a", "variation-b"], date: "2026-09-14" },
+    validateAvailabilityPayload({ variationIds: ["variation-b", "variation-a"], date: today }),
+    { variationIds: ["variation-a", "variation-b"], date: today },
   );
   assert.throws(
-    () => validateAvailabilityPayload({ variationIds: [], date: "2026-09-14" }),
+    () => validateAvailabilityPayload({ variationIds: [], date: today }),
     { statusCode: 400 },
   );
   assert.throws(
-    () => validateAvailabilityPayload({ variationIds: ["variation-a", "variation-a"], date: "2026-09-14" }),
+    () => validateAvailabilityPayload({ variationIds: ["variation-a", "variation-a"], date: today }),
     { statusCode: 400 },
   );
 });

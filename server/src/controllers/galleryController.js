@@ -6,6 +6,13 @@ const {
   validateGalleryPayload,
   validateObjectId,
 } = require("../utils/validators");
+const {
+  createGalleryCategory: createGalleryCategoryRecord,
+  deleteGalleryCategory: deleteGalleryCategoryRecord,
+  findGalleryCategory,
+  listGalleryCategories,
+} = require("../services/galleryCategoryService");
+const createHttpError = require("../utils/httpError");
 
 function imageMetadata(upload) {
   const width = Number(upload?.width);
@@ -25,8 +32,9 @@ async function hydrateLegacyDimensions(item) {
     const metadata = await getCloudinaryMetadata(item.publicId);
 
     if (metadata.width) {
-      item.set(metadata);
-      await item.save();
+      // Keep legacy metadata enrichment read-only for public GET requests.
+      // The client already has an editorial fallback ratio when it is absent.
+      return { ...(item.toObject?.() || item), ...metadata };
     }
   } catch (_error) {
     // A gallery item remains usable even if a legacy asset cannot be inspected.
@@ -77,9 +85,29 @@ function sortGalleryItems(items) {
 const getGallery = asyncHandler(async (request, response) => {
   const filter = request.admin ? {} : { active: { $ne: false } };
   const items = await Gallery.find(filter).sort({ createdAt: -1 });
-  await Promise.all(items.map(hydrateLegacyDimensions));
-  response.set("Cache-Control", "no-store").json(sortGalleryItems(items));
+  const hydratedItems = await Promise.all(items.map(hydrateLegacyDimensions));
+  response.set("Cache-Control", "no-store").json(sortGalleryItems(hydratedItems));
 });
+
+const getGalleryCategories = asyncHandler(async (_request, response) => {
+  response.set("Cache-Control", "no-store").json(await listGalleryCategories());
+});
+
+const createGalleryCategory = asyncHandler(async (request, response) => {
+  response.status(201).json(await createGalleryCategoryRecord(request.body?.label));
+});
+
+const deleteGalleryCategory = asyncHandler(async (request, response) => {
+  validateObjectId(request.params.categoryId, "gallery category");
+  await deleteGalleryCategoryRecord(request.params.categoryId);
+  response.json({ message: "Gallery category deleted" });
+});
+
+async function normalizeGalleryCategory(category) {
+  const matchingCategory = await findGalleryCategory(category);
+  if (!matchingCategory) throw createHttpError(400, "Gallery category is invalid");
+  return matchingCategory.value;
+}
 
 const createGalleryItem = asyncHandler(async (request, response) => {
   if (!request.file) {
@@ -89,6 +117,7 @@ const createGalleryItem = asyncHandler(async (request, response) => {
   }
 
   const galleryPayload = validateGalleryPayload(request.body);
+  galleryPayload.category = await normalizeGalleryCategory(galleryPayload.category);
   if (galleryPayload.active === false) {
     galleryPayload.featured = false;
   }
@@ -122,10 +151,10 @@ const updateGalleryItem = asyncHandler(async (request, response) => {
     });
   }
 
-  const updates = validateGalleryPayload(request.body, {
-    partial: true,
-    allowedCategories: [item.category].filter(Boolean),
-  });
+  const updates = validateGalleryPayload(request.body, { partial: true });
+  if (updates.category !== undefined) {
+    updates.category = await normalizeGalleryCategory(updates.category);
+  }
   const previousPublicId = item.publicId;
   const uploadedPublicId = request.file ? request.file.filename : null;
 
@@ -201,8 +230,12 @@ const likeGalleryItem = asyncHandler(async (request, response) => {
 
 module.exports = {
   getGallery,
+  getGalleryCategories,
+  createGalleryCategory,
+  deleteGalleryCategory,
   createGalleryItem,
   updateGalleryItem,
   deleteGalleryItem,
   likeGalleryItem,
+  __testables: { hydrateLegacyDimensions },
 };

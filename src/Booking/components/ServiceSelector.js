@@ -255,18 +255,8 @@ export default function ServiceSelector({
             </button>
           </div>
 
-          {loadingCategory ? (
-            <div
-              className="booking__category-loading"
-              aria-live="polite"
-              aria-label="Loading category"
-            >
-              <span />
-              <span />
-              <span />
-            </div>
-          ) : (
-            activeCategory && (
+          <div className="booking__category-panel-container">
+            {!loadingCategory && activeCategory && (
               <div
                 className="booking__category-panel"
                 id={`category-panel-${activeCategory.id}`}
@@ -315,8 +305,20 @@ export default function ServiceSelector({
                   })}
                 </div>
               </div>
-            )
-          )}
+            )}
+
+            {loadingCategory && (
+              <div
+                className="booking__category-loading"
+                aria-live="polite"
+                aria-label="Loading category"
+              >
+                <span />
+                <span />
+                <span />
+              </div>
+            )}
+          </div>
         </>
       )}
     </section>

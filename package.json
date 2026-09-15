@@ -4,6 +4,9 @@
   "private": true,
   "homepage": "https://merobrowandlashbar.com",
   "proxy": "http://127.0.0.1:5001",
+  "engines": {
+    "node": ">=22 <23"
+  },
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -35,10 +38,10 @@
     "square:seed-sandbox": "NODE_ENV=development node server/scripts/seedSquareSandboxConnection.js",
     "square:create-sandbox-service": "NODE_ENV=development node server/scripts/createSquareSandboxTestService.js",
     "dev": "concurrently -k \"npm run server\" \"npm run client\"",
-    "build": "react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "npm run build && scp -r ./build/* handsomelotus1@merobrowandlashbar.com:/home/handsomelotus1/apps/merobrowandlashbar/build/"
+    "deploy": "bash infrastructure/deploy/deploy-release.sh"
   },
   "eslintConfig": {
     "extends": [

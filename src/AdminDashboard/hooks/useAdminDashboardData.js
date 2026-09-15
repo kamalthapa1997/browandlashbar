@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import { getServices } from "../../api/serviceService";
 import { getGallery } from "../../api/galleryService";
 import { getSettings } from "../../api/settingsService";
 import { getAdminFaqs } from "../../api/faqService";
-import { serviceCategories } from "../../constants/serviceCategories";
 
 function useAdminDashboardData(onSettingsUpdated) {
-  const [services, setServices] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [faqs, setFaqs] = useState([]);
   const [settings, setSettings] = useState(null);
@@ -17,14 +14,12 @@ function useAdminDashboardData(onSettingsUpdated) {
     setLoading(true);
     setError("");
     try {
-      const [nextServices, nextGallery, nextSettings, nextFaqs] =
+      const [nextGallery, nextSettings, nextFaqs] =
         await Promise.all([
-          getServices(),
           getGallery(),
           getSettings(),
           getAdminFaqs(),
         ]);
-      setServices(nextServices || {});
       setGallery(Array.isArray(nextGallery) ? nextGallery : []);
       setSettings(nextSettings || {});
       setFaqs(Array.isArray(nextFaqs) ? nextFaqs : []);
@@ -38,34 +33,6 @@ function useAdminDashboardData(onSettingsUpdated) {
   useEffect(() => {
     refresh();
   }, []);
-
-  function upsertService(service) {
-    setServices((current) => {
-      const next = Object.fromEntries(
-        serviceCategories.map((category) => [
-          category,
-          (current[category] || []).filter((item) => item._id !== service._id),
-        ]),
-      );
-      next[service.category] = [...next[service.category], service].sort(
-        (first, second) =>
-          Number(first.price) - Number(second.price) ||
-          first.name.localeCompare(second.name),
-      );
-      return next;
-    });
-  }
-
-  function removeService(serviceId) {
-    setServices((current) =>
-      Object.fromEntries(
-        serviceCategories.map((category) => [
-          category,
-          (current[category] || []).filter((item) => item._id !== serviceId),
-        ]),
-      ),
-    );
-  }
 
   function upsertGalleryItem(item) {
     setGallery((current) => {
@@ -113,15 +80,12 @@ function useAdminDashboardData(onSettingsUpdated) {
   }
 
   return {
-    services,
     gallery,
     faqs,
     settings,
     loading,
     error,
     refresh,
-    upsertService,
-    removeService,
     upsertGalleryItem,
     removeGalleryItem,
     upsertFaq,

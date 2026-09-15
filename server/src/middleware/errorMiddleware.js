@@ -66,8 +66,13 @@ function errorHandler(error, _request, response, _next) {
       : message;
 
   if (statusCode >= 500) {
-    console.error(`Server Error [${code}]: ${message}`);
+    // Provider, database, and filesystem errors can include sensitive context.
+    console.error(`Server Error [${code}]`);
   }
+
+  // Raw upstream error payloads are diagnostic data, not an API contract.
+  // Only explicitly approved client-safe details may be returned.
+  details = error.exposeDetails === true ? details : undefined;
 
   response.status(statusCode).json({
     ...(errorCode === "SQUARE_RATE_LIMITED" && { success: false }),

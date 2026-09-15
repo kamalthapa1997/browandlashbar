@@ -6,18 +6,18 @@ A full-stack business website and content-management dashboard for Mero Brow & L
 
 The application has four connected parts:
 
-- **Public website:** a React single-page experience for services, gallery work, Google reviews, FAQs, contact details, business hours, offers, and external appointment booking.
-- **Admin dashboard:** an authenticated interface for managing services, gallery items, FAQs, business settings, logo, and homepage offer content.
+- **Public website:** a React JavaScript/JSX single-page experience for Square Catalog services, an in-site booking flow, gallery work, Google reviews, FAQs, contact details, business hours, and offers.
+- **Admin dashboard:** an authenticated interface for managing gallery items, FAQs, business settings, logo, and homepage offer content.
 - **Express API:** validates requests, protects administrator actions, handles uploads, and serves public and admin data.
-- **Data and external services:** MongoDB stores application data; Cloudinary stores uploaded media; Google Places supplies review data.
+- **Data and external services:** MongoDB stores site content and administrator data; Square is the source of truth for bookable services, availability, customers, and appointments; Cloudinary stores uploaded media; Google Places supplies review data.
 
 ## Features
 
 ### Public Website
 
 - Responsive desktop and mobile navigation with section scrolling
-- API-driven service categories and pricing
-- External appointment-booking links
+- Square Catalog-driven service menu and pricing
+- In-site booking with Square availability and appointment creation; customers are not redirected to a Square booking page
 - Gallery with captions, lazy loading, scroll-reveal animation, and loading, error, and empty states
 - Google Places reviews in a motion-aware carousel
 - Database-driven FAQ accordion with category filtering
@@ -27,7 +27,6 @@ The application has four connected parts:
 ### Admin Dashboard
 
 - Protected sign-in and sign-out
-- Service creation, editing, and deletion
 - Gallery image upload, caption editing, replacement, and deletion
 - FAQ creation, editing, activation, ordering, and deletion
 - Business contact details, logo, and homepage-offer management
@@ -69,11 +68,12 @@ The application has four connected parts:
 flowchart LR
   Browser[React frontend] --> API[Express API]
   API --> DB[(MongoDB)]
+  API --> Square[Square Catalog and Bookings APIs]
   API --> Cloudinary[Cloudinary]
   API --> Google[Google Places API]
 ```
 
-The React application calls the Express API through `/api`. The API persists services, gallery records, FAQs, settings, and administrator data in MongoDB. Images are uploaded to Cloudinary; their URLs and public IDs are stored with the relevant MongoDB record. Review data is fetched by the API from Google Places, normalized, and cached in memory for 24 hours before being returned to the frontend.
+The React application calls the Express API through `/api`. Square Catalog is the source of truth for bookable services; the API uses Square availability and booking APIs for the custom in-site booking flow. MongoDB persists gallery records, FAQs, settings, administrator data, and other application state, but is not the source of truth for bookable services. The retired MongoDB Service model, Service API/routes, and admin Service Manager are not part of the active architecture. Images are uploaded to Cloudinary; their URLs and public IDs are stored with the relevant MongoDB record. Review data is fetched by the API from Google Places, normalized, and cached in memory for 24 hours before being returned to the frontend.
 
 ## How It Works
 
@@ -81,7 +81,13 @@ The React application calls the Express API through `/api`. The API persists ser
 
 `Admin Dashboard → Express API → MongoDB → Public Website`
 
-Administrators update business content through protected API routes. The public website retrieves the latest services, gallery items, FAQs, and settings from those routes.
+Administrators update business content through protected API routes. The public website retrieves the latest gallery items, FAQs, and settings from those routes; the booking flow retrieves bookable services from Square through the API.
+
+### Booking
+
+`Customer → React booking flow → Express API → Square Catalog / Availability / Bookings APIs`
+
+Customers select Square Catalog services, choose an available time, provide their details, and confirm within the site. The server validates the booking request and creates the Square customer and appointment; it does not redirect customers to the retired Square booking page.
 
 ### Image Uploads
 
@@ -105,7 +111,7 @@ The server verifies the JWT, administrator role, and a stored session version be
 
 | Technology          | Purpose                                    |
 | ------------------- | ------------------------------------------ |
-| React 19            | Public website and admin dashboard UI      |
+| React 19            | JavaScript/JSX public website and admin dashboard UI |
 | React Router        | Client-side routes and section navigation  |
 | Framer Motion       | Page, menu, modal, and UI animations       |
 | CSS                 | Responsive component styling               |
@@ -130,11 +136,11 @@ The server verifies the JWT, administrator role, and a stored session version be
 │   ├── Gallery/, Reviews/  # Public gallery and review features
 │   ├── Header/, Footer/    # Shared public layout
 │   ├── Login/              # Administrator sign-in UI
-│   ├── Services/           # Service section and category list
-│   └── constants/          # Shared service category definitions
+│   ├── Services/           # Square-powered service menu
+│   └── constants/          # Shared UI and category definitions
 ├── server/
 │   ├── src/bootstrap/      # Initial administrator setup
-│   ├── src/config/         # MongoDB and Cloudinary configuration
+│   ├── src/config/         # application and external-service configuration
 │   ├── src/controllers/    # API request handlers
 │   ├── src/middleware/     # Authentication, uploads, rate limiting, and error handling
 │   ├── src/models/         # Mongoose schemas
@@ -165,15 +171,14 @@ Unknown client routes display a not-found page. Homepage navigation uses hashes 
 | `/api/admin/session` | `GET`  | Public | Return current authentication status                     |
 | `/api/admin/logout`  | `POST` | Admin  | Invalidate the admin session and clear the cookie        |
 
-### Services, Gallery, and FAQs
+### Square Menu, Gallery, and FAQs
 
 | Endpoint                | Method   | Access | Purpose                                      |
 | ----------------------- | -------- | ------ | -------------------------------------------- |
-| `/api/services`         | `GET`    | Public | Retrieve services grouped by category        |
-| `/api/services`         | `POST`   | Admin  | Create a service                             |
-| `/api/services/:id`     | `PUT`    | Admin  | Update a service                             |
-| `/api/services/:id`     | `DELETE` | Admin  | Delete a service                             |
 | `/api/square/menu`      | `GET`    | Public | Retrieve Square appointment services for the public menu |
+| `/api/square/booking-services` | `GET` | Public | Retrieve bookable Square services for the in-site booking flow |
+| `/api/square/availability` | `POST` | Public | Retrieve Square availability for selected services and date |
+| `/api/square/bookings` | `POST` | Public | Validate and create a Square booking |
 | `/api/gallery`          | `GET`    | Public | Retrieve gallery items                       |
 | `/api/gallery`          | `POST`   | Admin  | Upload and create a gallery item             |
 | `/api/gallery/:id`      | `PUT`    | Admin  | Update a gallery item or image               |
@@ -197,7 +202,7 @@ Unknown client routes display a not-found page. Homepage navigation uses hashes 
 
 ### Prerequisites
 
-- Node.js
+- Node.js 22.x (production validation uses v22.23.2)
 - MongoDB database
 - Cloudinary account for administrator image uploads
 - Google Places API credentials for the reviews feature
@@ -244,7 +249,7 @@ This starts the React development server on port `3000` and the API server on po
 npm run build
 ```
 
-The optimized client bundle is written to `build/`. Serve that directory from a web server configured to support client-side routing, and run the Express API separately with its production environment variables.
+The optimized client bundle is written to `build/` without source maps. Production deployment uses the SHA-based immutable-release process under `infrastructure/`; its runbook creates a release directory for the committed SHA, atomically switches `current`, validates health, and provides rollback support.
 
 ## Available Scripts
 
@@ -256,7 +261,7 @@ The optimized client bundle is written to `build/`. Serve that directory from a 
 | `npm run dev`    | Run the client and API server together                                 |
 | `npm run build`  | Create an optimized client build in `build/`                           |
 | `npm test`       | Run the React test suite                                               |
-| `npm run deploy` | Build the client and copy its contents to the configured remote server |
+| `npm run deploy` | Run the authorized SHA-based immutable-release deployment script |
 
 ## Testing
 
@@ -266,11 +271,11 @@ Run the client test suite with:
 npm test
 ```
 
-The project uses Jest through Create React App together with React Testing Library. The current suite contains a basic test-environment smoke test; comprehensive component, API, and end-to-end coverage has not yet been added.
+The project uses Jest through Create React App together with React Testing Library for frontend tests, plus Node's built-in test runner for backend, security, booking, and deployment-engineering tests.
 
 ## Deployment
 
-`npm run deploy` runs the production build and copies the generated client files to the remote destination configured in `package.json`. The Express API is started separately and requires its production environment variables. The production web server should serve `build/`, support client-side routing, proxy `/api` requests to Express, and use HTTPS so secure administrator cookies can be sent.
+The deployment script under `infrastructure/deploy/` deploys one committed SHA at a time into an immutable release directory, then atomically switches the `current` symlink after its preflight checks. It requires Node 22, a clean release checkout, sufficient disk space, valid production configuration, healthy nginx/systemd configuration, and successful health checks. See `infrastructure/deploy/README.md` before any authorized production deployment.
 
 ## Authentication and Security
 
@@ -288,7 +293,8 @@ The UI uses semantic buttons and links, labels form inputs, and supplies ARIA la
 
 ## Key Engineering Decisions
 
-- **Database-driven content:** services, gallery items, FAQs, and business settings can be updated without redeploying the public site.
+- **Database-driven content:** gallery items, FAQs, and business settings can be updated without redeploying the public site.
+- **Square-backed booking:** Square Catalog, availability, customer, and booking APIs support the custom in-site booking flow; MongoDB Service infrastructure is retired.
 - **Cloud-hosted media:** Cloudinary keeps uploads out of the application filesystem and allows the API to clean up replaced assets.
 - **Server-side review integration:** Google credentials remain on the server, while the frontend receives only the normalized review data it needs.
 - **Cookie-based admin access:** signed JWTs remain inaccessible to client JavaScript and protected actions are enforced by the API, not only the frontend route guard.

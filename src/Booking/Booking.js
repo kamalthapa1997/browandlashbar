@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createSquareBooking } from "../api/squareService";
 import {
   clearBookingAttempt as clearStoredBookingAttempt,
@@ -8,11 +8,13 @@ import {
 import {
   getEasternDate,
   getEasternDateForInstant,
+  getEasternMaxBookingDate,
 } from "./utils/bookingFormatters";
 import {
   canonicalizeVariationIds,
   isCurrentAvailabilitySlot,
 } from "./utils/bookingHelpers";
+import { normalizeUsPhoneNumber } from "./utils/phoneNumber";
 import AppointmentSummaryView from "./components/AppointmentSummary";
 import MobileBookingAction, {
   MobileCartSheet as MobileCartSheetView,
@@ -21,6 +23,7 @@ import ServiceSelector from "./components/ServiceSelector";
 import DateSelector from "./components/DateSelector";
 import AvailabilityTimes from "./components/AvailabilityTimes";
 import CustomerDetails from "./components/CustomerDetails";
+import BookingReview from "./components/BookingReview";
 import BookingHeader from "./components/BookingHeader";
 import BookingProgress from "./components/BookingProgress";
 import BookingConfirmation from "./components/BookingConfirmation";
@@ -38,13 +41,78 @@ export {
   isCurrentAvailabilitySlot,
 } from "./utils/bookingHelpers";
 
+export function findFirstAvailableDate(
+  availabilityByDate,
+  startDate,
+  maximumDate,
+) {
+  if (!startDate || !maximumDate || startDate > maximumDate) return "";
+
+  const current = new Date(`${startDate}T12:00:00Z`);
+  const finalDate = new Date(`${maximumDate}T12:00:00Z`);
+
+  while (current <= finalDate) {
+    const value = current.toISOString().slice(0, 10);
+
+    if (
+      Array.isArray(availabilityByDate?.[value]) &&
+      availabilityByDate[value].length
+    ) {
+      return value;
+    }
+
+    current.setUTCDate(current.getUTCDate() + 1);
+  }
+
+  return "";
+}
+
+export function getReviewTransition(selectedVariations) {
+  if (!Array.isArray(selectedVariations) || !selectedVariations.length) {
+    return {
+      reviewingBooking: false,
+      reviewValidationMessage: "Please select at least one service to continue.",
+    };
+  }
+
+  return { reviewingBooking: true, reviewValidationMessage: "" };
+}
+
 function Booking() {
   const recoveredBookingState = useRef(loadBookingAttempt()).current;
-  const recoveredAttempt = recoveredBookingState?.bookingAttemptId
-    ? recoveredBookingState
-    : null;
+  const recoveredAttempt = useRef(
+    recoveredBookingState?.bookingAttemptId
+      ? {
+          bookingAttemptId: recoveredBookingState.bookingAttemptId,
+          variationIds: recoveredBookingState.variationIds,
+          startAt: recoveredBookingState.startAt,
+          customer: recoveredBookingState.customer,
+          selectedVariations: recoveredBookingState.selectedVariations,
+        }
+      : null,
+  ).current;
   const recoveredCart = recoveredBookingState?.selectedVariations || [];
-
+  const recoveredSlot = useRef(
+    recoveredBookingState?.selectedSlot ||
+      (recoveredAttempt
+        ? {
+            startAt: recoveredAttempt.startAt,
+            availabilityDate: getEasternDateForInstant(
+              recoveredAttempt.startAt,
+            ),
+            variationIds: recoveredAttempt.variationIds,
+          }
+        : null),
+  ).current;
+  const recoveredDate =
+    recoveredBookingState?.date ||
+    recoveredSlot?.availabilityDate ||
+    getEasternDate();
+  const recoveryRef = useRef({
+    catalogReconciled: !recoveredBookingState,
+    slotRevalidated: !recoveredSlot,
+    reviewingBooking: Boolean(recoveredBookingState?.reviewingBooking),
+  });
 
   const [serviceSelectorCollapsed, setServiceSelectorCollapsed] = useState(
     Boolean(recoveredAttempt),
@@ -54,14 +122,7 @@ function Booking() {
 
   const [selectedVariations, setSelectedVariations] = useState(recoveredCart);
 
-  const [date, setDate] = useState(
-    recoveredAttempt?.startAt
-      ? getEasternDateForInstant(recoveredAttempt.startAt)
-      : getEasternDate(),
-  );
-
-
-
+  const [date, setDate] = useState(recoveredDate);
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -81,16 +142,19 @@ function Booking() {
   const [retryAfterRemaining, setRetryAfterRemaining] = useState(0);
 
   const [error, setError] = useState("");
+  const [reviewValidationMessage, setReviewValidationMessage] = useState("");
   const [confirmation, setConfirmation] = useState(null);
 
   const [customer, setCustomer] = useState(
-    recoveredAttempt?.customer || {
+    recoveredBookingState?.customer || {
       firstName: "",
       lastName: "",
       phone: "",
       email: "",
     },
   );
+  const [reviewingBooking, setReviewingBooking] = useState(false);
+  const [recoveringSlot, setRecoveringSlot] = useState(Boolean(recoveredSlot));
 
   const [bookingAttempt, setBookingAttempt] = useState(recoveredAttempt);
 
@@ -98,6 +162,7 @@ function Booking() {
 
   const dateSectionRef = useRef(null);
   const serviceSectionRef = useRef(null);
+  const customerDetailsSectionRef = useRef(null);
 
   useEffect(() => {
     if (!retryAfterUntil) {
@@ -131,6 +196,12 @@ function Booking() {
       ),
     [selectedVariations],
   );
+
+  const clearActiveBookingAttempt = useCallback(() => {
+    // The attempt ID is immutable server-side. A change to appointment or
+    // customer data needs a fresh ID, but must not throw away the draft.
+    setBookingAttempt(null);
+  }, []);
 
   const selectedServiceEstimate = useMemo(() => {
     const currencies = new Set(
@@ -170,68 +241,197 @@ function Booking() {
   }, [selectedVariations]);
 
   const {
-    availability, selectedSlot, loadingAvailability, hasSearchedAvailability,
-    visibleTimeCount, invalidateAvailability, resetAvailability,
-    refreshAvailability, loadAvailability, handleTimeSelection,
-    showMoreTimes, showFewerTimes, setSelectedSlot,
+    availability,
+    selectedSlot,
+    loadingAvailability,
+    hasSearchedAvailability,
+    visibleTimeCount,
+    invalidateAvailability,
+    resetAvailability,
+    refreshAvailability,
+    revalidateRecoveredSlot,
+    loadAvailability,
+    handleTimeSelection,
+    showMoreTimes,
+    showFewerTimes,
+    setSelectedSlot,
+    availabilityByDate,
+    calendarAvailabilityStatus,
+    calendarAvailabilityError,
+    invalidateCalendarAvailability,
+    loadCalendarAvailability,
   } = useBookingAvailability({
-    date, selectedVariationIds, submitting, clearActiveBookingAttempt, setError,
-    uiDelay: UI_DELAY, initialVisibleTimes: INITIAL_MOBILE_TIMES,
+    date,
+    selectedVariationIds,
+    submitting,
+    clearActiveBookingAttempt,
+    setError,
+    uiDelay: UI_DELAY,
+    initialVisibleTimes: INITIAL_MOBILE_TIMES,
     visibleTimeIncrement: MOBILE_TIME_INCREMENT,
+    initialSelectedSlot: recoveredSlot,
   });
 
+  const selectSlot = useCallback(
+    (slot) => {
+      setReviewingBooking(false);
+      handleTimeSelection(slot);
+    },
+    [handleTimeSelection],
+  );
 
   useEffect(() => {
-    if (!bookingAttempt || !variations.length) {
+    if (!selectedSlot) setReviewingBooking(false);
+  }, [selectedSlot]);
+
+  useEffect(() => {
+    if (!selectedVariations.length) {
+      setReviewingBooking(false);
       return;
     }
 
-    if (
-      !Array.isArray(bookingAttempt.variationIds) ||
-      !bookingAttempt.variationIds.length ||
-      !bookingAttempt.startAt
-    ) {
-      clearStoredBookingAttempt();
-      setBookingAttempt(null);
-      setServiceSelectorCollapsed(false);
+    setReviewValidationMessage("");
+  }, [selectedVariations.length]);
+
+  useEffect(() => {
+    if (recoveryRef.current.catalogReconciled || !recoveredBookingState) {
       return;
     }
 
-    const recoveredVariations = bookingAttempt.variationIds.map((variationId) =>
-      variations.find((item) => item.id === variationId),
+    if (!variations.length) return;
+
+    const recoveredVariations = recoveredBookingState.variationIds.map(
+      (variationId) => variations.find((item) => item.id === variationId),
     );
 
     if (recoveredVariations.some((variation) => !variation)) {
-      if (!selectedVariations.length) {
-        clearStoredBookingAttempt();
-        setBookingAttempt(null);
-        setServiceSelectorCollapsed(false);
-        return;
-      }
-    } else {
-      setSelectedVariations((current) =>
-        current.length
-          ? current.map(
-              (variation) =>
-                recoveredVariations.find((item) => item.id === variation.id) ||
-                variation,
-            )
-          : recoveredVariations,
-      );
+      clearStoredBookingAttempt();
+      setBookingAttempt(null);
+      setSelectedVariations([]);
+      setSelectedSlot(null);
+      setServiceSelectorCollapsed(false);
+      setRecoveringSlot(false);
+      recoveryRef.current.catalogReconciled = true;
+      return;
     }
 
-    const availabilityDate = getEasternDateForInstant(bookingAttempt.startAt);
-
-    setDate(availabilityDate);
-    setSelectedSlot({
-      startAt: bookingAttempt.startAt,
-      availabilityDate,
-      variationIds: canonicalizeVariationIds(bookingAttempt.variationIds),
-    });
-
-    setServiceSelectorCollapsed(true);
+    setSelectedVariations(recoveredVariations);
+    setServiceSelectorCollapsed(Boolean(recoveredAttempt));
     setMobileCartOpen(false);
-  }, [bookingAttempt, selectedVariations.length, setSelectedSlot, variations]);
+    recoveryRef.current.catalogReconciled = true;
+  }, [recoveredAttempt, recoveredBookingState, setSelectedSlot, variations]);
+
+  useEffect(() => {
+    if (
+      recoveryRef.current.slotRevalidated ||
+      !recoveredSlot ||
+      !recoveryRef.current.catalogReconciled ||
+      selectedVariationIds.join(",") !== recoveredSlot.variationIds.join(",")
+    ) {
+      return;
+    }
+
+    if (!isCurrentAvailabilitySlot(recoveredSlot, date, selectedVariationIds)) {
+      recoveryRef.current.slotRevalidated = true;
+      setSelectedSlot(null);
+      setBookingAttempt(null);
+      setRecoveringSlot(false);
+      setError(
+        "Your saved appointment time is no longer valid. Please choose another time.",
+      );
+      return;
+    }
+
+    recoveryRef.current.slotRevalidated = true;
+    void revalidateRecoveredSlot(recoveredSlot).then((isAvailable) => {
+      setRecoveringSlot(false);
+      if (isAvailable) {
+        const hasRequiredCustomerDetails = [
+          "firstName",
+          "lastName",
+          "phone",
+        ].every((field) => customer[field]?.trim());
+        setReviewingBooking(
+          recoveryRef.current.reviewingBooking && hasRequiredCustomerDetails,
+        );
+        return;
+      }
+
+      setReviewingBooking(false);
+      if (isAvailable === false) {
+        setBookingAttempt(null);
+        setError(
+          "The selected time is no longer available. Please choose another time.",
+        );
+      }
+    });
+  }, [
+    customer,
+    date,
+    recoveredSlot,
+    revalidateRecoveredSlot,
+    selectedVariationIds,
+    setSelectedSlot,
+  ]);
+
+  useEffect(() => {
+    if (!recoveryRef.current.catalogReconciled) return;
+
+    if (confirmation) {
+      clearStoredBookingAttempt();
+      return;
+    }
+
+    if (!selectedVariationIds.length) {
+      clearStoredBookingAttempt();
+      return;
+    }
+
+    const currentSlot = isCurrentAvailabilitySlot(
+      selectedSlot,
+      date,
+      selectedVariationIds,
+    )
+      ? selectedSlot
+      : null;
+    const currentAttempt =
+      bookingAttempt &&
+      bookingAttempt.startAt === currentSlot?.startAt &&
+      canonicalizeVariationIds(bookingAttempt.variationIds).join(",") ===
+        selectedVariationIds.join(",")
+        ? bookingAttempt
+        : null;
+
+    saveBookingAttempt({
+      variationIds: selectedVariationIds,
+      selectedVariations,
+      date,
+      ...(currentSlot ? { selectedSlot: currentSlot } : {}),
+      customer,
+      reviewingBooking: Boolean(
+        reviewingBooking &&
+        currentSlot &&
+        ["firstName", "lastName", "phone"].every((field) =>
+          customer[field]?.trim(),
+        ),
+      ),
+      ...(currentAttempt
+        ? {
+            bookingAttemptId: currentAttempt.bookingAttemptId,
+            startAt: currentAttempt.startAt,
+          }
+        : {}),
+    });
+  }, [
+    bookingAttempt,
+    confirmation,
+    customer,
+    date,
+    reviewingBooking,
+    selectedSlot,
+    selectedVariationIds,
+    selectedVariations,
+  ]);
 
   const step = useMemo(() => {
     if (confirmation) {
@@ -258,34 +458,12 @@ function Booking() {
     selectedVariations.length,
   ]);
 
-  function saveCartSelection(nextSelectedVariations) {
-    if (!nextSelectedVariations.length) {
-      clearStoredBookingAttempt();
-      return;
-    }
-
-    saveBookingAttempt({
-      variationIds: canonicalizeVariationIds(
-        nextSelectedVariations.map((variation) => variation.id),
-      ),
-      selectedVariations: nextSelectedVariations,
-    });
-  }
-
-  function clearActiveBookingAttempt({ preserveCart = false } = {}) {
-    clearStoredBookingAttempt();
-    setBookingAttempt(null);
-
-    if (preserveCart) {
-      saveCartSelection(selectedVariations);
-    }
-  }
-
   function updateCustomer(field, value) {
     if (bookingAttempt) {
-      clearActiveBookingAttempt({ preserveCart: true });
+      clearActiveBookingAttempt();
     }
 
+    setReviewingBooking(false);
     setCustomer((current) => ({
       ...current,
       [field]: value,
@@ -294,45 +472,153 @@ function Booking() {
 
   function updateSelectedVariations(nextSelectedVariations) {
     invalidateAvailability();
+    invalidateCalendarAvailability();
     clearActiveBookingAttempt();
     setSelectedVariations(nextSelectedVariations);
-    saveCartSelection(nextSelectedVariations);
     resetAvailability();
+    setReviewingBooking(false);
+    if (nextSelectedVariations.length) setReviewValidationMessage("");
     setError("");
-    if (!nextSelectedVariations.length) { setServiceSelectorCollapsed(false); setMobileCartOpen(false); }
+    if (!nextSelectedVariations.length) {
+      setServiceSelectorCollapsed(false);
+      setMobileCartOpen(false);
+    }
   }
 
   function toggleVariation(variation) {
     if (submitting || loadingAvailability) return;
-    const isSelected = selectedVariations.some((item) => item.id === variation.id);
-    if (isSelected) { updateSelectedVariations(selectedVariations.filter((item) => item.id !== variation.id)); return; }
+    const isSelected = selectedVariations.some(
+      (item) => item.id === variation.id,
+    );
+    if (isSelected) {
+      updateSelectedVariations(
+        selectedVariations.filter((item) => item.id !== variation.id),
+      );
+      return;
+    }
     updateSelectedVariations([...selectedVariations, variation]);
   }
 
   function continueToDate() {
     if (!selectedVariations.length || submitting) return;
-    setServiceSelectorCollapsed(true); setMobileCartOpen(false);
-    window.requestAnimationFrame(() => { dateSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
+    setServiceSelectorCollapsed(true);
+    setMobileCartOpen(false);
+    window.requestAnimationFrame(() => {
+      dateSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }
+
+  function continueFromMobile() {
+    if (!selectedVariations.length || submitting) return;
+
+    if (selectedSlot) {
+      setServiceSelectorCollapsed(true);
+      setMobileCartOpen(false);
+      window.requestAnimationFrame(() => {
+        customerDetailsSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+      return;
+    }
+
+    continueToDate();
   }
 
   function editServices() {
-    setServiceSelectorCollapsed(false); setMobileCartOpen(true);
-    window.requestAnimationFrame(() => { serviceSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); });
+    setServiceSelectorCollapsed(false);
+    setMobileCartOpen(true);
+    window.requestAnimationFrame(() => {
+      serviceSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
   }
 
-  function closeMobileCart() { setMobileCartOpen(false); }
-  function removeVariation(variationId) { updateSelectedVariations(selectedVariations.filter((variation) => variation.id !== variationId)); }
+  function closeMobileCart() {
+    setMobileCartOpen(false);
+  }
+  function removeVariation(variationId) {
+    updateSelectedVariations(
+      selectedVariations.filter((variation) => variation.id !== variationId),
+    );
+  }
+
+  function startReview() {
+    const transition = getReviewTransition(selectedVariations);
+    setReviewingBooking(transition.reviewingBooking);
+    setReviewValidationMessage(transition.reviewValidationMessage);
+  }
 
   function handleDateChange(event) {
     const nextDate = event.target.value;
     if (!nextDate || nextDate === date) return;
     invalidateAvailability();
-    clearActiveBookingAttempt({ preserveCart: true });
+    clearActiveBookingAttempt();
     setDate(nextDate);
     resetAvailability();
+    setReviewingBooking(false);
     setError("");
-    if (selectedVariationIds.length) void refreshAvailability({ requestedDate: nextDate, requestedVariationIds: selectedVariationIds });
+    if (selectedVariationIds.length)
+      void refreshAvailability({
+        requestedDate: nextDate,
+        requestedVariationIds: selectedVariationIds,
+      });
   }
+
+  useEffect(() => {
+    if (
+      !selectedVariationIds.length ||
+      calendarAvailabilityStatus !== "success"
+    ) {
+      return;
+    }
+
+    const minimumDate = getEasternDate();
+    const maximumDate = getEasternMaxBookingDate();
+    const selectedDateHasAvailability =
+      Boolean(date) &&
+      Array.isArray(availabilityByDate?.[date]) &&
+      availabilityByDate[date].length > 0;
+
+    if (selectedDateHasAvailability) return;
+
+    const searchStart =
+      date && date >= minimumDate && date <= maximumDate ? date : minimumDate;
+    const nextAvailableDate = findFirstAvailableDate(
+      availabilityByDate,
+      searchStart,
+      maximumDate,
+    );
+
+    if (!nextAvailableDate && !date && !selectedSlot) return;
+
+    invalidateAvailability();
+    clearActiveBookingAttempt();
+    resetAvailability();
+    setError("");
+
+    if (!nextAvailableDate) {
+      setDate("");
+      return;
+    }
+
+    setDate(nextAvailableDate);
+  }, [
+    availabilityByDate,
+    calendarAvailabilityStatus,
+    clearActiveBookingAttempt,
+    date,
+    invalidateAvailability,
+    resetAvailability,
+    selectedVariationIds,
+    selectedSlot,
+  ]);
 
   async function submitBooking(event) {
     event.preventDefault();
@@ -347,7 +633,7 @@ function Booking() {
     }
 
     if (!isCurrentAvailabilitySlot(selectedSlot, date, selectedVariationIds)) {
-      clearActiveBookingAttempt({ preserveCart: true });
+      clearActiveBookingAttempt();
       setSelectedSlot(null);
 
       setError(
@@ -364,19 +650,40 @@ function Booking() {
     submittingRef.current = true;
     setSubmitting(true);
 
-    const activeAttempt = bookingAttempt || {
-      bookingAttemptId: crypto.randomUUID(),
-      variationIds: selectedVariationIds,
-      startAt: selectedSlot.startAt,
-      customer: {
-        ...customer,
-      },
-      selectedVariations,
-    };
+    const activeAttempt = bookingAttempt
+      ? {
+          ...bookingAttempt,
+          customer: {
+            ...bookingAttempt.customer,
+            phone: normalizeUsPhoneNumber(bookingAttempt.customer.phone),
+          },
+        }
+      : {
+          bookingAttemptId: crypto.randomUUID(),
+          variationIds: selectedVariationIds,
+          startAt: selectedSlot.startAt,
+          customer: {
+            ...customer,
+            phone: normalizeUsPhoneNumber(customer.phone),
+          },
+          selectedVariations,
+        };
 
     if (!bookingAttempt) {
       setBookingAttempt(activeAttempt);
-      saveBookingAttempt(activeAttempt);
+      // Persist the immutable attempt before issuing the request. A refresh
+      // during submission will therefore recover an ID that the server can
+      // safely de-duplicate, but never auto-submit it.
+      saveBookingAttempt({
+        variationIds: activeAttempt.variationIds,
+        selectedVariations,
+        date,
+        selectedSlot,
+        customer: activeAttempt.customer,
+        reviewingBooking: true,
+        bookingAttemptId: activeAttempt.bookingAttemptId,
+        startAt: activeAttempt.startAt,
+      });
     }
 
     setError("");
@@ -389,7 +696,8 @@ function Booking() {
         customer: activeAttempt.customer,
       });
 
-      clearActiveBookingAttempt();
+      clearStoredBookingAttempt();
+      setBookingAttempt(null);
 
       setConfirmation(data?.booking || {});
     } catch (requestError) {
@@ -417,7 +725,7 @@ function Booking() {
       }
 
       if (requestError.code === "SLOT_UNAVAILABLE") {
-        clearActiveBookingAttempt({ preserveCart: true });
+        clearActiveBookingAttempt();
 
         await refreshAvailability({
           preserveError: true,
@@ -478,6 +786,12 @@ function Booking() {
                 date={date}
                 submitting={submitting}
                 loadingAvailability={loadingAvailability}
+                availabilityByDate={availabilityByDate}
+                calendarAvailabilityStatus={calendarAvailabilityStatus}
+                calendarAvailabilityError={calendarAvailabilityError}
+                retryCalendarAvailability={() => {
+                  void loadCalendarAvailability({ force: true });
+                }}
                 handleDateChange={handleDateChange}
                 loadAvailability={loadAvailability}
               />
@@ -490,7 +804,7 @@ function Booking() {
               visibleAvailability={visibleAvailability}
               selectedSlot={selectedSlot}
               submitting={submitting}
-              handleTimeSelection={handleTimeSelection}
+              handleTimeSelection={selectSlot}
               hasPaginatedTimes={availability.length > INITIAL_MOBILE_TIMES}
               hasMoreTimes={hasMoreTimes}
               showMoreTimes={showMoreTimes}
@@ -499,15 +813,32 @@ function Booking() {
               hasSearchedAvailability={hasSearchedAvailability}
             />
 
-            {selectedSlot && (
-              <CustomerDetails
-                customer={customer}
-                submitting={submitting}
-                retryAfterRemaining={retryAfterRemaining}
-                updateCustomer={updateCustomer}
-                submitBooking={submitBooking}
-              />
-            )}
+            {selectedSlot &&
+              !recoveringSlot &&
+              (reviewingBooking ? (
+                <BookingReview
+                  customer={customer}
+                  selectedVariations={selectedVariations}
+                  selectedServiceEstimate={selectedServiceEstimate}
+                  date={date}
+                  selectedSlot={selectedSlot}
+                  submitting={submitting}
+                  retryAfterRemaining={retryAfterRemaining}
+                  onBack={() => setReviewingBooking(false)}
+                  onConfirm={submitBooking}
+                />
+              ) : (
+                <CustomerDetails
+                  customerDetailsSectionRef={customerDetailsSectionRef}
+                  customer={customer}
+                  submitting={submitting}
+                  retryAfterRemaining={retryAfterRemaining}
+                  updateCustomer={updateCustomer}
+                  hasSelectedVariations={selectedVariations.length > 0}
+                  reviewValidationMessage={reviewValidationMessage}
+                  onReview={startReview}
+                />
+              ))}
           </div>
 
           <aside
@@ -524,6 +855,10 @@ function Booking() {
               onContinue={continueToDate}
               showContinue={!serviceSelectorCollapsed}
             />
+
+            <div className="booking__appointment-image" aria-hidden="true">
+              <img src="/booking-decorative-art.png" alt="" />
+            </div>
           </aside>
         </div>
       </section>
@@ -533,7 +868,7 @@ function Booking() {
           selectedVariations={selectedVariations}
           selectedServiceEstimate={selectedServiceEstimate}
           editServices={editServices}
-          continueToDate={continueToDate}
+          continueToDate={continueFromMobile}
           submitting={submitting}
         />
       )}

@@ -60,6 +60,11 @@ test("concurrent expired-token callers share one refresh and receive the persist
     },
     decryptFn: () => "refresh-token",
     encryptFn: (value) => `encrypted:${value}`,
+    persistRefreshedConnectionFn: async (connection, _originalCredentials, updates) => {
+      Object.assign(connection, updates);
+      await connection.save();
+      return true;
+    },
     fetchWithTimeoutFn: async (_url, _options) => {
       refreshCalls += 1;
       await refreshGate.promise;

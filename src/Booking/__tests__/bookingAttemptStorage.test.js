@@ -1,5 +1,7 @@
 import {
   BOOKING_ATTEMPT_STORAGE_KEY,
+  BOOKING_DRAFT_MAX_AGE_MS,
+  BOOKING_DRAFT_STORAGE_VERSION,
   clearBookingAttempt,
   loadBookingAttempt,
   saveBookingAttempt,
@@ -17,12 +19,22 @@ const attempt = {
   },
 };
 
-beforeEach(() => window.sessionStorage.clear());
+beforeEach(() => {
+  window.sessionStorage.clear();
+  window.localStorage.clear();
+});
 
 test("retains a booking attempt for recovery after a browser refresh", () => {
   saveBookingAttempt(attempt);
 
-  expect(loadBookingAttempt()).toEqual(attempt);
+  expect(loadBookingAttempt()).toEqual(
+    expect.objectContaining({
+      ...attempt,
+      version: BOOKING_DRAFT_STORAGE_VERSION,
+      reviewingBooking: false,
+      updatedAt: expect.any(Number),
+    }),
+  );
 });
 
 test("retains a selected Square cart before a booking attempt exists", () => {
@@ -42,7 +54,13 @@ test("retains a selected Square cart before a booking attempt exists", () => {
 
   saveBookingAttempt(cart);
 
-  expect(loadBookingAttempt()).toEqual(cart);
+  expect(loadBookingAttempt()).toEqual(
+    expect.objectContaining({
+      ...cart,
+      customer: { firstName: "", lastName: "", phone: "", email: "" },
+      version: BOOKING_DRAFT_STORAGE_VERSION,
+    }),
+  );
 });
 
 test("stores variation IDs in canonical order", () => {
@@ -61,7 +79,7 @@ test("clears an active booking attempt after confirmation", () => {
   saveBookingAttempt(attempt);
   clearBookingAttempt();
 
-  expect(window.sessionStorage.getItem(BOOKING_ATTEMPT_STORAGE_KEY)).toBeNull();
+  expect(window.localStorage.getItem(BOOKING_ATTEMPT_STORAGE_KEY)).toBeNull();
   expect(loadBookingAttempt()).toBeNull();
 });
 
@@ -77,10 +95,19 @@ test("migrates a valid legacy single-variation attempt", () => {
     JSON.stringify(legacyAttempt),
   );
 
-  expect(loadBookingAttempt()).toEqual(attempt);
+  expect(loadBookingAttempt()).toEqual(
+    expect.objectContaining({
+      ...attempt,
+      version: BOOKING_DRAFT_STORAGE_VERSION,
+      reviewingBooking: false,
+    }),
+  );
   expect(
-    JSON.parse(window.sessionStorage.getItem(BOOKING_ATTEMPT_STORAGE_KEY)),
-  ).toEqual(attempt);
+    JSON.parse(window.localStorage.getItem(BOOKING_ATTEMPT_STORAGE_KEY)),
+  ).toEqual(expect.objectContaining({
+    ...attempt,
+    version: BOOKING_DRAFT_STORAGE_VERSION,
+  }));
 });
 
 test("clears a legacy Mongo service attempt instead of sending it to Square", () => {
@@ -95,4 +122,26 @@ test("clears a legacy Mongo service attempt instead of sending it to Square", ()
 
   expect(loadBookingAttempt()).toBeNull();
   expect(window.sessionStorage.getItem(BOOKING_ATTEMPT_STORAGE_KEY)).toBeNull();
+});
+
+test("safely discards corrupt or expired drafts", () => {
+  window.localStorage.setItem(BOOKING_ATTEMPT_STORAGE_KEY, "not-json");
+
+  expect(loadBookingAttempt()).toBeNull();
+  expect(window.localStorage.getItem(BOOKING_ATTEMPT_STORAGE_KEY)).toBeNull();
+
+  window.localStorage.setItem(
+    BOOKING_ATTEMPT_STORAGE_KEY,
+    JSON.stringify({
+      version: BOOKING_DRAFT_STORAGE_VERSION,
+      updatedAt: Date.now() - BOOKING_DRAFT_MAX_AGE_MS - 1,
+      variationIds: ["square-variation-1"],
+      selectedVariations: [{ id: "square-variation-1" }],
+      customer: { firstName: "", lastName: "", phone: "", email: "" },
+      reviewingBooking: false,
+    }),
+  );
+
+  expect(loadBookingAttempt()).toBeNull();
+  expect(window.localStorage.getItem(BOOKING_ATTEMPT_STORAGE_KEY)).toBeNull();
 });

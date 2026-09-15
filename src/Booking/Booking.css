@@ -3,6 +3,7 @@
 @import "./styles/booking-appointment.css";
 @import "./styles/booking-calendar.css";
 @import "./styles/booking-details.css";
+@import "./styles/booking-review.css";
 @import "./styles/booking-confirmation.css";
 
 .booking__error {

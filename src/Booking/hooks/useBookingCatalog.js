@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getSquareBookingServices } from "../../api/squareService";
 import { wait } from "../utils/bookingHelpers";
+import { formatServiceIdentity } from "../utils/serviceIdentity";
 
 export default function useBookingCatalog({ submitting, uiDelay }) {
   const [categories, setCategories] = useState([]);
@@ -40,7 +41,20 @@ export default function useBookingCatalog({ submitting, uiDelay }) {
 
   const variations = useMemo(() => categories.flatMap((category) =>
     (category.services || []).flatMap((service) =>
-      (service.variations || []).map((variation) => ({ ...variation, serviceName: service.name })),
+      (service.variations || []).map((variation) => {
+        const hasVariationChoice = service.variations.length > 1;
+
+        return {
+          ...variation,
+          serviceName: service.name,
+          hasVariationChoice,
+          displayName: formatServiceIdentity(
+            service.name,
+            variation.name,
+            hasVariationChoice,
+          ),
+        };
+      }),
     ),
   ), [categories]);
 

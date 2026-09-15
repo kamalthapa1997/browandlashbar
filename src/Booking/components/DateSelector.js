@@ -41,32 +41,55 @@ export default function DateSelector({
   date,
   submitting,
   loadingAvailability,
+  availabilityByDate,
+  calendarAvailabilityStatus,
+  calendarAvailabilityError,
+  retryCalendarAvailability,
   handleDateChange,
   loadAvailability,
 }) {
   const minimumDate = getEasternDate();
   const maximumDate = getEasternMaxBookingDate();
-  const selectedDate = date || minimumDate;
-  const [weekStart, setWeekStart] = useState(() => startOfWeek(selectedDate));
+  const selectedDate = date || "";
+  const dateForCalendar = selectedDate || minimumDate;
+  const [weekStart, setWeekStart] = useState(() =>
+    startOfWeek(dateForCalendar),
+  );
   const earliestWeek = startOfWeek(minimumDate);
   const latestWeek = startOfWeek(maximumDate);
-  const weekDates = Array.from(
-    { length: WEEKDAY_LABELS.length },
-    (_, index) => addDays(weekStart, index),
+  const weekDates = Array.from({ length: WEEKDAY_LABELS.length }, (_, index) =>
+    addDays(weekStart, index),
   );
 
   useEffect(() => {
-    const selectedWeek = startOfWeek(selectedDate);
+    const selectedWeek = startOfWeek(dateForCalendar);
 
     setWeekStart((currentWeek) =>
       dateValue(currentWeek) === dateValue(selectedWeek)
         ? currentWeek
         : selectedWeek,
     );
-  }, [selectedDate]);
+  }, [dateForCalendar]);
+
+  function hasSquareAvailability(value) {
+    return Array.isArray(availabilityByDate?.[value]) &&
+      availabilityByDate[value].length > 0;
+  }
+
+  function isDateSelectable(value) {
+    if (value < minimumDate || value > maximumDate) return false;
+    if (calendarAvailabilityStatus === "loading") return false;
+    if (calendarAvailabilityStatus === "success") {
+      return hasSquareAvailability(value);
+    }
+
+    // If Square could not be reached, retain the prior date-selection behavior
+    // rather than incorrectly presenting every date as unavailable.
+    return true;
+  }
 
   function selectDate(nextDate) {
-    if (nextDate < minimumDate || nextDate > maximumDate) {
+    if (!isDateSelectable(nextDate)) {
       return;
     }
 
@@ -90,7 +113,8 @@ export default function DateSelector({
   const nextWeekDisabled =
     submitting ||
     loadingAvailability ||
-    dateValue(addDays(weekStart, WEEKDAY_LABELS.length)) > dateValue(latestWeek);
+    dateValue(addDays(weekStart, WEEKDAY_LABELS.length)) >
+      dateValue(latestWeek);
 
   return (
     <section
@@ -161,18 +185,29 @@ export default function DateSelector({
               const value = dateValue(calendarDate);
               const isPast = value < minimumDate;
               const isBeyondBookingWindow = value > maximumDate;
-              const isSelectable = !isPast && !isBeyondBookingWindow;
+              const hasAvailability = hasSquareAvailability(value);
+              const isSelectable = isDateSelectable(value);
               const isSelected = value === selectedDate && isSelectable;
               const isToday = value === minimumDate;
+              const isUnavailable =
+                !isPast &&
+                !isBeyondBookingWindow &&
+                calendarAvailabilityStatus === "success" &&
+                !hasAvailability;
+              const dayLabel = `${DAY_LABEL_FORMATTER.format(calendarDate)}${
+                isUnavailable ? " — unavailable" : ""
+              }`;
 
               return (
                 <button
                   className={`booking__calendar-day${
                     isSelected ? " is-selected" : ""
-                  }${isBeyondBookingWindow ? " is-outside-window" : ""}`}
+                  }${isBeyondBookingWindow ? " is-outside-window" : ""}${
+                    isUnavailable ? " is-unavailable" : ""
+                  }`}
                   type="button"
                   key={value}
-                  aria-label={`Select ${DAY_LABEL_FORMATTER.format(calendarDate)}`}
+                  aria-label={`Select ${dayLabel}`}
                   aria-pressed={isSelected}
                   aria-current={isToday ? "date" : undefined}
                   onClick={() => selectDate(value)}
@@ -185,10 +220,44 @@ export default function DateSelector({
           </div>
         </div>
 
+        {calendarAvailabilityStatus === "loading" && (
+          <p className="booking__hint" role="status">
+            Checking available dates…
+          </p>
+        )}
+
+        {calendarAvailabilityStatus === "error" && (
+          <p className="booking__hint" role="alert">
+            {calendarAvailabilityError || "Unable to check available dates."}{" "}
+            <button
+              className="booking__show-more"
+              type="button"
+              onClick={retryCalendarAvailability}
+            >
+              Try again
+            </button>
+          </p>
+        )}
+
+        {calendarAvailabilityStatus === "success" &&
+          Object.values(availabilityByDate || {}).every(
+            (slots) => !Array.isArray(slots) || slots.length === 0,
+          ) && (
+            <p className="booking__hint" role="status">
+              No appointments are currently available for these services within
+              the selected booking window.
+            </p>
+          )}
+
         <button
           className="booking__button"
           type="submit"
-          disabled={loadingAvailability || submitting}
+          disabled={
+            loadingAvailability ||
+            submitting ||
+            !selectedDate ||
+            calendarAvailabilityStatus === "loading"
+          }
         >
           {loadingAvailability ? (
             <>

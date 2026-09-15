@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./Gallery.css";
-import { getGallery } from "../api/galleryService";
-import { getServices } from "../api/serviceService";
+import { getGallery, getGalleryCategories } from "../api/galleryService";
 import { useSettings } from "../contexts/SettingsContext";
-import {
-  getGalleryCategoryLabel,
-  getGalleryCategoryOptions,
-} from "../utils/galleryCategoryOptions";
+import { getGalleryCategoryLabel } from "../utils/galleryCategoryOptions";
 import GalleryLightbox from "./GalleryLightbox";
 
 const galleryDefaults = {
@@ -27,14 +23,19 @@ function sortGalleryItems(items) {
   return items
     .map((item, index) => ({ item, index }))
     .sort((first, second) => {
-      const featuredDifference = Number(Boolean(second.item.featured)) - Number(Boolean(first.item.featured));
+      const featuredDifference =
+        Number(Boolean(second.item.featured)) -
+        Number(Boolean(first.item.featured));
+
       if (featuredDifference) return featuredDifference;
 
       const firstOrder = Number(first.item.displayOrder);
       const secondOrder = Number(second.item.displayOrder);
+
       const displayOrderDifference =
         (Number.isFinite(firstOrder) ? firstOrder : first.index) -
         (Number.isFinite(secondOrder) ? secondOrder : second.index);
+
       return displayOrderDifference || first.index - second.index;
     })
     .map(({ item }) => item);
@@ -53,22 +54,96 @@ function imageAlt(image, index, categoryOptions) {
 
 function storedImageRatio(image) {
   const ratio = Number(image.aspectRatio);
+
   return Number.isFinite(ratio) && ratio > 0 ? ratio : null;
 }
 
-function ImageDetails({ image, featured = false }) {
-  if (!image.caption && !featured) return null;
-
+function ImageDetails({ image }) {
   return (
-    <div className={featured ? "gallery-page__featured-copy" : "gallery-page__item-copy"}>
-      {featured && <p className="gallery-page__featured-label">Featured work</p>}
+    <div className="gallery-page__featured-copy">
+      <p className="gallery-page__featured-label">Featured work</p>
+
       {image.caption && <h2>{image.caption}</h2>}
     </div>
   );
 }
 
+function GalleryImage({
+  src,
+  alt,
+  loading = "lazy",
+  className,
+  onLoad,
+  onError,
+  ...props
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  function handleLoad(event) {
+    setLoaded(true);
+    setFailed(false);
+
+    if (onLoad) {
+      onLoad(event);
+    }
+  }
+
+  function handleError(event) {
+    setFailed(true);
+    setLoaded(false);
+
+    if (onError) {
+      onError(event);
+    }
+  }
+
+  return (
+    <span
+      className={`gallery-page__image-frame ${
+        loaded ? "is-loaded" : ""
+      } ${failed ? "is-failed" : ""}`}
+    >
+      {!loaded && !failed && (
+        <span
+          className="gallery-page__image-loader"
+          role="status"
+          aria-label="Loading image"
+        >
+          <span
+            className="gallery-page__image-loader-ring"
+            aria-hidden="true"
+          />
+        </span>
+      )}
+
+      {failed ? (
+        <span className="gallery-page__image-fallback">
+          <span aria-hidden="true">×</span>
+          <small>Image unavailable</small>
+        </span>
+      ) : (
+        <img
+          {...props}
+          src={src}
+          alt={alt}
+          loading={loading}
+          decoding="async"
+          draggable="false"
+          className={`${className || ""} ${
+            loaded ? "is-loaded" : "is-loading"
+          }`.trim()}
+          onLoad={handleLoad}
+          onError={handleError}
+        />
+      )}
+    </span>
+  );
+}
+
 function Gallery() {
   const { settings } = useSettings();
+
   const [images, setImages] = useState([]);
   const [imageSizes, setImageSizes] = useState({});
   const [error, setError] = useState("");
@@ -78,9 +153,13 @@ function Gallery() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [galleryElement, setGalleryElement] = useState(null);
+
   const measuredWidthRef = useRef(0);
   const resizeFrameRef = useRef(null);
-  const galleryRef = useCallback((element) => setGalleryElement(element), []);
+
+  const galleryRef = useCallback((element) => {
+    setGalleryElement(element);
+  }, []);
 
   const gallerySettings = {
     eyebrow: settings?.gallery?.eyebrow || galleryDefaults.eyebrow,
@@ -97,7 +176,13 @@ function Gallery() {
 
         const finish = async (loaded) => {
           if (!loaded) {
-            resolve({ image, width: 0, height: 0, loaded: false });
+            resolve({
+              image,
+              width: 0,
+              height: 0,
+              loaded: false,
+            });
+
             return;
           }
 
@@ -128,15 +213,20 @@ function Gallery() {
       setLoading(true);
 
       try {
-        const [data, services] = await Promise.all([
+        const [data, categories] = await Promise.all([
           getGallery(),
-          getServices().catch(() => ({})),
+          getGalleryCategories().catch(() => []),
         ]);
+
         const galleryImages = sortGalleryItems(
-          (Array.isArray(data) ? data : []).filter((image) => image.active !== false),
+          (Array.isArray(data) ? data : []).filter(
+            (image) => image.active !== false,
+          ),
         );
 
         if (cancelled) return;
+
+        setCategoryOptions(Array.isArray(categories) ? categories : []);
 
         if (!galleryImages.length) {
           setImages([]);
@@ -145,49 +235,70 @@ function Gallery() {
           return;
         }
 
+        /*
+         * Preload all images so the existing justified-row layout can
+         * calculate their aspect ratios before displaying the gallery.
+         *
+         * The actual <img> elements below still maintain their own
+         * visual loading state, so each image fades in independently.
+         */
         const preloadPromises = galleryImages.map(preloadImage);
+
         const firstSuccessfulImage = new Promise((resolve) => {
           let remaining = preloadPromises.length;
+
           preloadPromises.forEach((promise) => {
             promise.then((result) => {
               if (result.loaded) {
                 resolve(result);
                 return;
               }
+
               remaining -= 1;
-              if (remaining === 0) resolve(null);
+
+              if (remaining === 0) {
+                resolve(null);
+              }
             });
           });
         });
 
         await firstSuccessfulImage;
+
         if (cancelled) return;
 
         setImages(galleryImages);
-        setCategoryOptions(getGalleryCategoryOptions(services));
         setLoading(false);
 
         Promise.all(preloadPromises).then((results) => {
           if (cancelled) return;
+
           const dimensions = results.reduce((sizes, result, index) => {
-            if (!result?.loaded || !result.width || !result.height) return sizes;
+            if (!result?.loaded || !result.width || !result.height) {
+              return sizes;
+            }
+
             sizes[imageKey(result.image, index)] = {
               width: result.width,
               height: result.height,
               ratio: result.width / result.height,
             };
+
             return sizes;
           }, {});
+
           setImageSizes(dimensions);
         });
       } catch (loadError) {
         if (cancelled) return;
+
         setError(loadError.message || "Unable to load gallery.");
         setLoading(false);
       }
     }
 
     loadGallery();
+
     return () => {
       cancelled = true;
     };
@@ -204,7 +315,9 @@ function Gallery() {
         resizeFrameRef.current = null;
       }
 
-      if (Math.abs(measuredWidthRef.current - nextWidth) < 0.5) return;
+      if (Math.abs(measuredWidthRef.current - nextWidth) < 0.5) {
+        return;
+      }
 
       resizeFrameRef.current = requestAnimationFrame(() => {
         measuredWidthRef.current = nextWidth;
@@ -215,14 +328,19 @@ function Gallery() {
 
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
-      if (entry) scheduleWidthUpdate(entry.contentRect.width);
+
+      if (entry) {
+        scheduleWidthUpdate(entry.contentRect.width);
+      }
     });
 
     resizeObserver.observe(galleryElement);
+
     scheduleWidthUpdate(galleryElement.getBoundingClientRect().width);
 
     return () => {
       resizeObserver.disconnect();
+
       if (resizeFrameRef.current) {
         cancelAnimationFrame(resizeFrameRef.current);
         resizeFrameRef.current = null;
@@ -232,9 +350,11 @@ function Gallery() {
 
   const availableCategories = useMemo(() => {
     const imageCategories = new Set(images.map(categoryFor).filter(Boolean));
+
     const menuCategories = categoryOptions.filter((option) =>
       imageCategories.has(option.value),
     );
+
     const legacyCategories = [...imageCategories]
       .filter(
         (category) =>
@@ -245,11 +365,17 @@ function Gallery() {
         label: getGalleryCategoryLabel(category, categoryOptions),
       }));
 
-    return [{ value: "all", label: "All" }, ...menuCategories, ...legacyCategories];
+    return [
+      { value: "all", label: "All" },
+      ...menuCategories,
+      ...legacyCategories,
+    ];
   }, [categoryOptions, images]);
 
   useEffect(() => {
-    if (!availableCategories.some((option) => option.value === activeCategory)) {
+    if (
+      !availableCategories.some((option) => option.value === activeCategory)
+    ) {
       setActiveCategory("all");
     }
   }, [activeCategory, availableCategories]);
@@ -262,12 +388,15 @@ function Gallery() {
     [activeCategory, images],
   );
 
-  const featuredImage = filteredImages.find((image) => image.featured) || filteredImages[0];
+  const featuredImage =
+    filteredImages.find((image) => image.featured) || filteredImages[0];
+
   const featuredRatio = featuredImage
     ? imageSizes[imageKey(featuredImage, 0)]?.ratio ||
       storedImageRatio(featuredImage) ||
       4 / 3
     : 4 / 3;
+
   const supportingImages = useMemo(
     () =>
       filteredImages.filter(
@@ -277,13 +406,18 @@ function Gallery() {
   );
 
   const rows = useMemo(() => {
-    if (!supportingImages.length || !containerWidth) return [];
+    if (!supportingImages.length || !containerWidth) {
+      return [];
+    }
 
     const isMobile = containerWidth <= 640;
+
     const targetHeight = isMobile
       ? Math.max(150, Math.min(220, containerWidth * 0.48))
       : Math.max(210, Math.min(300, containerWidth * 0.23));
+
     const gap = isMobile ? 8 : 14;
+
     const result = [];
     let currentRow = [];
     let currentRatioTotal = 0;
@@ -293,24 +427,47 @@ function Gallery() {
         imageSizes[imageKey(image, index)]?.ratio ||
         storedImageRatio(image) ||
         1;
-      currentRow.push({ image, index, ratio });
+
+      currentRow.push({
+        image,
+        index,
+        ratio,
+      });
+
       currentRatioTotal += ratio;
+
       const estimatedWidth =
-        currentRatioTotal * targetHeight + Math.max(0, currentRow.length - 1) * gap;
+        currentRatioTotal * targetHeight +
+        Math.max(0, currentRow.length - 1) * gap;
 
       if (
-        (estimatedWidth >= containerWidth || (isMobile && currentRow.length >= 2)) &&
+        (estimatedWidth >= containerWidth ||
+          (isMobile && currentRow.length >= 2)) &&
         currentRow.length > 1
       ) {
-        result.push({ items: currentRow, ratioTotal: currentRatioTotal, targetHeight, gap, isLast: false });
+        result.push({
+          items: currentRow,
+          ratioTotal: currentRatioTotal,
+          targetHeight,
+          gap,
+          isLast: false,
+        });
+
         currentRow = [];
         currentRatioTotal = 0;
       }
     });
 
     if (currentRow.length) {
-      result.push({ items: currentRow, ratioTotal: currentRatioTotal, targetHeight, gap, isLast: true });
+      result.push({
+        items: currentRow,
+        ratioTotal: currentRatioTotal,
+        targetHeight,
+        gap,
+        isLast: true,
+      });
     }
+
     return result;
   }, [containerWidth, imageSizes, supportingImages]);
 
@@ -321,26 +478,43 @@ function Gallery() {
 
   function openLightbox(image) {
     const index = filteredImages.indexOf(image);
-    if (index >= 0) setLightboxIndex(index);
+
+    if (index >= 0) {
+      setLightboxIndex(index);
+    }
   }
 
   return (
     <main className="gallery-page">
       <header className="gallery-page__header">
         <p className="gallery-page__subtitle">{gallerySettings.eyebrow}</p>
+
         <h1 className="gallery-page__title">{gallerySettings.title}</h1>
-        <p className="gallery-page__description">{gallerySettings.description}</p>
+
+        <p className="gallery-page__description">
+          {gallerySettings.description}
+        </p>
       </header>
 
-      {error && <p className="gallery-page__error" role="alert">{error}</p>}
+      {error && (
+        <p className="gallery-page__error" role="alert">
+          {error}
+        </p>
+      )}
 
       {!error && loading && (
-        <section className="gallery-page__loader" role="status" aria-live="polite">
+        <section
+          className="gallery-page__loader"
+          role="status"
+          aria-live="polite"
+        >
           <div className="gallery-page__loader-content">
             <span className="gallery-page__loader-mark" aria-hidden="true">
               <span className="gallery-page__loader-mark-inner" />
             </span>
+
             <span className="gallery-page__loader-line" aria-hidden="true" />
+
             <p>Curating our portfolio</p>
           </div>
         </section>
@@ -348,7 +522,10 @@ function Gallery() {
 
       {!error && !loading && images.length > 0 && (
         <>
-          <nav className="gallery-page__filters" aria-label="Filter portfolio by category">
+          <nav
+            className="gallery-page__filters"
+            aria-label="Filter portfolio by category"
+          >
             {availableCategories.map((category) => (
               <button
                 type="button"
@@ -361,64 +538,85 @@ function Gallery() {
               </button>
             ))}
           </nav>
-          <section ref={galleryRef} className="gallery-page__list gallery-page__list--ready" aria-label="Our portfolio">
+
+          <section
+            ref={galleryRef}
+            className="gallery-page__list gallery-page__list--ready"
+            aria-label="Our portfolio"
+          >
             {featuredImage && (
               <article className="gallery-page__featured">
                 <button
                   type="button"
                   className="gallery-page__featured-image"
-                  style={{ "--gallery-featured-ratio": featuredRatio }}
+                  style={{
+                    "--gallery-featured-ratio": featuredRatio,
+                  }}
                   onClick={() => openLightbox(featuredImage)}
-                  aria-label={`View featured image: ${imageAlt(featuredImage, 0, categoryOptions)}`}
+                  aria-label={`View featured image: ${imageAlt(
+                    featuredImage,
+                    0,
+                    categoryOptions,
+                  )}`}
                 >
-                  <img
+                  <GalleryImage
                     src={featuredImage.imageUrl}
                     alt={imageAlt(featuredImage, 0, categoryOptions)}
                     loading="eager"
-                    decoding="async"
-                    draggable="false"
                   />
                 </button>
-                <ImageDetails image={featuredImage} featured />
+
+                <ImageDetails image={featuredImage} />
               </article>
             )}
 
             {rows.map((row, rowIndex) => {
               const totalGap = Math.max(0, row.items.length - 1) * row.gap;
+
               const availableWidth = containerWidth - totalGap;
+
               const rowHeight = row.isLast
                 ? Math.min(row.targetHeight, availableWidth / row.ratioTotal)
                 : availableWidth / row.ratioTotal;
 
               return (
                 <div
-                  className={`gallery-page__row ${row.isLast ? "gallery-page__row--last" : ""}`}
+                  className={`gallery-page__row ${
+                    row.isLast ? "gallery-page__row--last" : ""
+                  }`}
                   key={`row-${rowIndex}`}
-                  style={{ "--gallery-gap": `${row.gap}px` }}
+                  style={{
+                    "--gallery-gap": `${row.gap}px`,
+                  }}
                 >
                   {row.items.map(({ image, index, ratio }) => {
                     const width = ratio * rowHeight;
+
                     return (
                       <article
                         className="gallery-page__item"
                         key={imageKey(image, index)}
-                        style={{ "--gallery-width": `${width}px`, "--gallery-height": `${rowHeight}px` }}
+                        style={{
+                          "--gallery-width": `${width}px`,
+                          "--gallery-height": `${rowHeight}px`,
+                        }}
                       >
                         <button
                           type="button"
                           className="gallery-page__image"
                           onClick={() => openLightbox(image)}
-                          aria-label={`View ${imageAlt(image, index, categoryOptions)}`}
+                          aria-label={`View ${imageAlt(
+                            image,
+                            index,
+                            categoryOptions,
+                          )}`}
                         >
-                          <img
+                          <GalleryImage
                             src={image.imageUrl}
                             alt={imageAlt(image, index, categoryOptions)}
-                            loading="eager"
-                            decoding="async"
-                            draggable="false"
+                            loading="lazy"
                           />
                         </button>
-                        <ImageDetails image={image} />
                       </article>
                     );
                   })}
@@ -430,7 +628,9 @@ function Gallery() {
       )}
 
       {!error && !loading && images.length === 0 && (
-        <p className="gallery-page__empty">Our latest work will be here soon.</p>
+        <p className="gallery-page__empty">
+          Our latest work will be here soon.
+        </p>
       )}
 
       {lightboxIndex !== null && (

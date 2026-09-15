@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ConfirmationModal from "../components/Modal/ConfirmationModal";
-import ServicesManager from "./components/ServicesManager";
 import GalleryManager from "./components/GalleryManager";
 import FaqManager from "./components/FaqManager";
 import SettingsManager from "./components/SettingsManager";
@@ -14,7 +13,6 @@ import "./AdminDashboard.css";
 
 const navItems = [
   ["overview", "Overview", "⌂"],
-  ["services", "Services", "✦"],
   ["gallery", "Gallery", "▧"],
   ["faq", "FAQ", "?"],
   ["settings", "Settings", "⚙"],
@@ -38,23 +36,18 @@ function AdminDashboard({ onSettingsUpdated }) {
   const [toast, setToast] = useState(null);
   const [confirmation, setConfirmation] = useState(null);
   const {
-    services,
     gallery,
     faqs,
     settings,
     loading,
     error,
     refresh,
-    upsertService,
-    removeService,
     upsertGalleryItem,
     removeGalleryItem,
     upsertFaq,
     removeFaq,
     applySettings,
   } = useAdminDashboardData(onSettingsUpdated);
-
-  const serviceList = useMemo(() => Object.values(services).flat(), [services]);
 
   useEffect(() => {
     setActiveSection(
@@ -109,15 +102,8 @@ function AdminDashboard({ onSettingsUpdated }) {
   }
 
   const stats = [
-    ["Services", serviceList.length, "✦", "services"],
     ["Gallery images", gallery.length, "▧", "gallery"],
     ["FAQs", faqs.length, "?", "faq"],
-    [
-      "Service groups",
-      Object.keys(services).filter((key) => services[key]?.length).length,
-      "◫",
-      "services",
-    ],
   ];
 
   return (
@@ -238,20 +224,9 @@ function AdminDashboard({ onSettingsUpdated }) {
                 onSelectSection={selectSection}
               />
             )}
-            {activeSection === "services" && (
-              <ServicesManager
-                services={services}
-                onSaved={upsertService}
-                onDeleted={removeService}
-                notify={showToast}
-                confirmAction={requestConfirmation}
-                findErrorField={findErrorField}
-              />
-            )}
             {activeSection === "gallery" && (
               <GalleryManager
                 gallery={gallery}
-                services={services}
                 onSaved={upsertGalleryItem}
                 onDeleted={removeGalleryItem}
                 notify={showToast}

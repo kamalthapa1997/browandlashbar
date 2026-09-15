@@ -14,6 +14,15 @@ const squareConnectionSchema = new mongoose.Schema(
       enum: ["oauth", "sandbox_development"],
       default: "oauth",
     },
+    connectionStatus: {
+      type: String,
+      enum: ["CONNECTED", "REAUTH_REQUIRED"],
+      default: "CONNECTED",
+      required: true,
+    },
+    lastHealthCheckAt: { type: Date },
+    lastAuthFailureAt: { type: Date },
+    lastAuthFailureReasonCode: { type: String, trim: true },
   },
   { timestamps: true },
 );

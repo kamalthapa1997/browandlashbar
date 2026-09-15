@@ -1,14 +1,17 @@
 const express = require("express");
-const cors = require("cors");
 
 const adminRoutes = require("./routes/adminRoutes");
-const serviceRoutes = require("./routes/serviceRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const reviewsRoutes = require("./routes/reviewsRoutes");
 const faqRoutes = require("./routes/faqRoutes");
 const squareRoutes = require("./routes/squareRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+const {
+  applySecurityHeaders,
+  createCorsMiddleware,
+  protectCookieAuthenticatedWrites,
+} = require("./middleware/securityMiddleware");
 
 function configureTrustProxy(application, environment = process.env.NODE_ENV) {
   // Production traffic reaches Node only through the local Nginx reverse proxy.
@@ -21,11 +24,9 @@ const app = express();
 
 configureTrustProxy(app);
 
+app.use(applySecurityHeaders);
 app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
-    credentials: true,
-  }),
+  createCorsMiddleware(),
 );
 app.use(
   express.json({
@@ -35,13 +36,13 @@ app.use(
   }),
 );
 app.use(express.urlencoded({ extended: true }));
+app.use(protectCookieAuthenticatedWrites);
 
 app.get("/api/health", (_request, response) => {
   response.status(200).json({ status: "ok" });
 });
 
 app.use("/api/admin", adminRoutes);
-app.use("/api/services", serviceRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/reviews", reviewsRoutes);

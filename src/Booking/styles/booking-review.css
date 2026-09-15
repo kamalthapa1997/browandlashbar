@@ -1,0 +1,190 @@
+.booking__review-card {
+  display: grid;
+  gap: clamp(1.45rem, 3vw, 2rem);
+  padding: clamp(1.3rem, 3.4vw, 2.1rem);
+  border: 1px solid rgba(75, 55, 47, 0.16);
+  border-radius: 0.28rem;
+  background: var(--paper);
+  box-shadow: 0 1.15rem 2.8rem rgba(70, 49, 45, 0.075);
+}
+.booking__review-section + .booking__review-section {
+  padding-top: clamp(1.35rem, 3vw, 1.8rem);
+  border-top: 1px solid var(--line);
+}
+.booking__review-eyebrow {
+  margin: 0 0 1rem;
+  color: var(--rose-deep);
+  font:
+    600 0.62rem/1.2 Arial,
+    sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.booking__review-services {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.booking__review-services li {
+  display: grid;
+  gap: 0.32rem;
+  min-width: 0;
+  padding: 0.85rem 0;
+}
+.booking__review-services li:first-child {
+  padding-top: 0;
+}
+.booking__review-services li + li {
+  border-top: 1px solid rgba(75, 55, 47, 0.11);
+}
+.booking__review-services strong {
+  color: var(--ink);
+  font-family: CormorantGaramond, Georgia, serif;
+  font-size: clamp(1.24rem, 2.5vw, 1.55rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+.booking__review-services span {
+  color: var(--muted);
+  font:
+    500 0.72rem/1.4 Arial,
+    sans-serif;
+  letter-spacing: 0.035em;
+}
+.booking__review-details {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1.15rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+.booking__review-details div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.25rem;
+  min-width: 0;
+}
+.booking__review-details dt {
+  flex: 0 1 auto;
+  color: var(--muted);
+  font:
+    700 0.6rem/1.25 Arial,
+    sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.booking__review-details dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  font:
+    500 0.88rem/1.4 Arial,
+    sans-serif;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+.booking__review-section:first-child .booking__review-details div:last-child {
+  align-items: center;
+  margin-top: 0.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-strong);
+}
+.booking__review-section:first-child
+  .booking__review-details
+  div:last-child
+  dt {
+  color: var(--rose-deep);
+}
+.booking__review-section:first-child
+  .booking__review-details
+  div:last-child
+  dd {
+  color: var(--ink);
+  /* font-family: CormorantGaramond, Georgia, serif; */
+  font-size: clamp(1.65rem, 3.4vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+}
+.booking__review-details--customer {
+  gap: 0.72rem;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.booking__review-details--customer dd {
+  font-weight: 500;
+}
+.booking__review-actions {
+  display: grid;
+  /* grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr); */
+  gap: 0.75rem;
+  padding-top: 0.1rem;
+}
+.booking__review-actions .booking__button {
+  min-height: 54px;
+  margin: 0;
+}
+.booking__review-back {
+  min-height: 54px;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font:
+    700 0.66rem/1 Arial,
+    sans-serif;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  transition:
+    border-color var(--motion) var(--ease),
+    color var(--motion) var(--ease),
+    background var(--motion) var(--ease);
+}
+.booking__review-back:hover:not(:disabled) {
+  border-color: var(--rose-deep);
+  background: rgba(234, 216, 211, 0.3);
+  color: var(--rose-deep);
+}
+.booking__review-back:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+@media (prefers-reduced-motion: reduce) {
+  .booking__review-back {
+    transition-duration: 0ms;
+  }
+}
+@media (max-width: 480px) {
+  .booking__review-card {
+    gap: 1.25rem;
+    padding: 1.1rem;
+  }
+  .booking__review-services li {
+    padding: 0.75rem 0;
+  }
+  .booking__review-details {
+    gap: 0.75rem;
+  }
+  .booking__review-details div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.22rem;
+  }
+  .booking__review-details dd {
+    width: 100%;
+    text-align: left;
+  }
+  .booking__review-section:first-child .booking__review-details div:last-child {
+    align-items: flex-start;
+  }
+  .booking__review-actions {
+    grid-template-columns: 1fr;
+  }
+}

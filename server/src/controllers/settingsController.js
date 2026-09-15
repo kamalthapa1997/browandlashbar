@@ -14,7 +14,9 @@ async function getSettingsDocument() {
 }
 
 const getSettings = asyncHandler(async (_request, response) => {
-  const settings = await getSettingsDocument();
+  // Public reads return schema defaults without creating a document. A write is
+  // reserved for the authenticated settings update path.
+  const settings = await Settings.findOne() || new Settings();
   response.set("Cache-Control", "no-store").json(settings);
 });
 

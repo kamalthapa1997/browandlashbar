@@ -23,6 +23,10 @@
   top: 0;
 }
 
+/* =========================================================
+   Header
+   ========================================================= */
+
 .gallery-page__header {
   margin: 0 auto clamp(2.5rem, 6vw, 5rem);
   max-width: 44rem;
@@ -69,6 +73,10 @@
   max-width: 34rem;
 }
 
+/* =========================================================
+   Category filters
+   ========================================================= */
+
 .gallery-page__filters {
   align-items: center;
   display: flex;
@@ -103,6 +111,10 @@
   color: #fffdf9;
 }
 
+/* =========================================================
+   Focus states
+   ========================================================= */
+
 .gallery-page__filters button:focus-visible,
 .gallery-page__image:focus-visible,
 .gallery-page__featured-image:focus-visible,
@@ -111,6 +123,10 @@
   outline: 3px solid #ba757a;
   outline-offset: 4px;
 }
+
+/* =========================================================
+   Gallery container
+   ========================================================= */
 
 .gallery-page__list {
   margin: 0 auto;
@@ -121,6 +137,10 @@
 .gallery-page__list--ready {
   animation: gallery-gallery-in 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* =========================================================
+   Featured image
+   ========================================================= */
 
 .gallery-page__featured {
   border-bottom: 1px solid rgba(122, 98, 93, 0.19);
@@ -151,25 +171,12 @@
   height: auto;
 }
 
-.gallery-page__featured-image img,
-.gallery-page__image img {
-  display: block;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.001);
-  transition:
-    filter 550ms ease,
-    transform 750ms cubic-bezier(0.22, 1, 0.36, 1);
-  width: 100%;
-}
-
 .gallery-page__featured-copy {
   max-width: 34rem;
   padding: clamp(1rem, 2vw, 1.6rem) 0 0;
 }
 
-.gallery-page__featured-copy h2,
-.gallery-page__item-copy h2 {
+.gallery-page__featured-copy h2 {
   color: #40312e;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.2rem, 2vw, 1.55rem);
@@ -179,8 +186,7 @@
   margin: 0;
 }
 
-.gallery-page__featured-copy > p:last-child,
-.gallery-page__item-copy p {
+.gallery-page__featured-copy > p:last-child {
   color: #806d66;
   font-size: 0.86rem;
   line-height: 1.5;
@@ -191,8 +197,13 @@
   margin-bottom: 0.55rem !important;
 }
 
+/* =========================================================
+   Gallery rows
+   ========================================================= */
+
 .gallery-page__row {
   --gallery-gap: 14px;
+
   align-items: flex-start;
   display: flex;
   gap: var(--gallery-gap);
@@ -214,17 +225,141 @@
   height: var(--gallery-height);
 }
 
-.gallery-page__item-copy {
-  padding-top: 0.8rem;
+/* =========================================================
+   Per-image loading system
+   ========================================================= */
+
+/*
+ * The frame fills the image button.
+ * It gives every image a stable background while
+ * its actual image is loading.
+ */
+
+.gallery-page__image-frame {
+  align-items: center;
+  background: #f1ebe5;
+  display: flex;
+  height: 100%;
+  inset: 0;
+  justify-content: center;
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
 }
 
-.gallery-page__item-copy h2 {
+/*
+ * Actual image starts invisible.
+ * Once GalleryImage adds .is-loaded, it fades in.
+ */
+
+.gallery-page__image-frame img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.001);
+  transition:
+    opacity 450ms ease,
+    filter 550ms ease,
+    transform 750ms cubic-bezier(0.22, 1, 0.36, 1);
+  width: 100%;
+}
+
+.gallery-page__image-frame img.is-loading {
+  opacity: 0;
+}
+
+.gallery-page__image-frame img.is-loaded {
+  opacity: 1;
+}
+
+/*
+ * Individual loading overlay.
+ */
+
+.gallery-page__image-loader {
+  align-items: center;
+  background: #f1ebe5;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+  z-index: 2;
+}
+
+/*
+ * Small, understated Mero spinner.
+ */
+
+.gallery-page__image-loader-ring {
+  animation: gallery-image-loader-spin 1.1s linear infinite;
+  border: 1px solid rgba(155, 96, 101, 0.18);
+  border-radius: 50%;
+  border-top-color: rgba(155, 96, 101, 0.72);
+  display: block;
+  height: 1.75rem;
+  position: relative;
+  width: 1.75rem;
+}
+
+/*
+ * Small center point gives the spinner
+ * a more refined salon aesthetic.
+ */
+
+.gallery-page__image-loader-ring::after {
+  background: rgba(155, 96, 101, 0.42);
+  border-radius: 50%;
+  content: "";
+  height: 0.22rem;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.22rem;
+}
+
+/*
+ * Failed image state.
+ */
+
+.gallery-page__image-frame.is-failed {
+  background: #f1ebe5;
+}
+
+.gallery-page__image-fallback {
+  align-items: center;
+  color: rgba(112, 78, 79, 0.62);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  height: 100%;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.gallery-page__image-fallback > span {
+  align-items: center;
+  border: 1px solid rgba(155, 96, 101, 0.25);
+  border-radius: 50%;
+  display: flex;
+  font-family: Arial, sans-serif;
   font-size: 1rem;
+  height: 1.75rem;
+  justify-content: center;
+  width: 1.75rem;
 }
 
-.gallery-page__item-copy p {
-  font-size: 0.8rem;
+.gallery-page__image-fallback small {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
 }
+
+/* =========================================================
+   Desktop image hover
+   ========================================================= */
 
 @media (hover: hover) and (pointer: fine) {
   .gallery-page__filters button:hover {
@@ -238,12 +373,16 @@
     box-shadow: 0 1.1rem 2.8rem rgba(69, 48, 43, 0.11);
   }
 
-  .gallery-page__image:hover img,
-  .gallery-page__featured-image:hover img {
+  .gallery-page__image:hover img.is-loaded,
+  .gallery-page__featured-image:hover img.is-loaded {
     filter: saturate(1.03) brightness(1.02);
     transform: scale(1.018);
   }
 }
+
+/* =========================================================
+   Initial gallery loader
+   ========================================================= */
 
 .gallery-page__loader {
   display: grid;
@@ -304,6 +443,10 @@
   margin: 0.8rem 0 0;
 }
 
+/* =========================================================
+   Error / empty states
+   ========================================================= */
+
 .gallery-page__error,
 .gallery-page__empty {
   background: rgba(255, 255, 255, 0.6);
@@ -318,6 +461,10 @@
 .gallery-page__error {
   color: #9a555a;
 }
+
+/* =========================================================
+   Lightbox
+   ========================================================= */
 
 .gallery-lightbox {
   align-items: center;
@@ -369,6 +516,10 @@
   text-align: center;
 }
 
+/* =========================================================
+   Lightbox controls
+   ========================================================= */
+
 .gallery-lightbox__close,
 .gallery-lightbox__control {
   align-items: center;
@@ -411,6 +562,10 @@
   }
 }
 
+/* =========================================================
+   Mobile
+   ========================================================= */
+
 @media (max-width: 640px) {
   .gallery-page {
     padding: calc(var(--header-height, 5rem) + 2.5rem) 1rem 3.5rem;
@@ -426,8 +581,14 @@
     margin-bottom: 1.75rem;
   }
 
-  .gallery-page__item-copy {
-    padding-top: 0.65rem;
+  /*
+   * Slightly smaller loader on mobile so it
+   * remains subtle inside small gallery tiles.
+   */
+
+  .gallery-page__image-loader-ring {
+    height: 1.45rem;
+    width: 1.45rem;
   }
 
   .gallery-lightbox {
@@ -450,9 +611,14 @@
   }
 }
 
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
   .gallery-page__list--ready,
   .gallery-page__loader-mark,
+  .gallery-page__image-loader-ring,
   .gallery-lightbox,
   .gallery-lightbox__image {
     animation: none;
@@ -461,11 +627,20 @@
   .gallery-page__filters button,
   .gallery-page__image,
   .gallery-page__featured-image,
-  .gallery-page__image img,
-  .gallery-page__featured-image img,
+  .gallery-page__image-frame img,
   .gallery-lightbox__close,
   .gallery-lightbox__control {
     transition: none;
+  }
+}
+
+/* =========================================================
+   Animations
+   ========================================================= */
+
+@keyframes gallery-image-loader-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -480,6 +655,7 @@
     opacity: 0;
     transform: translateY(0.7rem);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -490,6 +666,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -500,6 +677,7 @@
     opacity: 0;
     transform: scale(0.985);
   }
+
   to {
     opacity: 1;
     transform: scale(1);

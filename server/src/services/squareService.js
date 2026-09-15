@@ -1,9 +1,11 @@
 const crypto = require("crypto");
 
 const SquareConnection = require("../models/SquareConnection");
+const OAuthState = require("../models/OAuthState");
 const createHttpError = require("../utils/httpError");
 const {
   getSquareConfig,
+  getSquareTokenRefreshWindowMs,
   getTokenEncryptionKey,
   isSquareConfigured,
 } = require("../config/square");
@@ -20,6 +22,12 @@ const OAUTH_SCOPES = [
 ];
 const CONNECTION_KEY = "primary";
 const refreshInFlight = new Map();
+const REACTIVE_TOKEN_REFRESH_WINDOW_MS = 5 * 60 * 1000;
+const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
+const CONNECTION_STATUS = Object.freeze({
+  CONNECTED: "CONNECTED",
+  REAUTH_REQUIRED: "REAUTH_REQUIRED",
+});
 // These are deliberately kept server-side so every outbound Square request has
 // a bounded lifetime without adding client-facing configuration.
 const SQUARE_TIMEOUTS = Object.freeze({
@@ -97,6 +105,52 @@ function createOAuthState() {
     JSON.stringify({ nonce: crypto.randomBytes(24).toString("base64url"), issuedAt: Date.now() }),
   ).toString("base64url");
   return `${payload}.${getOAuthStateSignature(payload)}`;
+}
+
+function hashOAuthState(state) {
+  return crypto.createHash("sha256").update(state).digest("base64url");
+}
+
+async function createPersistedOAuthState({
+  state,
+  adminId,
+  sessionVersion,
+  environment = getSquareConfig().environment,
+  now = new Date(),
+  createStateFn = OAuthState.create.bind(OAuthState),
+}) {
+  const issuedAt = new Date(now);
+  return createStateFn({
+    stateHash: hashOAuthState(state),
+    adminId,
+    sessionVersion,
+    environment,
+    issuedAt,
+    expiresAt: new Date(issuedAt.getTime() + OAUTH_STATE_TTL_MS),
+  });
+}
+
+async function consumePersistedOAuthState({
+  state,
+  adminId,
+  sessionVersion,
+  environment = getSquareConfig().environment,
+  now = new Date(),
+  findOneAndUpdateFn = OAuthState.findOneAndUpdate.bind(OAuthState),
+}) {
+  const consumedAt = new Date(now);
+  return findOneAndUpdateFn(
+    {
+      stateHash: hashOAuthState(state),
+      adminId,
+      sessionVersion,
+      environment,
+      consumedAt: null,
+      expiresAt: { $gt: consumedAt },
+    },
+    { $set: { consumedAt } },
+    { new: true },
+  );
 }
 
 function verifyOAuthState(state) {
@@ -224,21 +278,79 @@ function getSquareRequestOperation(path, method) {
   return "API";
 }
 
+function classifySquareApiFailure(status, data = {}) {
+  const squareCode = data.errors?.[0]?.code;
+  const squareDetail = data.errors?.[0]?.detail || "";
+
+  if (
+    status === 401 &&
+    squareCode === "UNAUTHORIZED" &&
+    squareDetail.includes("Merchant not onboarded to Appointments")
+  ) {
+    return "AUTHORIZATION";
+  }
+  if (
+    status === 401 &&
+    ["ACCESS_TOKEN_EXPIRED", "ACCESS_TOKEN_REVOKED", "UNAUTHORIZED"].includes(squareCode)
+  ) {
+    return "AUTHENTICATION";
+  }
+  if (status === 403) return "AUTHORIZATION";
+  return "NORMAL";
+}
+
+function isPermanentRefreshFailure(response) {
+  return response.status === 400 || response.status === 401;
+}
+
+async function markConnectionReauthRequired(connection, {
+  reasonCode,
+  now = new Date(),
+  updateOneFn = SquareConnection.updateOne.bind(SquareConnection),
+} = {}) {
+  if (!connection?._id) throw new Error("Cannot mark a missing Square connection as requiring reauthorization.");
+
+  const result = await updateOneFn(
+    {
+      _id: connection._id,
+      connectionStatus: { $ne: CONNECTION_STATUS.REAUTH_REQUIRED },
+      ...(connection.accessToken && { accessToken: connection.accessToken }),
+    },
+    {
+      $set: {
+        connectionStatus: CONNECTION_STATUS.REAUTH_REQUIRED,
+        lastAuthFailureAt: now,
+        ...(reasonCode && { lastAuthFailureReasonCode: reasonCode }),
+      },
+    },
+  );
+  if (typeof result?.matchedCount === "number" && result.matchedCount === 0) return false;
+  connection.connectionStatus = CONNECTION_STATUS.REAUTH_REQUIRED;
+  connection.lastAuthFailureAt = now;
+  if (reasonCode) connection.lastAuthFailureReasonCode = reasonCode;
+  return true;
+}
+
 async function squareFetch(path, {
   method = "GET",
   body,
   accessToken,
   timeoutMs,
   fetchImpl,
+  getAccessTokenFn = getAccessToken,
+  getConnectionFn = getConnection,
+  refreshConnectionOnceFn = refreshConnectionOnce,
+  markConnectionReauthRequiredFn = markConnectionReauthRequired,
+  getSquareConfigFn = getSquareConfig,
 } = {}) {
-  const config = getSquareConfig();
+  const config = getSquareConfigFn();
   const operation = getSquareRequestOperation(path, method);
-  const { response, data } = await fetchWithTimeout(
+  const requestWithAccessToken = async (token) => fetchWithTimeout(
     `${config.apiBaseUrl}${path}`,
     {
       method,
       headers: {
-        Authorization: `Bearer ${accessToken || (await getAccessToken())}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         "Square-Version": config.apiVersion,
       },
@@ -257,6 +369,40 @@ async function squareFetch(path, {
     },
   );
 
+  let { response, data } = await requestWithAccessToken(accessToken || await getAccessTokenFn());
+  if (
+    !response.ok &&
+    !accessToken &&
+    classifySquareApiFailure(response.status, data) === "AUTHENTICATION"
+  ) {
+    const connection = await getConnectionFn();
+    const refreshedAccessToken = await refreshConnectionOnceFn(connection);
+    ({ response, data } = await requestWithAccessToken(refreshedAccessToken));
+
+    if (
+      !response.ok &&
+      classifySquareApiFailure(response.status, data) === "AUTHENTICATION"
+    ) {
+      const markedReauthRequired = await markConnectionReauthRequiredFn(connection, {
+        reasonCode: data.errors?.[0]?.code || "UNAUTHORIZED",
+      });
+      if (markedReauthRequired === false) {
+        throw createHttpError(
+          503,
+          "Square connection changed while this request was in progress. Please try again.",
+          undefined,
+          "SQUARE_CONNECTION_CHANGED",
+        );
+      }
+      throw createHttpError(
+        503,
+        "Square authorization needs to be connected again.",
+        undefined,
+        "SQUARE_REAUTH_REQUIRED",
+      );
+    }
+  }
+
   if (!response.ok) {
     const squareCode = data.errors?.[0]?.code;
     const squareDetail = data.errors?.[0]?.detail || "";
@@ -274,6 +420,7 @@ async function squareFetch(path, {
         ...(typeof detail === "string" && { detail: detail.slice(0, 500) }),
       }))
       : undefined;
+    const failureType = classifySquareApiFailure(response.status, data);
     const statusCode = response.status === 429
       ? 429
       : response.status === 401 || response.status === 403 ? 503 : 502;
@@ -295,6 +442,7 @@ async function squareFetch(path, {
         : squareCode === "CONFLICT" ? "SQUARE_CONFLICT" : "SQUARE_REQUEST_FAILED",
     );
     error.squareCode = squareCode;
+    error.squareFailureType = failureType;
     if (response.status === 429) {
       error.retryable = true;
       error.retryAfterSeconds = retryAfterSeconds;
@@ -314,10 +462,18 @@ async function squareFetch(path, {
   return data;
 }
 
-async function exchangeCode(code) {
-  requireSquareConfiguration();
-  const config = getSquareConfig();
-  const { response, data } = await fetchWithTimeout(
+async function exchangeCode(code, {
+  requireSquareConfigurationFn = requireSquareConfiguration,
+  getSquareConfigFn = getSquareConfig,
+  encryptFn = encrypt,
+  fetchWithTimeoutFn = fetchWithTimeout,
+  findOneAndUpdateFn = SquareConnection.findOneAndUpdate.bind(SquareConnection),
+  now = () => new Date(),
+} = {}) {
+  requireSquareConfigurationFn();
+  const config = getSquareConfigFn();
+  const connectedAt = now();
+  const { response, data } = await fetchWithTimeoutFn(
     `${config.oauthBaseUrl}/token`,
     {
       method: "POST",
@@ -344,17 +500,25 @@ async function exchangeCode(code) {
     throw createHttpError(502, "Square authorization could not be completed.", undefined, "SQUARE_OAUTH_FAILED");
   }
 
-  await SquareConnection.findOneAndUpdate(
+  await findOneAndUpdateFn(
     { connectionKey: CONNECTION_KEY },
     {
-      connectionKey: CONNECTION_KEY,
-      merchantId: data.merchant_id,
-      environment: config.environment,
-      accessToken: encrypt(data.access_token),
-      refreshToken: encrypt(data.refresh_token),
-      authMode: "oauth",
-      ...(data.expires_at && { expiresAt: new Date(data.expires_at) }),
-      scopes: Array.isArray(data.scopes) ? data.scopes : OAUTH_SCOPES,
+      $set: {
+        connectionKey: CONNECTION_KEY,
+        merchantId: data.merchant_id,
+        environment: config.environment,
+        accessToken: encryptFn(data.access_token),
+        refreshToken: encryptFn(data.refresh_token),
+        authMode: "oauth",
+        connectionStatus: CONNECTION_STATUS.CONNECTED,
+        lastHealthCheckAt: connectedAt,
+        ...(data.expires_at && { expiresAt: new Date(data.expires_at) }),
+        scopes: Array.isArray(data.scopes) ? data.scopes : OAUTH_SCOPES,
+      },
+      $unset: {
+        lastAuthFailureAt: 1,
+        lastAuthFailureReasonCode: 1,
+      },
     },
     { upsert: true, new: true, setDefaultsOnInsert: true },
   );
@@ -365,13 +529,45 @@ async function refreshConnection(connection, {
   config = getSquareConfig(),
   decryptFn = decrypt,
   encryptFn = encrypt,
+  markConnectionReauthRequiredFn = markConnectionReauthRequired,
+  persistRefreshedConnectionFn = async (currentConnection, originalCredentials, updates) => {
+    const result = await SquareConnection.updateOne(
+      {
+        _id: currentConnection._id,
+        connectionStatus: { $ne: CONNECTION_STATUS.REAUTH_REQUIRED },
+        accessToken: originalCredentials.accessToken,
+        ...(originalCredentials.refreshToken && { refreshToken: originalCredentials.refreshToken }),
+      },
+      {
+        $set: updates,
+        $unset: {
+          lastAuthFailureAt: 1,
+          lastAuthFailureReasonCode: 1,
+        },
+      },
+    );
+    return result.matchedCount > 0;
+  },
+  now = () => new Date(),
 } = {}) {
   if (!connection.refreshToken) {
+    const markedReauthRequired = await markConnectionReauthRequiredFn(connection, {
+      reasonCode: "SQUARE_REFRESH_TOKEN_MISSING",
+      now: now(),
+    });
+    if (markedReauthRequired === false) {
+      throw createHttpError(
+        503,
+        "Square connection changed while this request was in progress. Please try again.",
+        undefined,
+        "SQUARE_CONNECTION_CHANGED",
+      );
+    }
     throw createHttpError(
       503,
-      "The Sandbox development token is no longer valid. Authorize and seed a new Sandbox test token.",
+      "Square authorization needs to be connected again.",
       undefined,
-      "SQUARE_SANDBOX_TOKEN_RENEWAL_REQUIRED",
+      "SQUARE_REAUTH_REQUIRED",
     );
   }
   const refreshToken = decryptFn(connection.refreshToken);
@@ -398,26 +594,82 @@ async function refreshConnection(connection, {
   );
 
   if (!response.ok || !data.access_token) {
-    throw createHttpError(503, "Square authorization needs to be connected again.", undefined, "SQUARE_REAUTH_REQUIRED");
+    if (!response.ok && isPermanentRefreshFailure(response)) {
+      const markedReauthRequired = await markConnectionReauthRequiredFn(connection, {
+        reasonCode: data.errors?.[0]?.code || "SQUARE_REFRESH_REJECTED",
+        now: now(),
+      });
+      if (markedReauthRequired === false) {
+        throw createHttpError(
+          503,
+          "Square connection changed while this request was in progress. Please try again.",
+          undefined,
+          "SQUARE_CONNECTION_CHANGED",
+        );
+      }
+      throw createHttpError(
+        503,
+        "Square authorization needs to be connected again.",
+        undefined,
+        "SQUARE_REAUTH_REQUIRED",
+      );
+    }
+    throw createHttpError(
+      503,
+      "Square token refresh could not be completed. Please try again.",
+      undefined,
+      "SQUARE_TOKEN_REFRESH_FAILED",
+    );
   }
 
-  connection.accessToken = encryptFn(data.access_token);
-  if (data.refresh_token) connection.refreshToken = encryptFn(data.refresh_token);
-  if (data.expires_at) connection.expiresAt = new Date(data.expires_at);
-  if (Array.isArray(data.scopes)) connection.scopes = data.scopes;
-  await connection.save();
+  const originalCredentials = {
+    accessToken: connection.accessToken,
+    refreshToken: connection.refreshToken,
+  };
+  const updates = {
+    accessToken: encryptFn(data.access_token),
+    connectionStatus: CONNECTION_STATUS.CONNECTED,
+    lastHealthCheckAt: now(),
+    ...(data.refresh_token && { refreshToken: encryptFn(data.refresh_token) }),
+    ...(data.expires_at && { expiresAt: new Date(data.expires_at) }),
+    ...(Array.isArray(data.scopes) && { scopes: data.scopes }),
+  };
+  const persisted = await persistRefreshedConnectionFn(connection, originalCredentials, updates);
+  if (!persisted) {
+    throw createHttpError(
+      503,
+      "Square connection changed while this request was in progress. Please try again.",
+      undefined,
+      "SQUARE_CONNECTION_CHANGED",
+    );
+  }
+  Object.assign(connection, updates);
+  connection.lastAuthFailureAt = undefined;
+  connection.lastAuthFailureReasonCode = undefined;
   return data.access_token;
 }
 
-async function getConnection() {
-  requireSquareConfiguration();
-  const connection = await SquareConnection.findOne({ connectionKey: CONNECTION_KEY }).select(
+async function getConnection({
+  requireSquareConfigurationFn = requireSquareConfiguration,
+  findConnectionFn = () => SquareConnection.findOne({ connectionKey: CONNECTION_KEY }).select(
     "+accessToken +refreshToken",
-  );
-  const { environment } = getSquareConfig();
+  ),
+  getSquareConfigFn = getSquareConfig,
+} = {}) {
+  requireSquareConfigurationFn();
+  const connection = await findConnectionFn();
+  const { environment } = getSquareConfigFn();
 
   if (!connection || connection.environment !== environment) {
     throw createHttpError(503, "Square has not been connected yet.", undefined, "SQUARE_NOT_CONNECTED");
+  }
+  if (connection.connectionStatus === CONNECTION_STATUS.REAUTH_REQUIRED) {
+    throw createHttpError(
+      503,
+      "Square authorization needs to be connected again.",
+      undefined,
+      "SQUARE_REAUTH_REQUIRED",
+    );
   }
   return connection;
 }
@@ -456,7 +708,10 @@ async function getAccessToken({
   inFlight = refreshInFlight,
 } = {}) {
   const connection = await getConnectionFn();
-  if (connection.expiresAt && connection.expiresAt.getTime() <= now() + 5 * 60 * 1000) {
+  if (
+    connection.expiresAt &&
+    connection.expiresAt.getTime() <= now() + REACTIVE_TOKEN_REFRESH_WINDOW_MS
+  ) {
     return refreshConnectionOnce(connection, { refreshConnectionFn, inFlight });
   }
   return decryptFn(connection.accessToken);
@@ -476,21 +731,97 @@ async function seedSandboxDevelopmentToken(accessToken) {
         environment: "sandbox",
         accessToken: encrypt(accessToken.trim()),
         authMode: "sandbox_development",
+        connectionStatus: CONNECTION_STATUS.CONNECTED,
         scopes: [],
       },
-      $unset: { merchantId: 1, refreshToken: 1, expiresAt: 1 },
+      $unset: {
+        merchantId: 1,
+        refreshToken: 1,
+        expiresAt: 1,
+        lastAuthFailureAt: 1,
+        lastAuthFailureReasonCode: 1,
+      },
     },
     { upsert: true, new: true, setDefaultsOnInsert: true },
   );
 }
 
-async function getSquareStatus() {
-  const config = getSquareConfig();
-  const connection = await SquareConnection.findOne({ connectionKey: CONNECTION_KEY }).select("environment");
+async function getSquareStatus({
+  getSquareConfigFn = getSquareConfig,
+  isSquareConfiguredFn = isSquareConfigured,
+  findConnectionFn = () => SquareConnection.findOne({ connectionKey: CONNECTION_KEY }).select(
+    "environment connectionStatus",
+  ),
+} = {}) {
+  const config = getSquareConfigFn();
+  const connection = await findConnectionFn();
+  const connectionStatus = connection?.environment === config.environment
+    ? connection.connectionStatus || CONNECTION_STATUS.CONNECTED
+    : CONNECTION_STATUS.REAUTH_REQUIRED;
   return {
-    configured: isSquareConfigured(),
-    connected: Boolean(connection && connection.environment === config.environment),
+    configured: isSquareConfiguredFn(),
+    connected: connectionStatus === CONNECTION_STATUS.CONNECTED,
     environment: config.environment,
+    connectionStatus,
+  };
+}
+
+function getSquareOperationalStatus(connection, {
+  environment,
+  now = Date.now(),
+  refreshWindowMs,
+} = {}) {
+  if (!connection || connection.environment !== environment) return "NOT_CONNECTED";
+  if (connection.connectionStatus === CONNECTION_STATUS.REAUTH_REQUIRED) return "REAUTH_REQUIRED";
+
+  const expiresAtMs = connection.expiresAt instanceof Date
+    ? connection.expiresAt.getTime()
+    : new Date(connection.expiresAt).getTime();
+  if (!Number.isFinite(expiresAtMs)) return "TOKEN_EXPIRATION_UNKNOWN";
+  if (expiresAtMs <= now + refreshWindowMs) return "TOKEN_REFRESH_DUE";
+  return "HEALTHY";
+}
+
+async function getSquareAdminHealth({
+  getSquareConfigFn = getSquareConfig,
+  getRefreshWindowMsFn = getSquareTokenRefreshWindowMs,
+  isSquareConfiguredFn = isSquareConfigured,
+  findConnectionFn = () => SquareConnection.findOne({ connectionKey: CONNECTION_KEY }).select(
+    "environment connectionStatus lastHealthCheckAt lastAuthFailureAt lastAuthFailureReasonCode expiresAt",
+  ),
+  now = () => Date.now(),
+} = {}) {
+  const config = getSquareConfigFn();
+  if (!isSquareConfiguredFn()) {
+    return {
+      configured: false,
+      connected: false,
+      connectionStatus: "NOT_CONFIGURED",
+      operationalStatus: "NOT_CONFIGURED",
+      environment: config.environment,
+    };
+  }
+
+  const connection = await findConnectionFn();
+  const connectionStatus = connection?.environment === config.environment
+    ? connection.connectionStatus || CONNECTION_STATUS.CONNECTED
+    : "NOT_CONNECTED";
+  const operationalStatus = getSquareOperationalStatus(connection, {
+    environment: config.environment,
+    now: now(),
+    refreshWindowMs: getRefreshWindowMsFn(),
+  });
+  return {
+    configured: true,
+    connected: connectionStatus === CONNECTION_STATUS.CONNECTED,
+    connectionStatus,
+    operationalStatus,
+    environment: config.environment,
+    ...(connection?.lastHealthCheckAt && { lastHealthCheckAt: connection.lastHealthCheckAt }),
+    ...(connection?.lastAuthFailureAt && { lastAuthFailureAt: connection.lastAuthFailureAt }),
+    ...(connection?.lastAuthFailureReasonCode && {
+      lastAuthFailureReasonCode: connection.lastAuthFailureReasonCode,
+    }),
   };
 }
 
@@ -744,13 +1075,17 @@ async function ensureSandboxTestCatalogService() {
 }
 
 module.exports = {
+  CONNECTION_STATUS,
   OAUTH_SCOPES,
   SANDBOX_TEST_SERVICE,
   assertSandboxDevelopmentEnvironment,
   buildAuthorizationUrl,
   assertSandboxDevelopmentSeeding,
   createOAuthState,
+  createPersistedOAuthState,
+  consumePersistedOAuthState,
   exchangeCode,
+  getSquareAdminHealth,
   getSquareStatus,
   getSafeAuthorizationMetadata,
   ensureSandboxTestCatalogService,
@@ -760,11 +1095,18 @@ module.exports = {
   listLocations,
   resolveLocation,
   retrieveServiceVariation,
+  refreshConnectionOnce,
   seedSandboxDevelopmentToken,
   squareFetch,
   __testables: {
+    classifySquareApiFailure,
     fetchWithTimeout,
     getAccessToken,
+    getConnection,
+    getSquareOperationalStatus,
+    hashOAuthState,
+    isPermanentRefreshFailure,
+    markConnectionReauthRequired,
     parseRetryAfterSeconds,
     refreshConnection,
     refreshConnectionOnce,

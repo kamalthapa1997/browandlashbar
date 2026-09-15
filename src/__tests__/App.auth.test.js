@@ -29,7 +29,6 @@ jest.mock("framer-motion", () => {
 import { MemoryRouter } from "react-router-dom";
 import App from "../App";
 import { getCurrentAdmin } from "../api/authService";
-import { getServices } from "../api/serviceService";
 import { getGallery } from "../api/galleryService";
 import { getAdminFaqs } from "../api/faqService";
 import { getSettings } from "../api/settingsService";
@@ -39,7 +38,6 @@ jest.mock("../api/authService", () => ({
   loginAdmin: jest.fn(),
   logoutAdmin: jest.fn(),
 }));
-jest.mock("../api/serviceService", () => ({ getServices: jest.fn() }));
 jest.mock("../api/galleryService", () => ({ getGallery: jest.fn() }));
 jest.mock("../api/faqService", () => ({ getAdminFaqs: jest.fn() }));
 jest.mock("../api/settingsService", () => ({
@@ -57,7 +55,6 @@ beforeEach(() => {
     removeListener: () => {},
   });
   window.scrollTo = () => {};
-  getServices.mockResolvedValue({});
   getGallery.mockResolvedValue([]);
   getAdminFaqs.mockResolvedValue([]);
   getSettings.mockResolvedValue({ businessName: "Mero Brow & Lash Bar" });

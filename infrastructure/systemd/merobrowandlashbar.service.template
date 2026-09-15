@@ -1,0 +1,17 @@
+[Unit]
+Description=Mero Brow & Lash Bar Node.js Application
+After=network.target
+
+[Service]
+Type=simple
+User=handsomelotus1
+WorkingDirectory=/home/handsomelotus1/apps/merobrowandlashbar/current
+EnvironmentFile=/home/handsomelotus1/apps/merobrowandlashbar/shared/.env
+Environment=NODE_ENV=production
+Environment=PORT=5001
+ExecStart=__NODE_22_BINARY__ /home/handsomelotus1/apps/merobrowandlashbar/current/server/index.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

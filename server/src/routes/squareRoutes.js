@@ -7,6 +7,7 @@ const {
   completeOAuth,
   createBooking,
   getAvailability,
+  getAdminHealth,
   getBookingServices,
   getCatalogServices,
   getLocations,
@@ -19,10 +20,11 @@ const {
 const router = express.Router();
 
 router.get("/status", getStatus);
+router.get("/admin/health", requireAuth, requireAdmin, getAdminHealth);
 router.get("/booking-services", bookingRateLimiter, getBookingServices);
 router.get("/menu", getMenu);
 router.get("/oauth", requireAuth, requireAdmin, beginOAuth);
-router.get("/oauth/callback", completeOAuth);
+router.get("/oauth/callback", requireAuth, requireAdmin, completeOAuth);
 router.get("/locations", requireAuth, requireAdmin, getLocations);
 router.get("/catalog/services", requireAuth, requireAdmin, getCatalogServices);
 router.get("/team-members", requireAuth, requireAdmin, getTeamMembers);

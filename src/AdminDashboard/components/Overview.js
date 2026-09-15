@@ -6,15 +6,14 @@ function Overview({ stats, settings, onSelectSection }) {
           <p className="admin-overview__eyebrow">Business overview</p>
           <h2>Everything is looking polished.</h2>
           <p>
-            Manage your services, gallery, FAQs, and website details from one
-            place.
+            Manage your gallery, FAQs, and website details from one place.
           </p>
         </div>
         <button
           className="button button--primary"
-          onClick={() => onSelectSection("services")}
+          onClick={() => onSelectSection("gallery")}
         >
-          Manage services
+          Manage gallery
         </button>
       </section>
       <section className="admin-overview__stats">

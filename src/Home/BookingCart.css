@@ -1,0 +1,607 @@
+.home-booking-cart {
+  --ink: #332b29;
+  --ink-soft: #6f615c;
+  --muted: #91837d;
+
+  --paper: #fffdf9;
+  --paper-soft: #f8f3ee;
+
+  --rose: #9f6968;
+  --rose-deep: #704445;
+
+  --line: rgba(51, 43, 41, 0.12);
+  --line-strong: rgba(51, 43, 41, 0.2);
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --motion: 300ms;
+
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+
+  z-index: 100;
+
+  display: grid;
+  justify-items: end;
+
+  pointer-events: none;
+}
+
+.home-booking-cart__toggle,
+.home-booking-cart__popup {
+  pointer-events: auto;
+}
+
+/* =========================================================
+   Floating Cart Button
+   ========================================================= */
+
+.home-booking-cart__toggle {
+  position: relative;
+
+  display: inline-flex;
+
+  min-width: 3.55rem;
+  min-height: 3.55rem;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.45rem;
+
+  padding: 0.7rem 0.9rem;
+
+  border: 1px solid rgba(51, 43, 41, 0.15);
+  border-radius: 50%;
+
+  background: var(--rose-deep);
+
+  color: #fffdf9;
+
+  cursor: pointer;
+
+  font:
+    600 0.8rem/1 Arial,
+    sans-serif;
+
+  box-shadow: 0 8px 24px rgba(51, 43, 41, 0.16);
+
+  transition:
+    background var(--motion) var(--ease),
+    border-color var(--motion) var(--ease),
+    box-shadow var(--motion) var(--ease),
+    transform var(--motion) var(--ease);
+}
+
+.home-booking-cart__toggle:hover {
+  background: #633c3d;
+
+  border-color: rgba(51, 43, 41, 0.25);
+
+  box-shadow: 0 11px 28px rgba(51, 43, 41, 0.2);
+}
+
+.home-booking-cart__toggle.is-open {
+  background: #5f3b3c;
+
+  box-shadow: 0 9px 25px rgba(51, 43, 41, 0.2);
+}
+
+.home-booking-cart__toggle:focus-visible,
+.home-booking-cart__close:focus-visible,
+.home-booking-cart__continue:focus-visible {
+  outline: 2px solid var(--rose);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   Cart Icon
+   ========================================================= */
+
+.home-booking-cart__toggle-icon {
+  display: grid;
+
+  width: 1.15rem;
+  height: 1.15rem;
+
+  place-items: center;
+}
+
+.home-booking-cart__toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+
+  fill: none;
+  stroke: currentColor;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+/* =========================================================
+   Cart Count
+   ========================================================= */
+
+.home-booking-cart__count {
+  display: grid;
+
+  min-width: 1.2rem;
+  height: 1.2rem;
+
+  padding: 0 0.2rem;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: rgba(255, 253, 249, 0.16);
+
+  color: #fffdf9;
+
+  font:
+    600 0.67rem/1 Arial,
+    sans-serif;
+}
+
+/* =========================================================
+   Popup
+   ========================================================= */
+
+.home-booking-cart__popup {
+  position: relative;
+
+  width: min(22.5rem, calc(100vw - 2rem));
+  max-width: 100%;
+
+  max-height: calc(100dvh - 6.25rem);
+
+  min-width: 0;
+
+  margin-bottom: 0.85rem;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  border: 1px solid var(--line);
+
+  border-radius: 10px;
+
+  background: var(--paper);
+
+  color: var(--ink);
+
+  box-shadow:
+    0 18px 45px rgba(51, 43, 41, 0.13),
+    0 4px 12px rgba(51, 43, 41, 0.06);
+}
+
+/* =========================================================
+   Popup Inner
+   ========================================================= */
+
+.home-booking-cart__inner {
+  position: relative;
+
+  max-height: inherit;
+
+  padding: 1.35rem 1.35rem 1.25rem;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(51, 43, 41, 0.2) transparent;
+}
+
+.home-booking-cart__inner::-webkit-scrollbar {
+  width: 4px;
+}
+
+.home-booking-cart__inner::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.home-booking-cart__inner::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+
+  background: rgba(51, 43, 41, 0.2);
+}
+
+/* =========================================================
+   Hide Decorative Elements
+   ========================================================= */
+
+/*
+ * The React component still contains these decorative elements.
+ * They are intentionally hidden so BookingCart.js does not need
+ * to change.
+ */
+
+.home-booking-cart__corner,
+.home-booking-cart__ornament {
+  display: none;
+}
+
+/* =========================================================
+   Heading
+   ========================================================= */
+
+.home-booking-cart__popup-heading {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 1rem;
+}
+
+.home-booking-cart__popup-heading p {
+  margin: 0 0 0.35rem;
+
+  color: var(--muted);
+
+  font:
+    600 0.62rem/1.3 Arial,
+    sans-serif;
+
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+}
+
+.home-booking-cart__popup-heading h2 {
+  margin: 0;
+
+  color: var(--ink);
+
+  font-family: CormorantGaramond, Georgia, serif;
+
+  font-size: 1.85rem;
+  font-weight: 500;
+
+  line-height: 1;
+}
+
+/* =========================================================
+   Close Button
+   ========================================================= */
+
+.home-booking-cart__close {
+  display: grid;
+
+  width: 1.9rem;
+  height: 1.9rem;
+
+  flex: 0 0 auto;
+
+  place-items: center;
+
+  padding: 0;
+
+  border: 1px solid var(--line);
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: var(--ink-soft);
+
+  cursor: pointer;
+
+  transition:
+    background var(--motion) var(--ease),
+    border-color var(--motion) var(--ease),
+    color var(--motion) var(--ease);
+}
+
+.home-booking-cart__close span {
+  display: block;
+
+  margin-top: -1px;
+
+  font:
+    300 1.2rem/1 Arial,
+    sans-serif;
+}
+
+.home-booking-cart__close:hover {
+  border-color: var(--line-strong);
+
+  background: var(--paper-soft);
+
+  color: var(--ink);
+}
+
+/* =========================================================
+   Divider
+   ========================================================= */
+
+.home-booking-cart__divider {
+  width: 100%;
+  height: 1px;
+
+  margin: 1.1rem 0 0;
+
+  background: var(--line);
+}
+
+/* =========================================================
+   Selected Services
+   ========================================================= */
+
+.home-booking-cart__services {
+  display: grid;
+
+  gap: 0;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.home-booking-cart__services li {
+  display: flex;
+
+  min-width: 0;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 0.9rem 0;
+
+  border-bottom: 1px solid var(--line);
+}
+
+.home-booking-cart__services li > div {
+  display: flex;
+
+  min-width: 0;
+
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  gap: 0.25rem;
+}
+
+.home-booking-cart__services strong {
+  max-width: 100%;
+
+  overflow: hidden;
+
+  color: var(--ink);
+
+  font:
+    600 0.84rem/1.35 Arial,
+    sans-serif;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-booking-cart__services li > span {
+  flex: 0 0 auto;
+
+  color: var(--ink);
+
+  font:
+    600 0.8rem/1 Arial,
+    sans-serif;
+}
+
+.home-booking-cart__services li div span {
+  color: var(--muted);
+
+  font:
+    400 0.7rem/1.25 Arial,
+    sans-serif;
+}
+
+/* =========================================================
+   Estimate
+   ========================================================= */
+
+.home-booking-cart__estimate {
+  display: grid;
+
+  gap: 0.55rem;
+
+  margin: 0;
+
+  padding: 1rem 0 0;
+}
+
+.home-booking-cart__estimate > div {
+  display: flex;
+
+  min-width: 0;
+
+  align-items: baseline;
+  justify-content: space-between;
+
+  gap: 0.75rem;
+}
+
+.home-booking-cart__estimate dt {
+  color: var(--muted);
+
+  font:
+    600 0.62rem/1.2 Arial,
+    sans-serif;
+
+  letter-spacing: 0.06em;
+
+  text-transform: uppercase;
+}
+
+.home-booking-cart__estimate dd {
+  margin: 0;
+
+  color: var(--ink);
+
+  font:
+    600 0.82rem/1.2 Arial,
+    sans-serif;
+
+  text-align: right;
+}
+
+/* =========================================================
+   Continue Booking Button
+   ========================================================= */
+
+.home-booking-cart__continue {
+  display: flex;
+
+  width: 100%;
+  min-height: 2.95rem;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.65rem;
+
+  margin-top: 1.15rem;
+
+  padding: 0.75rem 1rem;
+
+  border: 1px solid var(--rose-deep);
+  border-radius: 4px;
+
+  background: var(--rose-deep);
+
+  color: #fffdf9;
+
+  cursor: pointer;
+
+  font:
+    600 0.67rem/1 Arial,
+    sans-serif;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+
+  transition:
+    background var(--motion) var(--ease),
+    border-color var(--motion) var(--ease),
+    transform var(--motion) var(--ease),
+    box-shadow var(--motion) var(--ease);
+}
+
+.home-booking-cart__continue:hover {
+  background: #633c3d;
+
+  border-color: #633c3d;
+
+  box-shadow: 0 5px 14px rgba(51, 43, 41, 0.12);
+
+  transform: translateY(-1px);
+}
+
+.home-booking-cart__continue span {
+  position: relative;
+  z-index: 1;
+}
+
+.home-booking-cart__continue-arrow {
+  font-size: 0.95rem;
+
+  line-height: 0.8;
+
+  transition: transform var(--motion) var(--ease);
+}
+
+.home-booking-cart__continue:hover .home-booking-cart__continue-arrow {
+  transform: translateX(3px);
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .home-booking-cart {
+    right: 1.1rem;
+
+    bottom: calc(1.1rem + env(safe-area-inset-bottom));
+  }
+
+  .home-booking-cart__popup {
+    width: min(21.5rem, calc(100vw - 2.2rem));
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .home-booking-cart {
+    right: 0.85rem;
+
+    bottom: calc(0.85rem + env(safe-area-inset-bottom));
+  }
+
+  .home-booking-cart__toggle {
+    min-width: 3.45rem;
+    min-height: 3.45rem;
+
+    padding: 0.65rem 0.8rem;
+  }
+
+  .home-booking-cart__popup {
+    width: min(21rem, calc(100vw - 1.7rem));
+
+    max-height: calc(100dvh - 5.75rem);
+
+    border-radius: 9px;
+  }
+
+  .home-booking-cart__inner {
+    padding: 1.2rem;
+  }
+
+  .home-booking-cart__popup-heading h2 {
+    font-size: 1.75rem;
+  }
+}
+
+/* =========================================================
+   Small Phones
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .home-booking-cart {
+    right: 0.7rem;
+  }
+
+  .home-booking-cart__popup {
+    width: calc(100vw - 1.4rem);
+  }
+
+  .home-booking-cart__inner {
+    padding: 1.05rem;
+  }
+
+  .home-booking-cart__popup-heading h2 {
+    font-size: 1.65rem;
+  }
+}
+
+/* =========================================================
+   Reduced Motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .home-booking-cart__toggle,
+  .home-booking-cart__close,
+  .home-booking-cart__continue,
+  .home-booking-cart__continue-arrow {
+    transition: none;
+  }
+}

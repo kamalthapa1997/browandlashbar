@@ -7,22 +7,11 @@ jest.mock(
 );
 import { MemoryRouter } from "react-router-dom";
 import AdminDashboard from "../AdminDashboard";
-import {
-  createService,
-  deleteService,
-  getServices,
-} from "../../api/serviceService";
 import { getGallery } from "../../api/galleryService";
 import { getAdminFaqs } from "../../api/faqService";
 import { getSettings, updateSettings } from "../../api/settingsService";
 
 jest.mock("../../api/authService", () => ({ logoutAdmin: jest.fn() }));
-jest.mock("../../api/serviceService", () => ({
-  getServices: jest.fn(),
-  createService: jest.fn(),
-  updateService: jest.fn(),
-  deleteService: jest.fn(),
-}));
 jest.mock("../../api/galleryService", () => ({ getGallery: jest.fn() }));
 jest.mock("../../api/faqService", () => ({ getAdminFaqs: jest.fn() }));
 jest.mock("../../api/settingsService", () => ({
@@ -41,17 +30,6 @@ const settings = {
   zipCode: "10001",
   homepageOfferLink: "",
   homepageOffer: "",
-};
-
-const services = {
-  Threading: [
-    {
-      _id: "service-1",
-      name: "Brow Shape",
-      price: 20,
-      category: "Threading",
-    },
-  ],
 };
 
 function renderDashboard(onSettingsUpdated = jest.fn()) {
@@ -74,18 +52,17 @@ function dashboardNavigation() {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  getServices.mockResolvedValue(services);
   getGallery.mockResolvedValue([]);
   getAdminFaqs.mockResolvedValue([]);
   getSettings.mockResolvedValue(settings);
 });
 
 test("loads dashboard data and renders the overview", async () => {
-  let resolveServices;
-  getServices.mockImplementationOnce(
+  let resolveGallery;
+  getGallery.mockImplementationOnce(
     () =>
       new Promise((resolve) => {
-        resolveServices = resolve;
+        resolveGallery = resolve;
       }),
   );
 
@@ -93,7 +70,7 @@ test("loads dashboard data and renders the overview", async () => {
 
   expect(screen.getByText("Loading your dashboard…")).toBeInTheDocument();
 
-  resolveServices(services);
+  resolveGallery([]);
 
   await loadDashboard();
   expect(screen.getByText("Mero Brow & Lash Bar")).toBeInTheDocument();
@@ -103,50 +80,19 @@ test("loads dashboard data and renders the overview", async () => {
 });
 
 test("shows the existing load error and retries successfully", async () => {
-  getServices.mockRejectedValueOnce(new Error("Unable to reach services"));
+  getGallery.mockRejectedValueOnce(new Error("Unable to reach gallery"));
 
   renderDashboard();
 
   expect(
     await screen.findByRole("alert"),
-  ).toHaveTextContent("Unable to reach services");
+  ).toHaveTextContent("Unable to reach gallery");
 
   await userEvent.click(screen.getByRole("button", { name: "Try again" }));
 
   await loadDashboard();
   expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-  expect(getServices).toHaveBeenCalledTimes(2);
-});
-
-test("adds a saved service to the displayed service data once", async () => {
-  const savedService = {
-    _id: "service-2",
-    name: "Brow Design",
-    price: 30,
-    category: "Threading",
-  };
-  createService.mockResolvedValue(savedService);
-
-  renderDashboard();
-  await loadDashboard();
-
-  await userEvent.click(
-    dashboardNavigation().getByRole("button", { name: /Services$/ }),
-  );
-  await userEvent.click(screen.getByRole("button", { name: /Add service/i }));
-
-  await userEvent.type(screen.getByLabelText("Service name"), "Brow Design");
-  await userEvent.type(screen.getByLabelText("Price"), "30");
-  await userEvent.selectOptions(screen.getByLabelText("Category"), "Threading");
-  await userEvent.click(screen.getByRole("button", { name: "Save service" }));
-
-  expect(await screen.findByText("Brow Design")).toBeInTheDocument();
-  expect(screen.getAllByText("Brow Design")).toHaveLength(1);
-  expect(createService).toHaveBeenCalledWith({
-    name: "Brow Design",
-    price: "30",
-    category: "Threading",
-  });
+  expect(getGallery).toHaveBeenCalledTimes(2);
 });
 
 test("propagates saved settings through the existing callback", async () => {
@@ -170,32 +116,4 @@ test("propagates saved settings through the existing callback", async () => {
     "Updated Brow Bar",
   );
   expect(onSettingsUpdated).toHaveBeenCalledWith(savedSettings);
-});
-
-test("requires confirmation before deleting a service and deletes once after confirmation", async () => {
-  deleteService.mockResolvedValue({});
-
-  renderDashboard();
-  await loadDashboard();
-
-  await userEvent.click(
-    dashboardNavigation().getByRole("button", { name: /Services$/ }),
-  );
-  await userEvent.click(screen.getByRole("button", { name: "Delete" }));
-
-  expect(
-    await screen.findByRole("heading", { name: "Delete service?" }),
-  ).toBeInTheDocument();
-
-  await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
-  expect(deleteService).not.toHaveBeenCalled();
-
-  await userEvent.click(screen.getByRole("button", { name: "Delete" }));
-  await userEvent.click(screen.getByRole("button", { name: "Yes, Delete" }));
-
-  await waitFor(() => expect(deleteService).toHaveBeenCalledTimes(1));
-  expect(deleteService).toHaveBeenCalledWith("service-1");
-  await waitFor(() =>
-    expect(screen.queryByText("Brow Shape")).not.toBeInTheDocument(),
-  );
 });

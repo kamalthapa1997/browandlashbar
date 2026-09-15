@@ -2,9 +2,14 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 
 const {
-  __testables: { getAvailabilityData, searchAvailability },
+  __testables: {
+    getAvailabilityData,
+    getAvailabilityRangeData,
+    searchAvailability,
+  },
 } = require("../controllers/squareController");
 const { validateAvailabilityPayload } = require("../utils/validators");
+const { getBookingWindow } = require("../utils/bookingWindow");
 
 function variation(id, teamMemberIds = []) {
   return {
@@ -28,25 +33,46 @@ const profiles = [
 const location = { id: "location-1", name: "Main location" };
 
 test("availability validation requires a non-empty unique variationIds array", () => {
+  const { today, maximumDate } = getBookingWindow();
   assert.throws(
-    () => validateAvailabilityPayload({ variationIds: [], date: "2026-09-14" }),
+    () => validateAvailabilityPayload({ variationIds: [], date: today }),
     { statusCode: 400 },
   );
   assert.throws(
-    () => validateAvailabilityPayload({ variationIds: ["a", "a"], date: "2026-09-14" }),
+    () => validateAvailabilityPayload({ variationIds: ["a", "a"], date: today }),
     { statusCode: 400 },
   );
   assert.throws(
-    () => validateAvailabilityPayload({ variationIds: [42], date: "2026-09-14" }),
+    () => validateAvailabilityPayload({ variationIds: [42], date: today }),
     { statusCode: 400 },
   );
   assert.throws(
-    () => validateAvailabilityPayload({ variationIds: ["a".repeat(256)], date: "2026-09-14" }),
+    () => validateAvailabilityPayload({ variationIds: ["a".repeat(256)], date: today }),
     { statusCode: 400 },
   );
   assert.deepEqual(
-    validateAvailabilityPayload({ variationIds: ["variation-b", "variation-a"], date: "2026-09-14" }),
-    { variationIds: ["variation-a", "variation-b"], date: "2026-09-14" },
+    validateAvailabilityPayload({ variationIds: ["variation-b", "variation-a"], date: today }),
+    { variationIds: ["variation-a", "variation-b"], date: today },
+  );
+  assert.deepEqual(
+    validateAvailabilityPayload({
+      variationIds: ["variation-b", "variation-a"],
+      startDate: today,
+      endDate: maximumDate,
+    }),
+    {
+      variationIds: ["variation-a", "variation-b"],
+      startDate: today,
+      endDate: maximumDate,
+    },
+  );
+  assert.throws(
+    () => validateAvailabilityPayload({
+      variationIds: ["a"],
+      startDate: today,
+      endDate: "2099-01-01",
+    }),
+    { statusCode: 400 },
   );
 });
 
@@ -196,6 +222,46 @@ test("returns no availability when Square has no valid combined appointment", as
   );
 
   assert.deepEqual(result.availability, []);
+});
+
+test("groups one Square range search into Eastern calendar dates, including empty days", async () => {
+  const calls = [];
+  const result = await getAvailabilityRangeData(
+    {
+      variationIds: ["variation-a"],
+      startDate: "2026-09-14",
+      endDate: "2026-09-16",
+    },
+    {
+      resolveBookableVariation: async (id) => ({ variation: variation(id) }),
+      resolveLocation: async () => location,
+      listBookableTeamMembers: async () => profiles,
+      searchAvailability: async (input) => {
+        calls.push(input);
+        return [
+          {
+            start_at: "2026-09-15T01:00:00Z",
+            appointment_segments: [{ team_member_id: "team-a" }],
+          },
+          {
+            start_at: "2026-09-16T14:00:00Z",
+            appointment_segments: [{ team_member_id: "team-b" }],
+          },
+        ];
+      },
+    },
+  );
+
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].startDate, "2026-09-14");
+  assert.equal(calls[0].endDate, "2026-09-16");
+  assert.deepEqual(result.availabilityByDate["2026-09-14"], [
+    { startAt: "2026-09-15T01:00:00Z", teamMemberName: "Avery" },
+  ]);
+  assert.deepEqual(result.availabilityByDate["2026-09-15"], []);
+  assert.deepEqual(result.availabilityByDate["2026-09-16"], [
+    { startAt: "2026-09-16T14:00:00Z", teamMemberName: "Blair" },
+  ]);
 });
 
 test("returns same-staff and different-staff Square responses as safe availability choices", async () => {

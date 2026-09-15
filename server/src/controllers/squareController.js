@@ -7,7 +7,10 @@ const { createRateLimiter } = require("../middleware/rateLimitMiddleware");
 const {
   buildAuthorizationUrl,
   createOAuthState,
+  createPersistedOAuthState,
+  consumePersistedOAuthState,
   exchangeCode,
+  getSquareAdminHealth,
   getSafeAuthorizationMetadata,
   getSquareStatus,
   listBookingCatalogServices,
@@ -42,14 +45,44 @@ function getCookie(request, name) {
   return value ? decodeURIComponent(value.slice(name.length + 1)) : "";
 }
 
-function cookieOptions() {
+function cookieOptions(config = getSquareConfig()) {
   return [
     "HttpOnly",
     "SameSite=Lax",
     "Path=/api/square/oauth",
     "Max-Age=600",
-    ...(getSquareConfig().environment === "production" ? ["Secure"] : []),
+    ...(config.environment === "production" ? ["Secure"] : []),
   ].join("; ");
+}
+
+function clearOAuthStateCookie(response, config = getSquareConfig()) {
+  response.setHeader(
+    "Set-Cookie",
+    [
+      "square_oauth_state=",
+      "HttpOnly",
+      "SameSite=Lax",
+      "Path=/api/square/oauth",
+      "Max-Age=0",
+      ...(config.environment === "production" ? ["Secure"] : []),
+    ].join("; "),
+  );
+}
+
+function getOAuthStateBinding(admin) {
+  if (!admin?._id || !Number.isInteger(admin.sessionVersion)) {
+    throw createHttpError(401, "Authentication is required");
+  }
+  return { adminId: admin._id, sessionVersion: admin.sessionVersion };
+}
+
+function createOAuthStateInvalidError() {
+  return createHttpError(
+    400,
+    "Square authorization could not be verified. Please try again.",
+    undefined,
+    "SQUARE_OAUTH_STATE_INVALID",
+  );
 }
 
 function getOffsetMilliseconds(date, timeZone) {
@@ -80,10 +113,11 @@ function getOffsetMilliseconds(date, timeZone) {
   );
 }
 
-function businessDateRange(date) {
-  const [year, month, day] = date.split("-").map(Number);
+function businessDateRange(startDate, endDate = startDate) {
+  const [year, month, day] = startDate.split("-").map(Number);
+  const [endYear, endMonth, endDay] = endDate.split("-").map(Number);
   const startGuess = Date.UTC(year, month - 1, day);
-  const endGuess = Date.UTC(year, month - 1, day + 1);
+  const endGuess = Date.UTC(endYear, endMonth - 1, endDay + 1);
   const start = new Date(
     startGuess -
       getOffsetMilliseconds(new Date(startGuess), BUSINESS_TIME_ZONE),
@@ -149,11 +183,13 @@ async function resolveEligibleTeamMembers(variation, bookableProfiles) {
 
 async function searchAvailability({
   date,
+  startDate = date,
+  endDate = date,
   location,
   selections,
   fetchSquare = squareFetch,
 }) {
-  const { startAt, endAt } = businessDateRange(date);
+  const { startAt, endAt } = businessDateRange(startDate, endDate);
   const data = await fetchSquare("/bookings/availability/search", {
     method: "POST",
     body: {
@@ -175,7 +211,7 @@ async function searchAvailability({
   return data.availabilities || [];
 }
 
-async function findCombinedAvailability({ variationIds, date }, dependencies = {}) {
+async function findCombinedAvailability({ variationIds, date, startDate, endDate }, dependencies = {}) {
   const resolveVariation =
     dependencies.resolveBookableVariation || resolveBookableVariation;
   const resolveBookingLocation = dependencies.resolveLocation || resolveLocation;
@@ -202,7 +238,13 @@ async function findCombinedAvailability({ variationIds, date }, dependencies = {
     })),
   );
   if (beforeSquareOperation) await beforeSquareOperation();
-  const slots = await findAvailability({ date, location, selections });
+  const slots = await findAvailability({
+    date,
+    startDate: startDate || date,
+    endDate: endDate || date,
+    location,
+    selections,
+  });
 
   return { location, profiles, resolvedVariations, slots };
 }
@@ -226,6 +268,54 @@ async function getAvailabilityData({ variationIds, date }, dependencies = {}) {
         "Staff member",
     })),
   };
+}
+
+function calendarDates(startDate, endDate) {
+  const dates = [];
+  const current = new Date(`${startDate}T12:00:00Z`);
+  const finalDate = new Date(`${endDate}T12:00:00Z`);
+
+  while (current <= finalDate) {
+    dates.push(current.toISOString().slice(0, 10));
+    current.setUTCDate(current.getUTCDate() + 1);
+  }
+
+  return dates;
+}
+
+function mapAvailabilitySlot(slot, names) {
+  return {
+    startAt: slot.start_at,
+    teamMemberName:
+      names.get(slot.appointment_segments?.[0]?.team_member_id) ||
+      "Staff member",
+  };
+}
+
+async function getAvailabilityRangeData(
+  { variationIds, startDate, endDate },
+  dependencies = {},
+) {
+  const { profiles, slots } = await findCombinedAvailability(
+    { variationIds, startDate, endDate },
+    dependencies,
+  );
+  const names = new Map(
+    profiles.map((profile) => [profile.team_member_id, profile.display_name]),
+  );
+  const availabilityByDate = Object.fromEntries(
+    calendarDates(startDate, endDate).map((calendarDate) => [calendarDate, []]),
+  );
+
+  slots.forEach((slot) => {
+    const calendarDate = dateInBusinessTimeZone(slot.start_at);
+
+    if (availabilityByDate[calendarDate]) {
+      availabilityByDate[calendarDate].push(mapAvailabilitySlot(slot, names));
+    }
+  });
+
+  return { startDate, endDate, timezone: BUSINESS_TIME_ZONE, availabilityByDate };
 }
 
 async function findOrCreateCustomer(customer, dependencies = {}) {
@@ -465,21 +555,50 @@ const getStatus = asyncHandler(async (_request, response) => {
   response.json(await getSquareStatus());
 });
 
-const beginOAuth = asyncHandler(async (_request, response) => {
-  const state = createOAuthState();
-  const authorizationUrl = buildAuthorizationUrl(state);
+async function getAdminHealthData(_request, response, {
+  getSquareAdminHealthFn = getSquareAdminHealth,
+} = {}) {
+  response.json(await getSquareAdminHealthFn());
+}
+
+const getAdminHealth = asyncHandler(getAdminHealthData);
+
+async function beginOAuthFlow(request, response, {
+  createOAuthStateFn = createOAuthState,
+  createPersistedOAuthStateFn = createPersistedOAuthState,
+  buildAuthorizationUrlFn = buildAuthorizationUrl,
+  getSafeAuthorizationMetadataFn = getSafeAuthorizationMetadata,
+  getSquareConfigFn = getSquareConfig,
+} = {}) {
+  const state = createOAuthStateFn();
+  const config = getSquareConfigFn();
+  await createPersistedOAuthStateFn({
+    state,
+    ...getOAuthStateBinding(request.admin),
+    environment: config.environment,
+  });
+  const authorizationUrl = buildAuthorizationUrlFn(state);
   console.info(
     "Square OAuth authorization request",
-    getSafeAuthorizationMetadata(authorizationUrl),
+    getSafeAuthorizationMetadataFn(authorizationUrl),
   );
   response.setHeader(
     "Set-Cookie",
-    `square_oauth_state=${encodeURIComponent(state)}; ${cookieOptions()}`,
+    `square_oauth_state=${encodeURIComponent(state)}; ${cookieOptions(config)}`,
   );
   response.redirect(302, authorizationUrl);
-});
+}
 
-const completeOAuth = asyncHandler(async (request, response) => {
+const beginOAuth = asyncHandler(beginOAuthFlow);
+
+async function completeOAuthFlow(request, response, {
+  verifyOAuthStateFn = verifyOAuthState,
+  consumePersistedOAuthStateFn = consumePersistedOAuthState,
+  exchangeCodeFn = exchangeCode,
+  getSquareConfigFn = getSquareConfig,
+  clearOAuthStateCookieFn = clearOAuthStateCookie,
+  getClientUrlFn = () => process.env.CLIENT_URL || "http://localhost:3000",
+} = {}) {
   const state =
     typeof request.query.state === "string" ? request.query.state : "";
   const expectedState = getCookie(request, "square_oauth_state");
@@ -488,19 +607,21 @@ const completeOAuth = asyncHandler(async (request, response) => {
     !state ||
     !expectedState ||
     state !== expectedState ||
-    !verifyOAuthState(state)
+    !verifyOAuthStateFn(state)
   ) {
-    throw createHttpError(
-      400,
-      "Square authorization could not be verified. Please try again.",
-      undefined,
-      "SQUARE_OAUTH_STATE_INVALID",
-    );
+    clearOAuthStateCookieFn(response);
+    throw createOAuthStateInvalidError();
   }
-  response.setHeader(
-    "Set-Cookie",
-    "square_oauth_state=; HttpOnly; SameSite=Lax; Path=/api/square/oauth; Max-Age=0",
-  );
+
+  const config = getSquareConfigFn();
+  const consumedState = await consumePersistedOAuthStateFn({
+    state,
+    ...getOAuthStateBinding(request.admin),
+    environment: config.environment,
+  });
+  clearOAuthStateCookieFn(response, config);
+  if (!consumedState) throw createOAuthStateInvalidError();
+
   if (request.query.error) {
     throw createHttpError(
       400,
@@ -513,10 +634,12 @@ const completeOAuth = asyncHandler(async (request, response) => {
   if (!code)
     throw createHttpError(400, "Square authorization did not return a code.");
 
-  await exchangeCode(code);
-  const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+  await exchangeCodeFn(code);
+  const clientUrl = getClientUrlFn();
   response.redirect(302, `${clientUrl}/admin?square=connected`);
-});
+}
+
+const completeOAuth = asyncHandler(completeOAuthFlow);
 
 const getLocations = asyncHandler(async (_request, response) => {
   const locations = await listLocations();
@@ -553,7 +676,11 @@ const getTeamMembers = asyncHandler(async (_request, response) => {
 
 const getAvailability = asyncHandler(async (request, response) => {
   const payload = validateAvailabilityPayload(request.body);
-  response.json(await getAvailabilityData(payload));
+  response.json(
+    "date" in payload
+      ? await getAvailabilityData(payload)
+      : await getAvailabilityRangeData(payload),
+  );
 });
 
 const createBooking = asyncHandler(async (request, response) => {
@@ -658,6 +785,7 @@ module.exports = {
   completeOAuth,
   createBooking,
   getAvailability,
+  getAdminHealth,
   getBookingServices,
   getCatalogServices,
   getLocations,
@@ -667,10 +795,17 @@ module.exports = {
   receiveWebhook,
   __testables: {
     createSquareBookingRequest,
+    beginOAuthFlow,
+    clearOAuthStateCookie,
+    completeOAuthFlow,
+    cookieOptions,
+    getOAuthStateBinding,
     createAuthoritativeAvailabilityError,
     executeStoredSquareBooking,
     findCombinedAvailability,
     getAvailabilityData,
+    getAdminHealthData,
+    getAvailabilityRangeData,
     isSquareStaleSlotError,
     prepareAuthoritativeBooking,
     searchAvailability,

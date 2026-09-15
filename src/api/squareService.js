@@ -16,6 +16,14 @@ export function getSquareAvailability({ variationIds, date }) {
   });
 }
 
+export function getSquareAvailabilityRange({ variationIds, startDate, endDate }) {
+  return apiRequest("/api/square/availability", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ variationIds, startDate, endDate }),
+  });
+}
+
 export function createSquareBooking({ bookingAttemptId, variationIds, startAt, customer }) {
   return apiRequest("/api/square/bookings", {
     method: "POST",
