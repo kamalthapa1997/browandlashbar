@@ -11,9 +11,23 @@ HEALTH_TIMEOUT_SECONDS="${HEALTH_TIMEOUT_SECONDS:-30}"
 HEALTH_POLL_SECONDS="${HEALTH_POLL_SECONDS:-1}"
 RELEASE_SHA="${1:-}"
 PUBLIC_ORIGIN="${PUBLIC_ORIGIN:-}"
+NODE_BIN="/home/handsomelotus1/.nvm/versions/node/v22.23.2/bin/node"
+NODE_BIN_DIR="${NODE_BIN%/node}"
+NPM_BIN="$NODE_BIN_DIR/npm"
 
 fail() { printf 'Deployment failed: %s\n' "$*" >&2; exit 1; }
 note() { printf '==> %s\n' "$*"; }
+
+[[ -x "$NODE_BIN" ]] || fail "required Node 22 executable is unavailable: $NODE_BIN"
+[[ -x "$NPM_BIN" ]] || fail "required npm executable is unavailable: $NPM_BIN"
+export PATH="$NODE_BIN_DIR:$PATH"
+hash -r
+[[ "$(command -v node)" == "$NODE_BIN" ]] \
+  || fail "failed to select Node 22 executable: $NODE_BIN"
+[[ "$(command -v npm)" == "$NPM_BIN" ]] \
+  || fail "failed to select corresponding npm executable: $NPM_BIN"
+[[ "$("$NODE_BIN" -p 'process.versions.node.split(".")[0]')" == "22" ]] \
+  || fail "configured Node runtime is not major version 22"
 
 [[ -n "$RELEASE_SHA" ]] || fail "usage: $0 <committed-release-sha>"
 [[ "$PUBLIC_ORIGIN" =~ ^https:// ]] || fail "PUBLIC_ORIGIN must be the approved HTTPS origin"
