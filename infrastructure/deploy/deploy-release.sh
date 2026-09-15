@@ -39,7 +39,7 @@ rollback() {
     note "activation failed; restoring $previous_target"
     ln -sfn "$previous_target" "$RELEASE_ROOT/current.next"
     mv -Tf "$RELEASE_ROOT/current.next" "$RELEASE_ROOT/current"
-    systemctl restart "$SERVICE_NAME"
+    sudo systemctl restart "$SERVICE_NAME"
   fi
 }
 trap rollback ERR
